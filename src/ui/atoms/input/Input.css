@@ -1,0 +1,106 @@
+/* Container */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Label */
+.input-label {
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+}
+
+.input-label.s { font-size: 0.875rem; }
+.input-label.m { font-size: 1rem; }
+.input-label.l { font-size: 1.125rem; }
+.input-label.xl { font-size: 1.5rem; }
+
+/* Wrapper */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Icon */
+.input-icon {
+  position: absolute;
+  right: 0.5rem;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.input-icon.s { width: 1rem; }
+.input-icon.m { width: 1.5rem; }
+.input-icon.l { width: 2rem; }
+.input-icon.xl { width: 2.5rem; }
+
+/* Input Base */
+.input-field {
+  width: 100%;
+  border: 1px solid var(--color-primary-light);
+  border-radius: 0.375rem;
+  background-color: white;
+  color: var(--color-primary-dark);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-field:hover {
+  border-color: var(--color-primary);
+}
+
+.input-field:active {
+  border-color: var(--color-primary-dark);
+}
+
+.input-field:focus {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.input-field::placeholder {
+  color: var(--color-highlight);
+}
+
+/* Sizes */
+.input-field.s { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
+.input-field.m { padding: 0.5rem 1rem; font-size: 1rem; }
+.input-field.l { padding: 0.75rem 1.5rem; font-size: 1.125rem; }
+.input-field.xl { padding: 1rem 2rem; font-size: 1.5rem; }
+
+/* Padding with icon */
+
+/* Disabled */
+.input-field.disabled {
+  background-color: var(--color-lime-dark);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .input-icon {
+    filter: invert(1);
+  }
+
+  .input-field {
+    background-color: var(--color-dark-background);
+    color: var(--color-accent);
+    border-color: var(--color-primary-light);
+  }
+
+  .input-field:hover {
+    border-color: var(--color-primary);
+  }
+
+  .input-field:active {
+    border-color: var(--color-primary-dark);
+  }
+
+  .input-field.disabled {
+    background-color: var(--color-lime-dark);
+  }
+}

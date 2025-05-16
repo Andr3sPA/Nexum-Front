@@ -1,0 +1,19 @@
+/*Main theme*/
+:root {
+  --color-primary: #014926;
+  --color-primary-dark: #33691e;
+  --color-primary-light: #7db006;
+  --color-accent: #ffc107;
+  --color-success: #8bc34a;
+  --color-warning: #ef434d;
+  --color-info: #069a7e;
+  --color-secondary: #70205b;
+  --color-highlight: #137598;
+  --color-lime-dark: #6c9a06;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+* {
+  margin: 0;
+}
