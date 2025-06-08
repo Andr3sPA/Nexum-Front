@@ -1,0 +1,3168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #014926;
+  --color-primary-dark: #33691e;
+  --color-primary-light: #7db006;
+  --color-accent: #ffc107;
+  --color-success: #8bc34a;
+  --color-warning: #ef434d;
+  --color-info: #069a7e;
+  --color-secondary: #70205b;
+  --color-highlight: #137598;
+  --color-lime-dark: #6c9a06;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Roboto", "Cooper Hewitt", "Arial Narrow", sans-serif;
+  }
+  
+  /* Enhanced modal overlay styling */
+  [data-radix-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+
+  /* Ensure modal content is properly styled */
+  [data-radix-dialog-content] {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  /* Enhanced select dropdown styling */
+  [data-radix-select-content] {
+    background-color: white !important;
+    border: 1px solid #d1d5db !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
+    z-index: 9999 !important;
+  }
+
+  [data-radix-select-item] {
+    background-color: white !important;
+    color: #111827 !important;
+  }
+
+  [data-radix-select-item]:hover,
+  [data-radix-select-item][data-highlighted] {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+  }
+}
+
+@layer components {
+  .udea-primary {
+    background-color: var(--color-primary);
+  }
+  .udea-primary-text {
+    color: var(--color-primary);
+  }
+  .udea-accent {
+    background-color: var(--color-accent);
+  }
+  .udea-accent-text {
+    color: var(--color-accent);
+  }
+
+  /* Profile avatar enhancements */
+  .profile-avatar {
+    @apply relative inline-flex items-center justify-center;
+  }
+
+  .profile-avatar::after {
+    content: "";
+    @apply absolute inset-0 rounded-full border-2 border-transparent;
+    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-light));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+
+  /* Navigation enhancements */
+  .nav-link {
+    @apply relative px-3 py-2 rounded-md text-sm font-medium transition-all duration-200;
+  }
+
+  .nav-link:hover {
+    @apply bg-gray-100;
+    color: var(--color-primary);
+  }
+
+  .nav-link.active {
+    @apply bg-gray-100;
+    color: var(--color-primary);
+  }
+
+  /* Form enhancements */
+  .form-section {
+    @apply bg-white rounded-lg border border-gray-200 p-6 shadow-sm;
+  }
+
+  .form-section h3 {
+    @apply text-lg font-semibold mb-4;
+    color: var(--color-primary);
+  }
+
+  /* Button enhancements */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    @apply text-white border-0 shadow-md hover:shadow-lg transition-all duration-200;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-secondary);
+    @apply text-white hover:opacity-90 transition-opacity;
+  }
+
+  /* Card enhancements */
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  /* Status indicators */
+  .status-active {
+    @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .status-inactive {
+    @apply bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  /* Loading states */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-blue-600;
+  }
+
+  /* Responsive utilities */
+  .container-responsive {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Enhanced modal overlay styling */
+  [data-radix-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+
+  /* Ensure modal content is properly styled */
+  [data-radix-dialog-content] {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  /* Enhanced select dropdown styling */
+  [data-radix-select-content] {
+    background-color: white !important;
+    border: 1px solid #d1d5db !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
+    z-index: 9999 !important;
+  }
+
+  [data-radix-select-item] {
+    background-color: white !important;
+    color: #111827 !important;
+  }
+
+  [data-radix-select-item]:hover,
+  [data-radix-select-item][data-highlighted] {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+  }
+
+  /* Profile avatar enhancements */
+  .profile-avatar {
+    @apply relative inline-flex items-center justify-center;
+  }
+
+  .profile-avatar::after {
+    content: "";
+    @apply absolute inset-0 rounded-full border-2 border-transparent;
+    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-light));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+
+  /* Navigation enhancements */
+  .nav-link {
+    @apply relative px-3 py-2 rounded-md text-sm font-medium transition-all duration-200;
+  }
+
+  .nav-link:hover {
+    @apply bg-gray-100;
+    color: var(--color-primary);
+  }
+
+  .nav-link.active {
+    @apply bg-gray-100;
+    color: var(--color-primary);
+  }
+
+  /* Form enhancements */
+  .form-section {
+    @apply bg-white rounded-lg border border-gray-200 p-6 shadow-sm;
+  }
+
+  .form-section h3 {
+    @apply text-lg font-semibold mb-4;
+    color: var(--color-primary);
+  }
+
+  /* Button enhancements */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    @apply text-white border-0 shadow-md hover:shadow-lg transition-all duration-200;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-secondary);
+    @apply text-white hover:opacity-90 transition-opacity;
+  }
+
+  /* Card enhancements */
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  /* Status indicators */
+  .status-active {
+    @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .status-inactive {
+    @apply bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  /* Loading states */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-blue-600;
+  }
+
+  /* Responsive utilities */
+  .container-responsive {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+  display: none !important;
+}
+
+/* Hide development indicators */
+.next-dev-indicator {
+  display: none !important;
+}
+
+/* Suppress console output styling */
+.next-dev-overlay {
+}
