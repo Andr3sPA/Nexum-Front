@@ -32,6 +32,7 @@ export default function PersonalInfoModal({ isOpen, onClose, onSave, initialData
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave({ ...formData, lastUpdateDate: new Date().toISOString().split("T")[0] })
+      onClose() // Añadido: cerrar el modal después de guardar
     } finally {
       setIsSubmitting(false)
     }

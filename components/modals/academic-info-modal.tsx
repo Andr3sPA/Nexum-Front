@@ -41,12 +41,18 @@ export default function AcademicInfoModal({ isOpen, onClose, onSave, initialData
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="graduationYear">Año de Graduación</Label>
-              <Input
-                id="graduationYear"
-                type="number"
-                value={formData.graduationYear}
-                onChange={(e) => handleInputChange("graduationYear", e.target.value)}
-              />
+              <Select value={formData.graduationYear} onValueChange={(value) => handleInputChange("graduationYear", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar año" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="program">Programa Cursado en la UdeA</Label>

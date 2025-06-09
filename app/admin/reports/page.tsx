@@ -104,24 +104,40 @@ export default function ReportsPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="startYear">Año Inicial</Label>
-                    <Input
-                      id="startYear"
-                      type="number"
-                      placeholder="2020"
+                    <Select
                       value={reportConfig.startYear}
-                      onChange={(e) => handleConfigChange("startYear", e.target.value)}
-                    />
+                      onValueChange={(value) => handleConfigChange("startYear", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar año" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="endYear">Año Final</Label>
-                    <Input
-                      id="endYear"
-                      type="number"
-                      placeholder="2024"
+                    <Select
                       value={reportConfig.endYear}
-                      onChange={(e) => handleConfigChange("endYear", e.target.value)}
-                    />
+                      onValueChange={(value) => handleConfigChange("endYear", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar año" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
