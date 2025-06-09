@@ -1,6 +1,6 @@
 import { API_CONFIG, API_ENDPOINTS, DEFAULT_HEADERS, validateApiConfig } from "./api-config"
 import { getCsrfToken } from "./csrf-utils"
-
+import { logger } from "./logging"
 // Generic API error class
 export class ApiError extends Error {
   constructor(
@@ -84,10 +84,10 @@ class SecureApiClient {
       return data as T
     } catch (error) {
       // Log error for debugging (remove in production)
-      // Add import
-      import { logger } from "./logging"
       
-      // Replace console.error with logger.error
+      
+      
+      
       if (API_CONFIG.ENVIRONMENT === "development") {
         logger.error("API Request failed:", error)
       }

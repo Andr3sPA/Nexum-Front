@@ -11,6 +11,8 @@ import { ModalActions } from "@/components/molecules/modal-actions"
 import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
 import { sanitizeInput } from "@/lib/security"
 
+import { logger } from "@/lib/logging"
+
 interface WorkQuestionsModalProps {
   isOpen: boolean
   onClose: () => void
@@ -68,7 +70,10 @@ export default function WorkQuestionsModal({ isOpen, onClose, onSave, initialDat
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(sanitizedData)
     } catch (error) {
-      console.error("Error saving work questions:", error)
+      // Remove duplicate import
+      // import { logger } from "@/lib/logging"
+      
+      logger.error("Error saving work questions:", error)
     } finally {
       setIsSubmitting(false)
     }

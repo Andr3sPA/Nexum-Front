@@ -9,6 +9,8 @@ import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 
+import { logger } from "@/lib/logging"
+
 interface PersonalInfoModalProps {
   isOpen: boolean
   onClose: () => void
@@ -34,7 +36,9 @@ export default function PersonalInfoModal({ isOpen, onClose, onSave, initialData
       onSave({ ...formData, lastUpdateDate: new Date().toISOString().split('T')[0] });
       onClose(); // Esta línea ya está presente, pero no funciona correctamente
     } catch (error) {
-      console.error('Error saving data:', error);
+    
+      
+      logger.error('Error saving data:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -330,4 +334,4 @@ return (
     </form>
   </ModalContainer>
 )
-}
+

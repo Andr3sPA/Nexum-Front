@@ -1,16 +1,22 @@
 /**
- * Secure API configuration for Universidad de Antioquia graduates platform
- * Following security best practices for frontend applications
+ *
+ * 
  */
 
 // Environment validation
+import { logger } from "@/lib/logging"
+
 const requiredEnvVars = ["NEXT_PUBLIC_API_BASE_URL"] as const
 
 export function validateApiConfig(): boolean {
   for (const envVar of requiredEnvVars) {
     if (!process.env[envVar]) {
       if (process.env.NODE_ENV === "development") {
-        console.error(`Missing required environment variable: ${envVar}`)
+       
+        
+        
+
+        logger.error(`Missing required environment variable: ${envVar}`)
       }
       return false
     }

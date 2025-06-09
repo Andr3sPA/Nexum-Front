@@ -1,7 +1,7 @@
 /**
  * Secure API client for Universidad de Antioquia graduates platform
  */
-
+import { logger } from "@/lib/logging"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.udea.edu.co"
 
 class ApiClient {
@@ -32,7 +32,8 @@ class ApiClient {
 
       return await response.json()
     } catch (error) {
-      console.error("API request failed:", error)
+
+      logger.error("API request failed:", error)
       throw new Error("Error de conexión. Por favor, inténtelo de nuevo.")
     }
   }

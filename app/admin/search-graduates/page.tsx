@@ -14,6 +14,8 @@ import { Download, Search } from "lucide-react"
 import { sanitizeInput } from "@/lib/security"
 import Navbar from "@/components/navbar"
 
+import { logger } from "@/lib/logging"
+
 export default function SearchGraduatesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [program, setProgram] = useState("")
@@ -61,7 +63,10 @@ export default function SearchGraduatesPage() {
         },
       ])
     } catch (error) {
-      console.error("Error searching graduates:", error)
+      // Remove duplicate import
+      // import { logger } from "@/lib/logging"
+      
+      logger.error("Error searching graduates:", error)
       setSearchResults([])
     } finally {
       setIsSearching(false)

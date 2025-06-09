@@ -9,6 +9,8 @@ import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 import { sanitizeInput } from "@/lib/security"
 
+import { logger } from "@/lib/logging"
+
 interface WorkCurrentJobModalProps {
   isOpen: boolean
   onClose: () => void
@@ -51,7 +53,11 @@ export default function WorkCurrentJobModal({ isOpen, onClose, onSave, initialDa
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(sanitizedData)
     } catch (error) {
-      console.error("Error saving current job info:", error)
+      
+     
+      
+    
+      logger.error("Error saving current job info:", error)
     } finally {
       setIsSubmitting(false)
     }

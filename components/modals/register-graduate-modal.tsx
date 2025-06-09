@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/dialog"
 import { ROUTES } from "@/lib/routes"
 
+import { logger } from "@/lib/logging"
+
 interface RegisterGraduateModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -55,7 +57,10 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
       onOpenChange(false)
       router.push(`${ROUTES.ADMIN.COMPLETE_PROFILE}?graduateId=${graduateId}&newUser=true`)
     } catch (error) {
-      console.error("Registration failed:", error)
+      // Remove duplicate import
+      // import { logger } from "@/lib/logging"
+      
+      logger.error("Registration failed:", error)
     } finally {
       setIsSubmitting(false)
     }

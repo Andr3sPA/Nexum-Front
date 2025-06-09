@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
 import { sanitizeInput } from "@/lib/security"
 
+import { logger } from "@/lib/logging"
+
 interface EvaluationModalProps {
   isOpen: boolean
   onClose: () => void
@@ -74,7 +76,9 @@ export default function EvaluationModal({ isOpen, onClose, onSave, initialData }
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(sanitizedData)
     } catch (error) {
-      console.error("Error saving evaluation:", error)
+      
+
+      logger.error("Error saving evaluation:", error)
     } finally {
       setIsSubmitting(false)
     }

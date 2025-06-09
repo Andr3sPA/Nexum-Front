@@ -10,6 +10,8 @@ import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 import { sanitizeInput, validateEmail, validatePhone } from "@/lib/security"
 
+import { logger } from "@/lib/logging"
+
 interface PersonalInfoModalProps {
   isOpen: boolean
   onClose: () => void
@@ -101,7 +103,8 @@ export default function PersonalInfoModal({ isOpen, onClose, onSave, initialData
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(sanitizedData)
     } catch (error) {
-      console.error("Error saving personal info:", error)
+
+      logger.error("Error saving personal info:", error)
     } finally {
       setIsSubmitting(false)
     }
