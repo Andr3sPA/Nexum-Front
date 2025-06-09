@@ -96,8 +96,11 @@ export function validateNumeric(value: string, min?: number, max?: number): bool
  */
 export function escapeHtml(html: string): string {
   if (!html) return ""
-
-  const div = document.createElement("div")
-  div.textContent = html
-  return div.innerHTML
+  
+  return html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
 }

@@ -1,4 +1,5 @@
 import { API_CONFIG, API_ENDPOINTS, DEFAULT_HEADERS, validateApiConfig } from "./api-config"
+import { getCsrfToken } from "./csrf-utils"
 
 // Generic API error class
 export class ApiError extends Error {
@@ -52,11 +53,16 @@ class SecureApiClient {
     const sanitizedEndpoint = this.sanitizeUrl(endpoint)
     const url = `${this.baseUrl}${sanitizedEndpoint}`
 
+    // Get CSRF token
+    const csrfToken = getCsrfToken()
+
     const config: RequestInit = {
       ...options,
       headers: {
         ...this.defaultHeaders,
         ...options.headers,
+        // Add CSRF token header
+        "X-CSRF-Token": csrfToken,
       },
       // Security headers
       credentials: "include", // Include cookies for authentication
@@ -78,8 +84,12 @@ class SecureApiClient {
       return data as T
     } catch (error) {
       // Log error for debugging (remove in production)
+      // Add import
+      import { logger } from "./logging"
+      
+      // Replace console.error with logger.error
       if (API_CONFIG.ENVIRONMENT === "development") {
-        console.error("API Request failed:", error)
+        logger.error("API Request failed:", error)
       }
 
       // Re-throw ApiError as-is

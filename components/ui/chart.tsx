@@ -67,6 +67,18 @@ const ChartContainer = React.forwardRef<
 })
 ChartContainer.displayName = "Chart"
 
+// Add this validation function at the top of the file
+function validateCssValue(value: string | undefined): string {
+  if (!value) return "";
+  
+  // Only allow valid CSS color values
+  // This regex matches hex colors, rgb/rgba, hsl/hsla, and named colors
+  const safeColorRegex = /^(#[0-9A-Fa-f]{3,8}|rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)|rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[0-1](\.\d+)?\s*\)|hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)|hsla\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*,\s*[0-1](\.\d+)?\s*\)|[a-zA-Z]+)$/;
+  
+  return safeColorRegex.test(value) ? value : "";
+}
+
+// Then modify the ChartStyle component to use this validation
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([_, config]) => config.theme || config.color
@@ -76,25 +88,30 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
-  return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
+  // Generate CSS safely
+  const cssContent = Object.entries(THEMES)
+    .map(
+      ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
-    const color =
+    const color = validateCssValue(
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
       itemConfig.color
+    )
     return color ? `  --color-${key}: ${color};` : null
   })
+  .filter(Boolean)
   .join("\n")}
 }
 `
-          )
-          .join("\n"),
+    )
+    .join("\n")
+
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: cssContent,
       }}
     />
   )
