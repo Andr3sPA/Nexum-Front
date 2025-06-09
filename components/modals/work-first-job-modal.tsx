@@ -53,8 +53,7 @@ export default function WorkFirstJobModal({ isOpen, onClose, onSave, initialData
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(sanitizedData)
     } catch (error) {
-      // Remove duplicate import
-      // import { logger } from "@/lib/logging"
+     
       
       logger.error("Error saving first job info:", error)
     } finally {

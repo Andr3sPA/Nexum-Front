@@ -37,8 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error securely (remove in production or send to secure logging service)
     if (process.env.NODE_ENV === "development") {
-      // Remove duplicate import
-      // import { logger } from "@/lib/logging"
+   
       
       logger.error("Error caught by boundary:", error)
     }

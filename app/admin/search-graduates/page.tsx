@@ -63,8 +63,7 @@ export default function SearchGraduatesPage() {
         },
       ])
     } catch (error) {
-      // Remove duplicate import
-      // import { logger } from "@/lib/logging"
+     
       
       logger.error("Error searching graduates:", error)
       setSearchResults([])

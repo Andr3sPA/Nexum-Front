@@ -57,8 +57,7 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
       onOpenChange(false)
       router.push(`${ROUTES.ADMIN.COMPLETE_PROFILE}?graduateId=${graduateId}&newUser=true`)
     } catch (error) {
-      // Remove duplicate import
-      // import { logger } from "@/lib/logging"
+     
       
       logger.error("Registration failed:", error)
     } finally {
