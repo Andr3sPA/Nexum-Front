@@ -15,6 +15,15 @@ export interface AuthState {
   lastActivity: number
 }
 
+// User data interface for input to getSafeUserData
+export interface UserData {
+  id?: string | number
+  name?: string
+  email?: string
+  role?: string
+  [key: string]: unknown
+}
+
 // Session timeout (30 minutes)
 const SESSION_TIMEOUT = 30 * 60 * 1000
 
@@ -78,7 +87,7 @@ export function requireAuth(authState: AuthState): boolean {
 }
 
 // Safe user data extraction (remove sensitive fields)
-export function getSafeUserData(user: any): {
+export function getSafeUserData(user: UserData): {
   id: string
   name: string
   email: string

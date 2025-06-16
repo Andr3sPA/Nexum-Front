@@ -9,15 +9,24 @@ import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 
+import { logger } from "@/lib/logging"
+
+interface AcademicInfoData {
+  graduationYear: string
+  program: string
+  studyPlan: string
+  role: string
+}
+
 interface AcademicInfoModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: any) => void
-  initialData: any
+  onSave: (data: AcademicInfoData) => void
+  initialData: AcademicInfoData
 }
 
 export default function AcademicInfoModal({ isOpen, onClose, onSave, initialData }: AcademicInfoModalProps) {
-  const [formData, setFormData] = useState(initialData)
+  const [formData, setFormData] = useState<AcademicInfoData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -32,13 +41,15 @@ export default function AcademicInfoModal({ isOpen, onClose, onSave, initialData
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(formData)
+    } catch (error) {
+      logger.error("Error saving data:", error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }))
+  const handleInputChange = (field: keyof AcademicInfoData, value: string) => {
+    setFormData((prev: AcademicInfoData) => ({ ...prev, [field]: value }))
   }
 
   return (

@@ -9,15 +9,35 @@ import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 
-interface WorkCurrentJobModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (data: any) => void
-  initialData: any
+import { logger } from "@/lib/logging"
+
+interface CurrentJobData {
+  company: string
+  position: string
+  startDate: string
+  sector: string
+  contractType: string
+  salary: string
+  city: string
+  country: string
+  currentSituation: string
+  companyName: string
+  relatedToCareer: string
+  salaryRange: string
+  timeInCompany: string
+  area: string
+  companyType: string
 }
 
-export default function WorkCurrentJobModal({ isOpen, onClose, onSave, initialData }: WorkCurrentJobModalProps) {
-  const [formData, setFormData] = useState(initialData)
+interface CurrentJobModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onSave: (data: CurrentJobData) => void
+  initialData: CurrentJobData
+}
+
+export default function CurrentJobModal({ isOpen, onClose, onSave, initialData }: CurrentJobModalProps) {
+  const [formData, setFormData] = useState<CurrentJobData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -31,14 +51,16 @@ export default function WorkCurrentJobModal({ isOpen, onClose, onSave, initialDa
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
-      onSave({ ...formData, updateDate: new Date().toISOString().split("T")[0] })
+      onSave(formData)
+    } catch (error) {
+      logger.error("Error saving data:", error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }))
+  const handleInputChange = (field: keyof CurrentJobData, value: string) => {
+    setFormData((prev: CurrentJobData) => ({ ...prev, [field]: value }))
   }
 
   return (

@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Search, FileText, UserPlus } from "lucide-react"
 import { ROUTES } from "@/lib/routes"
-import RegisterGraduateModal from "@/components/modals/register-graduate-modal"
+import RegisterGraduateModal from "@/components/organisms/modals/register-graduate-modal"
 
 export default function AdminDashboardPage() {
   const [showRegisterModal, setShowRegisterModal] = useState(false)

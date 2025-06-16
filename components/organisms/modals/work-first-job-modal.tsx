@@ -9,15 +9,35 @@ import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 
-interface WorkFirstJobModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (data: any) => void
-  initialData: any
+import { logger } from "@/lib/logging"
+
+interface FirstJobData {
+  company: string
+  position: string
+  startDate: string
+  endDate: string
+  sector: string
+  contractType: string
+  salary: string
+  city: string
+  country: string
+  companyName: string
+  relatedToCareer: string
+  timeToFirstJob: string
+  salaryRange: string
+  area: string
+  companyType: string
 }
 
-export default function WorkFirstJobModal({ isOpen, onClose, onSave, initialData }: WorkFirstJobModalProps) {
-  const [formData, setFormData] = useState(initialData)
+interface FirstJobModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onSave: (data: FirstJobData) => void
+  initialData: FirstJobData
+}
+
+export default function FirstJobModal({ isOpen, onClose, onSave, initialData }: FirstJobModalProps) {
+  const [formData, setFormData] = useState<FirstJobData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -32,13 +52,15 @@ export default function WorkFirstJobModal({ isOpen, onClose, onSave, initialData
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(formData)
+    } catch (error) {
+      logger.error("Error saving data:", error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }))
+  const handleInputChange = (field: keyof FirstJobData, value: string) => {
+    setFormData((prev: FirstJobData) => ({ ...prev, [field]: value }))
   }
 
   return (

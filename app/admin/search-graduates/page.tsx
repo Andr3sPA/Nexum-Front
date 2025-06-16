@@ -16,12 +16,22 @@ import Navbar from "@/components/navbar"
 
 import { logger } from "@/lib/logging"
 
+// Graduate data interface
+interface Graduate {
+  id: number
+  name: string
+  email: string
+  program: string
+  graduationYear: string
+  location: string
+}
+
 export default function SearchGraduatesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [program, setProgram] = useState("")
   const [graduationYear, setGraduationYear] = useState("")
   const [location, setLocation] = useState("")
-  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchResults, setSearchResults] = useState<Graduate[]>([])
   const [isSearching, setIsSearching] = useState(false)
 
   const handleSearch = async (e: React.FormEvent) => {

@@ -3,20 +3,39 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 
+import { logger } from "@/lib/logging"
+
+interface EvaluationData {
+  programSatisfaction: string
+  teacherQuality: string
+  infrastructureQuality: string
+  administrativeSupport: string
+  overallExperience: string
+  comments: string
+  strengths: string
+  weaknesses: string
+  additionalCompetencies: string
+  question1: string
+  question2: string
+  question3: string
+}
+
 interface EvaluationModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: any) => void
-  initialData: any
+  onSave: (data: EvaluationData) => void
+  initialData: EvaluationData
 }
 
 export default function EvaluationModal({ isOpen, onClose, onSave, initialData }: EvaluationModalProps) {
-  const [formData, setFormData] = useState(initialData)
+  const [formData, setFormData] = useState<EvaluationData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -31,13 +50,15 @@ export default function EvaluationModal({ isOpen, onClose, onSave, initialData }
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(formData)
+    } catch (error) {
+      logger.error("Error saving data:", error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }))
+  const handleInputChange = (field: keyof EvaluationData, value: string) => {
+    setFormData((prev: EvaluationData) => ({ ...prev, [field]: value }))
   }
 
   return (

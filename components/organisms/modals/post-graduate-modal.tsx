@@ -11,15 +11,25 @@ import { ModalActions } from "@/components/molecules/modal-actions"
 import { Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+import { logger } from "@/lib/logging"
+
+interface PostGraduateEntry {
+  id: number
+  type: string
+  name: string
+  institution: string
+  country: string
+}
+
 interface PostGraduateModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: any) => void
-  initialData: any
+  onSave: (data: PostGraduateEntry[]) => void
+  initialData: PostGraduateEntry[]
 }
 
 export default function PostGraduateModal({ isOpen, onClose, onSave, initialData }: PostGraduateModalProps) {
-  const [formData, setFormData] = useState(initialData)
+  const [formData, setFormData] = useState<PostGraduateEntry[]>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -34,13 +44,15 @@ export default function PostGraduateModal({ isOpen, onClose, onSave, initialData
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(formData)
+    } catch (error) {
+      logger.error("Error saving data:", error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
   const handleInputChange = (index: number, field: string, value: string) => {
-    setFormData((prev: any) => {
+    setFormData((prev: PostGraduateEntry[]) => {
       const newData = [...prev]
       newData[index] = { ...newData[index], [field]: value }
       return newData
@@ -48,7 +60,7 @@ export default function PostGraduateModal({ isOpen, onClose, onSave, initialData
   }
 
   const removeEntry = (index: number) => {
-    setFormData((prev: any) => prev.filter((_: any, i: number) => i !== index))
+    setFormData((prev: PostGraduateEntry[]) => prev.filter((_, i: number) => i !== index))
   }
 
   return (
@@ -59,7 +71,7 @@ export default function PostGraduateModal({ isOpen, onClose, onSave, initialData
       maxWidth="max-w-4xl"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
-        {formData.map((entry: any, index: number) => (
+        {formData.map((entry: PostGraduateEntry, index: number) => (
           <div key={entry.id} className="p-4 border rounded-lg space-y-4">
             <div className="flex justify-between items-center">
               <h4 className="font-medium">Estudio {index + 1}</h4>

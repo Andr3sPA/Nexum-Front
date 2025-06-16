@@ -9,6 +9,21 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FileSpreadsheet } from "lucide-react"
 
+// Report data row interface
+interface ReportDataRow {
+  category: string
+  count: number
+  percentage: number
+}
+
+// Report data interface
+interface ReportData {
+  program: string
+  type: string
+  period: string
+  data: ReportDataRow[]
+}
+
 export default function ReportsPage() {
   const [reportConfig, setReportConfig] = useState({
     program: "",
@@ -17,7 +32,7 @@ export default function ReportsPage() {
     endYear: "",
   })
 
-  const [reportData, setReportData] = useState<any>(null)
+  const [reportData, setReportData] = useState<ReportData | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
 
   const handleConfigChange = (field: string, value: string) => {
@@ -184,7 +199,7 @@ export default function ReportsPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {reportData.data.map((row: any, index: number) => (
+                        {reportData.data.map((row: ReportDataRow, index: number) => (
                           <tr key={index}>
                             <td className="border border-gray-300 px-4 py-2">{row.category}</td>
                             <td className="border border-gray-300 px-4 py-2">{row.count}</td>

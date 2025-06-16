@@ -4,6 +4,44 @@
 import { logger } from "@/lib/logging"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.udea.edu.co"
 
+// User registration data interface
+interface UserRegistrationData {
+  name: string
+  email: string
+  password: string
+  program: string
+  graduationYear: string
+  [key: string]: unknown
+}
+
+// Profile update data interface
+interface ProfileUpdateData {
+  name?: string
+  email?: string
+  program?: string
+  graduationYear?: string
+  location?: string
+  [key: string]: unknown
+}
+
+// Report configuration interface
+interface ReportConfig {
+  program: string
+  reportType: string
+  startYear: string
+  endYear: string
+  [key: string]: unknown
+}
+
+// Graduate search filters interface
+interface GraduateSearchFilters {
+  searchTerm?: string
+  program?: string
+  graduationYear?: string
+  location?: string
+  [key: string]: unknown
+}
+
 class ApiClient {
   private baseUrl: string
 
@@ -46,7 +84,7 @@ class ApiClient {
     })
   }
 
-  async register(userData: any) {
+  async register(userData: UserRegistrationData) {
     return this.request("/auth/register", {
       method: "POST",
       body: JSON.stringify(userData),
@@ -58,7 +96,7 @@ class ApiClient {
     return this.request("/profile")
   }
 
-  async updateProfile(data: any) {
+  async updateProfile(data: ProfileUpdateData) {
     return this.request("/profile", {
       method: "PUT",
       body: JSON.stringify(data),
@@ -71,7 +109,7 @@ class ApiClient {
   }
 
   // Reports (for admin users)
-  async generateReport(config: any) {
+  async generateReport(config: ReportConfig) {
     return this.request("/admin/reports", {
       method: "POST",
       body: JSON.stringify(config),
@@ -79,7 +117,7 @@ class ApiClient {
   }
 
   // Search graduates (for admin users)
-  async searchGraduates(filters: any) {
+  async searchGraduates(filters: GraduateSearchFilters) {
     return this.request("/admin/graduates/search", {
       method: "POST",
       body: JSON.stringify(filters),

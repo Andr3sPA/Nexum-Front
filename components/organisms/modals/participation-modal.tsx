@@ -3,21 +3,42 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 
+import { logger } from "@/lib/logging"
+
+interface ParticipationData {
+  participationType: string
+  eventName: string
+  eventDate: string
+  role: string
+  description: string
+  participation: string
+  conferenceInterest: string
+  professorInterest: string
+  nonFormalProfessorInterest: string
+  postgraduateInterest: string
+  nonFormalStudentInterest: string
+  representativeInterest: string
+  meetingsInterest: string
+  activitiesInterest: string
+  continuousFormationTopics: string
+}
+
 interface ParticipationModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: any) => void
-  initialData: any
+  onSave: (data: ParticipationData) => void
+  initialData: ParticipationData
 }
 
 export default function ParticipationModal({ isOpen, onClose, onSave, initialData }: ParticipationModalProps) {
-  const [formData, setFormData] = useState(initialData)
+  const [formData, setFormData] = useState<ParticipationData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -32,13 +53,15 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(formData)
+    } catch (error) {
+      logger.error("Error saving data:", error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }))
+  const handleInputChange = (field: keyof ParticipationData, value: string) => {
+    setFormData((prev: ParticipationData) => ({ ...prev, [field]: value }))
   }
 
   return (

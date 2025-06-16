@@ -10,15 +10,31 @@ import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 
+import { logger } from "@/lib/logging"
+
+interface WorkQuestionsData {
+  currentlyWorking: string
+  workingInField: string
+  timeToFindJob: string
+  jobSatisfaction: string
+  salaryRange: string
+  profiles: string
+  formationRating: string
+  competencies: string
+  question1: string
+  question2: string
+  question3: string
+}
+
 interface WorkQuestionsModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: any) => void
-  initialData: any
+  onSave: (data: WorkQuestionsData) => void
+  initialData: WorkQuestionsData
 }
 
 export default function WorkQuestionsModal({ isOpen, onClose, onSave, initialData }: WorkQuestionsModalProps) {
-  const [formData, setFormData] = useState(initialData)
+  const [formData, setFormData] = useState<WorkQuestionsData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -33,13 +49,15 @@ export default function WorkQuestionsModal({ isOpen, onClose, onSave, initialDat
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(formData)
+    } catch (error) {
+      logger.error("Error saving data:", error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }))
+    setFormData((prev: WorkQuestionsData) => ({ ...prev, [field]: value }))
   }
 
   return (

@@ -1,11 +1,11 @@
 "use client"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import PersonalInfoTab from "@/components/tabs/personal-info-tab"
-import AcademicInfoTab from "@/components/tabs/academic-info-tab"
-import WorkInfoTab from "@/components/tabs/work-info-tab"
-import ParticipationTab from "@/components/tabs/participation-tab"
-import EvaluationTab from "@/components/tabs/evaluation-tab"
+import PersonalInfoTab from "@/components/organisms/tabs/personal-info-tab"
+import AcademicInfoTab from "@/components/organisms/tabs/academic-info-tab"
+import WorkInfoTab from "@/components/organisms/tabs/work-info-tab"
+import ParticipationTab from "@/components/organisms/tabs/participation-tab"
+import EvaluationTab from "@/components/organisms/tabs/evaluation-tab"
 
 export default function ProfileTabs() {
   return (
