@@ -53,15 +53,15 @@ const nextConfig = {
             value: [
               "default-src 'self';",
               // Allow self-hosted scripts and necessary JavaScript evaluation
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:;",
-              // Allow styles from our domain and inline styles (needed for shadcn/ui and Tailwind)
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval';",
+              // 
               "style-src 'self' 'unsafe-inline';",
-              // Allow images from our domain, data URIs, and udea.edu.co subdomains
-              "img-src 'self' data: https://*.udea.edu.co blob:;",
+              // 
+              "img-src 'self' data:;",
               // Allow fonts from our domain and data URIs
               "font-src 'self' data:;",
               // Allow connections to our domain and the API
-              "connect-src 'self' https://api.udea.edu.co;",
+              "connect-src 'self' ",
               // Prevent embedding our site in frames
               "frame-ancestors 'none';",
               // Restrict form submissions to our domain
