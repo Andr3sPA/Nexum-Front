@@ -52,14 +52,26 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self';",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval';", // Consider restricting further in production
-              "style-src 'self' 'unsafe-inline';", // Required for styled-components/emotion
-              "img-src 'self' data: https://*.udea.edu.co;",
+              // Allow self-hosted scripts and necessary JavaScript evaluation
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:;",
+              // Allow styles from our domain and inline styles (needed for shadcn/ui and Tailwind)
+              "style-src 'self' 'unsafe-inline';",
+              // Allow images from our domain, data URIs, and udea.edu.co subdomains
+              "img-src 'self' data: https://*.udea.edu.co blob:;",
+              // Allow fonts from our domain and data URIs
               "font-src 'self' data:;",
+              // Allow connections to our domain and the API
               "connect-src 'self' https://api.udea.edu.co;",
+              // Prevent embedding our site in frames
               "frame-ancestors 'none';",
+              // Restrict form submissions to our domain
               "form-action 'self';",
+              // Restrict base URI to our domain
               "base-uri 'self';",
+              // Prevent object embedding
+              "object-src 'none';",
+              // Add upgrade-insecure-requests directive
+              "upgrade-insecure-requests;",
             ].join(' ')
           },
           {

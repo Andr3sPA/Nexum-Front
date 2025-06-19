@@ -16,18 +16,29 @@ interface ReportDataRow {
   percentage: number
 }
 
+// Graduate data interface
+interface Graduate {
+  id: string
+  name: string
+  program: string
+  gender: string
+  employmentStatus: string
+  graduationYear: string
+}
+
 // Report data interface
 interface ReportData {
   program: string
-  type: string
   period: string
-  data: ReportDataRow[]
+  totalCount: number
+  graduates: Graduate[]
 }
 
 export default function ReportsPage() {
   const [reportConfig, setReportConfig] = useState({
     program: "",
-    reportType: "",
+    gender: "",
+    employmentStatus: "",
     startYear: "",
     endYear: "",
   })
@@ -43,20 +54,84 @@ export default function ReportsPage() {
     setIsGenerating(true)
     // TODO: Implement API call to generate report
     setTimeout(() => {
-      // Mock report data
+      // Mock graduates data
+      const mockGraduates: Graduate[] = [
+        // Ingeniería de Sistemas - Empleados (10)
+        { id: "1", name: "Juan Pérez", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Empleado", graduationYear: "2020" },
+        { id: "2", name: "María López", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Empleada", graduationYear: "2021" },
+        { id: "3", name: "Carlos Gómez", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Empleado", graduationYear: "2019" },
+        { id: "4", name: "Laura Ramírez", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Empleada", graduationYear: "2022" },
+        { id: "5", name: "Andrés Martínez", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Empleado", graduationYear: "2020" },
+        { id: "6", name: "Valentina Herrera", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Empleada", graduationYear: "2021" },
+        { id: "7", name: "Santiago Díaz", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Empleado", graduationYear: "2022" },
+        { id: "8", name: "Camila Vargas", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Empleada", graduationYear: "2020" },
+        { id: "9", name: "Daniel Morales", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Empleado", graduationYear: "2019" },
+        { id: "10", name: "Isabella Torres", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Empleada", graduationYear: "2021" },
+        
+        // Ingeniería de Sistemas - Desempleados (10)
+        { id: "11", name: "Mateo Rojas", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Desempleado", graduationYear: "2022" },
+        { id: "12", name: "Sofía Castro", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Desempleada", graduationYear: "2020" },
+        { id: "13", name: "Sebastián Ortiz", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Desempleado", graduationYear: "2021" },
+        { id: "14", name: "Gabriela Sánchez", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Desempleada", graduationYear: "2019" },
+        { id: "15", name: "Nicolás Jiménez", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Desempleado", graduationYear: "2022" },
+        { id: "16", name: "Valeria Mendoza", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Desempleada", graduationYear: "2020" },
+        { id: "17", name: "Alejandro Ruiz", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Desempleado", graduationYear: "2021" },
+        { id: "18", name: "Luciana Flores", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Desempleada", graduationYear: "2019" },
+        { id: "19", name: "Emilio Reyes", program: "Ingeniería de Sistemas", gender: "Hombre", employmentStatus: "Desempleado", graduationYear: "2022" },
+        { id: "20", name: "Antonella Medina", program: "Ingeniería de Sistemas", gender: "Mujer", employmentStatus: "Desempleada", graduationYear: "2020" },
+        
+        // Other programs (keeping the original ones)
+        { id: "21", name: "Carlos Rodríguez", program: "Ingeniería Industrial", gender: "Hombre", employmentStatus: "Desempleado", graduationYear: "2019" },
+        { id: "22", name: "Ana Martínez", program: "Medicina", gender: "Mujer", employmentStatus: "Empleada", graduationYear: "2022" },
+        { id: "23", name: "Alex Sánchez", program: "Derecho", gender: "No binario", employmentStatus: "Empleado", graduationYear: "2020" },
+      ]
+      
+      // Filter graduates based on selected criteria
+      let filteredGraduates = [...mockGraduates]
+      
+      if (reportConfig.program && reportConfig.program !== "todos") {
+        const programMap: Record<string, string> = {
+          "ingenieria-sistemas": "Ingeniería de Sistemas",
+          "ingenieria-industrial": "Ingeniería Industrial",
+          "medicina": "Medicina",
+          "derecho": "Derecho",
+          "administracion": "Administración"
+        }
+        filteredGraduates = filteredGraduates.filter(g => g.program === programMap[reportConfig.program])
+      }
+      
+      if (reportConfig.gender && reportConfig.gender !== "todos") {
+        filteredGraduates = filteredGraduates.filter(g => g.gender === reportConfig.gender)
+      }
+      
+      if (reportConfig.employmentStatus && reportConfig.employmentStatus !== "todos") {
+        filteredGraduates = filteredGraduates.filter(g => {
+          // Handle both masculine and feminine forms of employment status
+          if (reportConfig.employmentStatus === "Empleado") {
+            return g.employmentStatus === "Empleado" || g.employmentStatus === "Empleada"
+          } else if (reportConfig.employmentStatus === "Desempleado") {
+            return g.employmentStatus === "Desempleado" || g.employmentStatus === "Desempleada"
+          }
+          return g.employmentStatus === reportConfig.employmentStatus
+        })
+      }
+      
+      if (reportConfig.startYear && reportConfig.endYear) {
+        const startYear = parseInt(reportConfig.startYear)
+        const endYear = parseInt(reportConfig.endYear)
+        filteredGraduates = filteredGraduates.filter(g => {
+          const gradYear = parseInt(g.graduationYear)
+          return gradYear >= startYear && gradYear <= endYear
+        })
+      }
+      
       setReportData({
-        program: reportConfig.program,
-        type: reportConfig.reportType,
+        program: reportConfig.program ? (reportConfig.program === "todos" ? "Todos los programas" : mockGraduates.find(g => g.program === reportConfig.program)?.program || reportConfig.program) : "Todos",
         period: `${reportConfig.startYear} - ${reportConfig.endYear}`,
-        data:
-          reportConfig.reportType === "genero"
-            ? [
-                { category: "Hombre", count: 150, percentage: 60 },
-                { category: "Mujer", count: 95, percentage: 38 },
-                { category: "No binario", count: 5, percentage: 2 },
-              ]
-            : [{ category: "Total Egresados", count: 250, percentage: 100 }],
+        totalCount: filteredGraduates.length,
+        graduates: filteredGraduates
       })
+      
       setIsGenerating(false)
     }, 2000)
   }
@@ -80,9 +155,9 @@ export default function ReportsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="program">Seleccione Programa</Label>
+                    <Label htmlFor="program">Programa</Label>
                     <Select
                       value={reportConfig.program}
                       onValueChange={(value) => handleConfigChange("program", value)}
@@ -102,17 +177,36 @@ export default function ReportsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="reportType">Tipo de Reporte</Label>
+                    <Label htmlFor="gender">Género</Label>
                     <Select
-                      value={reportConfig.reportType}
-                      onValueChange={(value) => handleConfigChange("reportType", value)}
+                      value={reportConfig.gender}
+                      onValueChange={(value) => handleConfigChange("gender", value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Tipo de reporte" />
+                        <SelectValue placeholder="Seleccionar género" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="genero">Género</SelectItem>
-                        <SelectItem value="cantidad">Cantidad de Egresados</SelectItem>
+                        <SelectItem value="Hombre">Hombre</SelectItem>
+                        <SelectItem value="Mujer">Mujer</SelectItem>
+                        <SelectItem value="No binario">No binario</SelectItem>
+                        <SelectItem value="todos">Todos</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="employmentStatus">Empleabilidad</Label>
+                    <Select
+                      value={reportConfig.employmentStatus}
+                      onValueChange={(value) => handleConfigChange("employmentStatus", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar estado" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Empleado">Empleado</SelectItem>
+                        <SelectItem value="Desempleado">Desempleado</SelectItem>
+                        <SelectItem value="todos">Todos</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -161,8 +255,6 @@ export default function ReportsPage() {
                     onClick={generateReport}
                     className="udea-primary"
                     disabled={
-                      !reportConfig.program ||
-                      !reportConfig.reportType ||
                       !reportConfig.startYear ||
                       !reportConfig.endYear ||
                       isGenerating
@@ -180,7 +272,7 @@ export default function ReportsPage() {
                   <div>
                     <CardTitle className="text-xl udea-primary-text">Reporte Generado</CardTitle>
                     <CardDescription>
-                      {reportData.program} - {reportData.type} ({reportData.period})
+                      {reportData.program} ({reportData.period})
                     </CardDescription>
                   </div>
                   <Button onClick={exportToExcel} variant="outline" className="flex items-center gap-2">
@@ -189,21 +281,29 @@ export default function ReportsPage() {
                   </Button>
                 </CardHeader>
                 <CardContent>
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold">Cantidad de Egresados: {reportData.totalCount}</h3>
+                  </div>
+                  
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse border border-gray-300">
                       <thead>
                         <tr className="bg-gray-50">
-                          <th className="border border-gray-300 px-4 py-2 text-left">Categoría</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">Cantidad</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">Porcentaje</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Nombre</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Programa</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Género</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Estado Laboral</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Año de Graduación</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {reportData.data.map((row: ReportDataRow, index: number) => (
-                          <tr key={index}>
-                            <td className="border border-gray-300 px-4 py-2">{row.category}</td>
-                            <td className="border border-gray-300 px-4 py-2">{row.count}</td>
-                            <td className="border border-gray-300 px-4 py-2">{row.percentage}%</td>
+                        {reportData.graduates.map((graduate) => (
+                          <tr key={graduate.id}>
+                            <td className="border border-gray-300 px-4 py-2">{graduate.name}</td>
+                            <td className="border border-gray-300 px-4 py-2">{graduate.program}</td>
+                            <td className="border border-gray-300 px-4 py-2">{graduate.gender}</td>
+                            <td className="border border-gray-300 px-4 py-2">{graduate.employmentStatus}</td>
+                            <td className="border border-gray-300 px-4 py-2">{graduate.graduationYear}</td>
                           </tr>
                         ))}
                       </tbody>

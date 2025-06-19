@@ -26,6 +26,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#014926" />
+        <meta name="csrf-token" content="" />
       </head>
       <body className={inter.className}>
         <div id="root">{children}</div>
