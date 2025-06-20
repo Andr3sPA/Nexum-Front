@@ -22,20 +22,7 @@ const nextConfig = {
   // Optimize for development
   swcMinify: true,
   // Image optimization - FIXED SECURITY ISSUE
-  images: {
-    unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com", // Specific hostname instead of wildcard
-      },
-      {
-        protocol: "https",
-        hostname: "via.placeholder.com", // Add specific hostnames as needed
-      },
-      // Add more specific hostnames as needed, avoid wildcards
-    ],
-  },
+
   // Disable source maps in development for cleaner output
   productionBrowserSourceMaps: false,
   // ESLint configuration
