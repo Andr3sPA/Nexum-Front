@@ -41,8 +41,9 @@ const ChartContainer = React.forwardRef<
     children: React.ComponentProps<
       typeof RechartsPrimitive.ResponsiveContainer
     >["children"]
+    nonce?: string
   }
->(({ id, className, children, config, ...props }, ref) => {
+>(({ id, className, children, config, nonce, ...props }, ref) => {
   const uniqueId = React.useId()
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`
 
@@ -57,7 +58,7 @@ const ChartContainer = React.forwardRef<
         )}
         {...props}
       >
-        <ChartStyle id={chartId} config={config} />
+        <ChartStyle id={chartId} config={config} nonce={nonce} />
         <RechartsPrimitive.ResponsiveContainer>
           {children}
         </RechartsPrimitive.ResponsiveContainer>
@@ -79,7 +80,15 @@ function validateCssValue(value: string | undefined): string {
 }
 
 // Then modify the ChartStyle component to use this validation
-const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
+const ChartStyle = ({
+  id,
+  config,
+  nonce,
+}: {
+  id: string
+  config: ChartConfig
+  nonce?: string
+}) => {
   const colorConfig = Object.entries(config).filter(
     ([_, config]) => config.theme || config.color
   )
@@ -97,7 +106,7 @@ ${colorConfig
   .map(([key, itemConfig]) => {
     const color = validateCssValue(
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
-      itemConfig.color
+        itemConfig.color
     )
     return color ? `  --color-${key}: ${color};` : null
   })
@@ -110,6 +119,7 @@ ${colorConfig
 
   return (
     <style
+      nonce={nonce}
       dangerouslySetInnerHTML={{
         __html: cssContent,
       }}
@@ -225,21 +235,18 @@ const ChartTooltipContent = React.forwardRef<
                       !hideIndicator && (
                         <div
                           className={cn(
-                            "shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]",
+                            "shrink-0 rounded-[2px]",
                             {
                               "h-2.5 w-2.5": indicator === "dot",
                               "w-1": indicator === "line",
                               "w-0 border-[1.5px] border-dashed bg-transparent":
                                 indicator === "dashed",
                               "my-0.5": nestLabel && indicator === "dashed",
-                            }
+                            },
+                            indicator !== "dashed" &&
+                              indicatorColor &&
+                              `bg-[${indicatorColor}] border-[${indicatorColor}]`
                           )}
-                          style={
-                            {
-                              "--color-bg": indicatorColor,
-                              "--color-border": indicatorColor,
-                            } as React.CSSProperties
-                          }
                         />
                       )
                     )}
@@ -317,10 +324,10 @@ const ChartLegendContent = React.forwardRef<
                 <itemConfig.icon />
               ) : (
                 <div
-                  className="h-2 w-2 shrink-0 rounded-[2px]"
-                  style={{
-                    backgroundColor: item.color,
-                  }}
+                  className={cn(
+                    "h-2 w-2 shrink-0 rounded-[2px]",
+                    item.color && `bg-[${item.color}]`
+                  )}
                 />
               )}
               {itemConfig?.label}

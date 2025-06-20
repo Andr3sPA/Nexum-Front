@@ -21,14 +21,19 @@ const nextConfig = {
   },
   // Optimize for development
   swcMinify: true,
-  // Image optimization
+  // Image optimization - FIXED SECURITY ISSUE
   images: {
     unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "images.unsplash.com", // Specific hostname instead of wildcard
       },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com", // Add specific hostnames as needed
+      },
+      // Add more specific hostnames as needed, avoid wildcards
     ],
   },
   // Disable source maps in development for cleaner output
@@ -41,58 +46,23 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  
-  // Add security headers
+  // Add security headers via next.config.js as backup
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
           {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self';",
-              // Allow self-hosted scripts and necessary JavaScript evaluation
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval';",
-              // 
-              "style-src 'self' 'unsafe-inline';",
-              // 
-              "img-src 'self' data:;",
-              // Allow fonts from our domain and data URIs
-              "font-src 'self' data:;",
-              // Allow connections to our domain and the API
-              "connect-src 'self' ",
-              // Prevent embedding our site in frames
-              "frame-ancestors 'none';",
-              // Restrict form submissions to our domain
-              "form-action 'self';",
-              // Restrict base URI to our domain
-              "base-uri 'self';",
-              // Prevent object embedding
-              "object-src 'none';",
-              // Add upgrade-insecure-requests directive
-              "upgrade-insecure-requests;",
-            ].join(' ')
+            key: 'X-Frame-Options',
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
           },
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
           },
         ],
       },
@@ -100,4 +70,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig
+module.exports = nextConfig;

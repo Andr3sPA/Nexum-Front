@@ -60,6 +60,20 @@
 }
 
 @layer components {
+  .sidebar-provider {
+    --sidebar-width: 16rem;
+    --sidebar-width-icon: 3rem;
+  }
+
+  .sidebar-mobile {
+    --sidebar-width: 18rem;
+  }
+
+  [role="progressbar"] > div {
+    /* Use CSS variable to set progress, making it CSP-compliant */
+    transform: translateX(calc(var(--radix-progress-value, 0) * 1% - 100%));
+  }
+
   .udea-primary {
     background-color: var(--color-primary);
   }
