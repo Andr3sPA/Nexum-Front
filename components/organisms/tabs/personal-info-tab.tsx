@@ -6,6 +6,24 @@ import { DataField } from "@/components/atoms/data-field"
 import { EditButton } from "@/components/atoms/edit-button"
 import PersonalInfoModal from "@/components/organisms/modals/personal-info-modal"
 
+// Match the exact interface from the modal
+interface PersonalInfoData {
+  maritalStatus: string
+  children: string
+  socioeconomicLevel: string
+  address: string
+  country: string
+  department: string
+  city: string
+  landlinePhone: string
+  cellPhone: string
+  whatsapp: string
+  email: string
+  whatsappAuthorization: string
+  graduationDate: string
+  lastUpdateDate?: string // Optional, just like in the modal
+}
+
 export default function PersonalInfoTab() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -21,8 +39,8 @@ export default function PersonalInfoTab() {
     birthDate: "1990-05-15",
   }
 
-  // Mock additional personal data (editable)
-  const [personalData, setPersonalData] = useState({
+  // Mock additional personal data (editable) - match the modal interface
+  const [personalData, setPersonalData] = useState<PersonalInfoData>({
     maritalStatus: "",
     children: "",
     socioeconomicLevel: "",
@@ -36,10 +54,10 @@ export default function PersonalInfoTab() {
     email: "",
     whatsappAuthorization: "",
     graduationDate: "",
-    lastUpdateDate: "",
+    // lastUpdateDate is optional, so we can omit it or set it to undefined
   })
 
-  const handleSave = (data: typeof personalData) => {
+  const handleSave = (data: PersonalInfoData) => {
     setPersonalData(data)
     setIsModalOpen(false)
     // TODO: Send data to backend
@@ -76,7 +94,7 @@ export default function PersonalInfoTab() {
           <DataField label="WhatsApp" value={personalData.whatsapp} />
           <DataField label="Autoriza WhatsApp de la U" value={personalData.whatsappAuthorization} />
           <DataField label="Fecha de Egreso" value={personalData.graduationDate} />
-          <DataField label="Fecha de Última Actualización" value={personalData.lastUpdateDate} />
+          <DataField label="Fecha de Última Actualización" value={personalData.lastUpdateDate || "No disponible"} />
         </div>
       </DataSection>
 

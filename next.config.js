@@ -1,27 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Suppress development logs and output
-  logging: {
-    fetches: {
-      fullUrl: false,
-    },
-  },
-  // Disable telemetry completely
-  telemetry: false,
   // Reduce build verbosity
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,
     pagesBufferLength: 2,
   },
-  // Experimental features for cleaner output
-  experimental: {
-    logging: {
-      level: "error",
-    },
-  },
-  // Optimize for development
-  swcMinify: true,
-  // Image optimization - FIXED SECURITY ISSUE
 
   // Disable source maps in development for cleaner output
   productionBrowserSourceMaps: false,
@@ -32,6 +15,15 @@ const nextConfig = {
   // TypeScript configuration
   typescript: {
     ignoreBuildErrors: false,
+  },
+  
+  // Enable React strict mode for better development experience
+  reactStrictMode: true,
+  
+  // Configure webpack for better compatibility
+  webpack: (config, { dev, isServer }) => {
+    // Add any necessary webpack configurations here
+    return config;
   },
   // Add security headers via next.config.js as backup
   async headers() {

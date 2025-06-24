@@ -5,10 +5,32 @@ import { DataSection } from "@/components/organisms/data-section"
 import { EditButton } from "@/components/atoms/edit-button"
 import EvaluationModal from "@/components/organisms/modals/evaluation-modal"
 
+// Import the EvaluationData type from the modal to ensure consistency
+interface EvaluationData {
+  programSatisfaction: string
+  teacherQuality: string
+  infrastructureQuality: string
+  administrativeSupport: string
+  overallExperience: string
+  comments: string
+  strengths: string
+  weaknesses: string
+  additionalCompetencies: string
+  question1: string
+  question2: string
+  question3: string
+}
+
 export default function EvaluationTab() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const [evaluationData, setEvaluationData] = useState({
+  const [evaluationData, setEvaluationData] = useState<EvaluationData>({
+    programSatisfaction: "",
+    teacherQuality: "",
+    infrastructureQuality: "",
+    administrativeSupport: "",
+    overallExperience: "",
+    comments: "",
     strengths: "",
     weaknesses: "",
     additionalCompetencies: "",
@@ -17,7 +39,7 @@ export default function EvaluationTab() {
     question3: "",
   })
 
-  const handleSave = (data: typeof evaluationData) => {
+  const handleSave = (data: EvaluationData) => {
     setEvaluationData(data)
     setIsModalOpen(false)
     // TODO: Send data to backend

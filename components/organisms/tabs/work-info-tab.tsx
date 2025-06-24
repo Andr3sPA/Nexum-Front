@@ -1,137 +1,195 @@
 "use client"
 
-import { useState } from "react"
-import { DataSection } from "@/components/organisms/data-section"
-import { DataField } from "@/components/atoms/data-field"
-import { EditButton } from "@/components/atoms/edit-button"
-import WorkFirstJobModal from "@/components/organisms/modals/work-first-job-modal"
-import WorkCurrentJobModal from "@/components/organisms/modals/work-current-job-modal"
-import WorkQuestionsModal from "@/components/organisms/modals/work-questions-modal"
+import type React from "react"
 
-export default function WorkInfoTab() {
-  const [isFirstJobModalOpen, setIsFirstJobModalOpen] = useState(false)
-  const [isCurrentJobModalOpen, setIsCurrentJobModalOpen] = useState(false)
-  const [isQuestionsModalOpen, setIsQuestionsModalOpen] = useState(false)
+import { useState, useEffect } from "react"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ModalContainer } from "@/components/organisms/modal-container"
+import { FormField } from "@/components/molecules/form-field"
+import { ModalActions } from "@/components/molecules/modal-actions"
 
-  const [firstJobData, setFirstJobData] = useState({
-    companyName: "",
-    country: "",
-    position: "",
-    relatedToCareer: "",
-    timeToFirstJob: "",
-    salaryRange: "",
-    area: "",
-    companyType: "",
-  })
+import { logger } from "@/lib/logging"
 
-  const [currentJobData, setCurrentJobData] = useState({
-    currentSituation: "",
-    companyName: "",
-    position: "",
-    relatedToCareer: "",
-    salaryRange: "",
-    timeInCompany: "",
-    area: "",
-    companyType: "",
-    updateDate: "",
-  })
+export interface CurrentJobData {
+  company: string
+  position: string
+  startDate: string
+  sector: string
+  contractType: string
+  salary: string
+  city: string
+  country: string
+  currentSituation: string
+  companyName: string
+  relatedToCareer: string
+  salaryRange: string
+  timeInCompany: string
+  area: string
+  companyType: string
+  updateDate: string
+}
 
-  const [workQuestionsData, setWorkQuestionsData] = useState({
-    profiles: "",
-    formationRating: "",
-    competencies: "",
-    question1: "",
-    question2: "",
-    question3: "",
-  })
+export interface CurrentJobModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onSave: (data: CurrentJobData) => void
+  initialData: CurrentJobData
+}
 
-  const handleFirstJobSave = (data: typeof firstJobData) => {
-    setFirstJobData(data)
-    setIsFirstJobModalOpen(false)
-    // TODO: Send data to backend
+export default function CurrentJobModal({ isOpen, onClose, onSave, initialData }: CurrentJobModalProps) {
+  const [formData, setFormData] = useState<CurrentJobData>(initialData)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    setFormData(initialData)
+  }, [initialData])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      onSave(formData)
+    } catch (error) {
+      logger.error("Error saving data:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleCurrentJobSave = (data: typeof currentJobData) => {
-    setCurrentJobData(data)
-    setIsCurrentJobModalOpen(false)
-    // TODO: Send data to backend
-  }
-
-  const handleQuestionsSave = (data: typeof workQuestionsData) => {
-    setWorkQuestionsData(data)
-    setIsQuestionsModalOpen(false)
-    // TODO: Send data to backend
+  const handleInputChange = (field: keyof CurrentJobData, value: string) => {
+    setFormData((prev: CurrentJobData) => ({ ...prev, [field]: value }))
   }
 
   return (
-    <div className="space-y-6">
-      {/* First Job Information */}
-      <DataSection
-        title="Información Laboral Primer Empleo"
-        action={<EditButton onClick={() => setIsFirstJobModalOpen(true)} />}
-      >
+    <ModalContainer title="Editar Información Laboral Actual" isOpen={isOpen} onClose={onClose}>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <DataField label="Nombre de la empresa" value={firstJobData.companyName} />
-          <DataField label="País" value={firstJobData.country} />
-          <DataField label="Cargo" value={firstJobData.position} />
-          <DataField label="Cargo relacionado con la carrera" value={firstJobData.relatedToCareer} />
-          <DataField label="Tiempo promedio primer empleo" value={firstJobData.timeToFirstJob} />
-          <DataField label="Rango salarial primer empleo (SMLV)" value={firstJobData.salaryRange} />
-          <DataField label="Área de su primer empleo" value={firstJobData.area} />
-          <DataField label="Tipo de empresa" value={firstJobData.companyType} />
+          <FormField id="currentSituation" label="Su situación actual es">
+            <Select
+              value={formData.currentSituation}
+              onValueChange={(value) => handleInputChange("currentSituation", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="empleado-ejerciendo">Empleado ejerciendo la profesión</SelectItem>
+                <SelectItem value="empleado-no-ejerciendo">Empleado no ejerciendo la profesión</SelectItem>
+                <SelectItem value="independiente-ejerciendo">Independiente ejerciendo la profesión</SelectItem>
+                <SelectItem value="independiente-no-ejerciendo">Independiente no ejerciendo la profesión</SelectItem>
+                <SelectItem value="desempleado">Desempleado</SelectItem>
+                <SelectItem value="empresario">Empresario</SelectItem>
+                <SelectItem value="otros">Otros</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField id="companyName" label="Nombre de la empresa">
+            <Input
+              id="companyName"
+              value={formData.companyName}
+              onChange={(e) => handleInputChange("companyName", e.target.value)}
+            />
+          </FormField>
+
+          <FormField id="position" label="Cargo">
+            <Input
+              id="position"
+              value={formData.position}
+              onChange={(e) => handleInputChange("position", e.target.value)}
+            />
+          </FormField>
+
+          <FormField id="relatedToCareer" label="Cargo relacionado con la carrera">
+            <Select
+              value={formData.relatedToCareer}
+              onValueChange={(value) => handleInputChange("relatedToCareer", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="si">Sí</SelectItem>
+                <SelectItem value="no">No</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField id="salaryRange" label="Rango salarial actual (SMLV)">
+            <Select value={formData.salaryRange} onValueChange={(value) => handleInputChange("salaryRange", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1-2">Entre 1 y 2</SelectItem>
+                <SelectItem value="2-3">Entre 2 y 3</SelectItem>
+                <SelectItem value="3-4">Entre 3 y 4</SelectItem>
+                <SelectItem value="4-5">Entre 4 y 5</SelectItem>
+                <SelectItem value="4-6">Entre 4 y 6</SelectItem>
+                <SelectItem value="6-7">Entre 6 y 7</SelectItem>
+                <SelectItem value="7-8">Entre 7 y 8</SelectItem>
+                <SelectItem value="8-9">Entre 8 y 9</SelectItem>
+                <SelectItem value="mas-9">Más de 9</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField id="timeInCompany" label="Tiempo en la empresa">
+            <Select value={formData.timeInCompany} onValueChange={(value) => handleInputChange("timeInCompany", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="menos-6-meses">Menos de 6 meses</SelectItem>
+                <SelectItem value="6-meses-1-año">Entre 6 meses a 1 año</SelectItem>
+                <SelectItem value="1-2-años">Entre 1 y 2 años</SelectItem>
+                <SelectItem value="2-3-años">Entre 2 y 3 años</SelectItem>
+                <SelectItem value="3-6-años">Entre 3 y 6 años</SelectItem>
+                <SelectItem value="mas-6-años">Más de 6 años</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField id="area" label="Área de empleo actual">
+            <Select value={formData.area} onValueChange={(value) => handleInputChange("area", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="desarrollo">Desarrollo de Software</SelectItem>
+                <SelectItem value="analisis">Análisis de Datos</SelectItem>
+                <SelectItem value="redes">Redes y Comunicaciones</SelectItem>
+                <SelectItem value="seguridad">Seguridad Informática</SelectItem>
+                <SelectItem value="soporte">Soporte Técnico</SelectItem>
+                {/* TODO: Get areas from backend */}
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField id="companyType" label="Tipo de empresa">
+            <Input
+              id="companyType"
+              value={formData.companyType}
+              onChange={(e) => handleInputChange("companyType", e.target.value)}
+            />
+          </FormField>
+
+          <FormField id="updateDate" label="Fecha de actualización">
+            <Input
+              id="updateDate"
+              type="date"
+              value={formData.updateDate}
+              onChange={(e) => handleInputChange("updateDate", e.target.value)}
+            />
+          </FormField>
         </div>
-      </DataSection>
 
-      {/* Current Job Information */}
-      <DataSection
-        title="Información Laboral Actual"
-        action={<EditButton onClick={() => setIsCurrentJobModalOpen(true)} />}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <DataField label="Su situación actual es" value={currentJobData.currentSituation} />
-          <DataField label="Nombre de la empresa" value={currentJobData.companyName} />
-          <DataField label="Cargo" value={currentJobData.position} />
-          <DataField label="Cargo relacionado con la carrera" value={currentJobData.relatedToCareer} />
-          <DataField label="Rango salarial actual (SMLV)" value={currentJobData.salaryRange} />
-          <DataField label="Tiempo en la empresa" value={currentJobData.timeInCompany} />
-          <DataField label="Área de empleo actual" value={currentJobData.area} />
-          <DataField label="Tipo de empresa" value={currentJobData.companyType} />
-          <DataField label="Fecha de actualización" value={currentJobData.updateDate} />
-        </div>
-      </DataSection>
-
-      {/* Work Questions */}
-      <DataSection title="Preguntas Laborales" action={<EditButton onClick={() => setIsQuestionsModalOpen(true)} />}>
-        <div className="space-y-4">
-          <DataField label="Perfiles en los que se ha desempeñado" value={workQuestionsData.profiles} />
-          <DataField label="El perfil de formación ha sido adecuado (1-5)" value={workQuestionsData.formationRating} />
-          <DataField label="Competencias adecuadas" value={workQuestionsData.competencies} />
-          <DataField label="Pregunta 1" value={workQuestionsData.question1} />
-          <DataField label="Pregunta 2" value={workQuestionsData.question2} />
-          <DataField label="Pregunta 3" value={workQuestionsData.question3} />
-        </div>
-      </DataSection>
-
-      <WorkFirstJobModal
-        isOpen={isFirstJobModalOpen}
-        onClose={() => setIsFirstJobModalOpen(false)}
-        onSave={handleFirstJobSave}
-        initialData={firstJobData}
-      />
-
-      <WorkCurrentJobModal
-        isOpen={isCurrentJobModalOpen}
-        onClose={() => setIsCurrentJobModalOpen(false)}
-        onSave={handleCurrentJobSave}
-        initialData={currentJobData}
-      />
-
-      <WorkQuestionsModal
-        isOpen={isQuestionsModalOpen}
-        onClose={() => setIsQuestionsModalOpen(false)}
-        onSave={handleQuestionsSave}
-        initialData={workQuestionsData}
-      />
-    </div>
+        <ModalActions onCancel={onClose} isSubmitting={isSubmitting} />
+      </form>
+    </ModalContainer>
   )
 }

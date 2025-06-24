@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { headers } from 'next/headers';
 import "./globals.css"
@@ -14,14 +14,22 @@ export const metadata: Metadata = {
   creator: "Universidad de Antioquia",
   publisher: "Universidad de Antioquia",
   robots: "index, follow",
-  viewport: "width=device-width, initial-scale=1",
 }
 
-export default function RootLayout({
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#014926",
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Get the nonce from the headers (set by middleware)
+  const headersList = await headers();
+  const nonce = headersList.get('x-nonce') || '';
 
   return (
     <html lang="es">
@@ -31,7 +39,8 @@ export default function RootLayout({
         <meta name="csrf-token" content="" />
       </head>
       <body className={inter.className}>
-        <div id="root">{children}</div>
+        {/* Pass the nonce as a data attribute to make it available to client components */}
+        <div id="root" data-nonce={nonce}>{children}</div>
       </body>
     </html>
   )

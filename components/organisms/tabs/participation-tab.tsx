@@ -9,7 +9,15 @@ import ParticipationModal from "@/components/organisms/modals/participation-moda
 export default function ParticipationTab() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  // FIXED: Now includes ALL properties from ParticipationData interface
   const [participationData, setParticipationData] = useState({
+    // Missing properties that were causing build errors:
+    participationType: "",
+    eventName: "",
+    eventDate: "",
+    role: "",
+    description: "",
+    // Existing properties:
     participation: "",
     conferenceInterest: "",
     professorInterest: "",
@@ -78,3 +86,4 @@ export default function ParticipationTab() {
     </div>
   )
 }
+

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { z } from "zod"
 import { sanitizeText } from "@/lib/validation"
 
-export function useFormValidation<T extends z.ZodType>(schema: T) {
+export function useFormValidation<T extends z.ZodObject<any>>(schema: T) {
   type FormData = z.infer<T>
   
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});

@@ -11,22 +11,36 @@ export function middleware(req: NextRequest) {
     "'strict-dynamic'",
   ];
 
+  // Allow specific hashes for essential functionality
+  // These are placeholder hashes - you'll need to generate actual hashes for your scripts
+  const essentialScriptHashes: string[] = [
+    // Add specific script hashes here for critical functionality
+    // Example: "'sha256-XXXX'"
+  ];
+  
+  scriptSrc.push(...essentialScriptHashes);
+
+  // We've removed 'unsafe-eval' since our vanilla UI components don't require it
+  // If you're using libraries that still need eval, you can add specific hashes instead
+  
+  // In development mode only, we can allow unsafe-eval for better developer experience
   if (isDevelopment) {
     scriptSrc.push("'unsafe-eval'");
-    
-    // Additional safety check to ensure this never reaches production
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('unsafe-eval detected in production build!');
-    }
   }
 
-  // Secure style-src without unsafe-inline
+  // Style sources with nonce-based approach instead of unsafe-inline
   const styleSrc = [
     "'self'",
     `'nonce-${nonce}'`,
-    // Add specific hashes for any unavoidable inline styles
-    // "'sha256-xyz123...'", // Replace with actual hashes
+    // We've removed 'unsafe-inline' since our vanilla UI components use className approach
+    // If you have specific inline styles that can't be moved to CSS files,
+    // add their hashes here instead of using unsafe-inline
   ];
+
+  // In development mode only, we can allow unsafe-inline for styles for better developer experience
+  if (isDevelopment) {
+    styleSrc.push("'unsafe-inline'");
+  }
 
   const cspHeader = `
     default-src 'self';
