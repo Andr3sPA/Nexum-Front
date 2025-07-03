@@ -27,6 +27,7 @@ interface FirstJobData {
   salaryRange: string
   area: string
   companyType: string
+  updateDate?: string
 }
 
 interface FirstJobModalProps {
@@ -36,7 +37,7 @@ interface FirstJobModalProps {
   initialData: FirstJobData
 }
 
-export default function FirstJobModal({ isOpen, onClose, onSave, initialData }: FirstJobModalProps) {
+export function FirstJobModal({ isOpen, onClose, onSave, initialData }: FirstJobModalProps) {
   const [formData, setFormData] = useState<FirstJobData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -76,11 +77,28 @@ export default function FirstJobModal({ isOpen, onClose, onSave, initialData }: 
           </FormField>
 
           <FormField id="country" label="País">
-            <Input
-              id="country"
+            <Select
               value={formData.country}
-              onChange={(e) => handleInputChange("country", e.target.value)}
-            />
+              onValueChange={(value) => handleInputChange("country", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="colombia">Colombia</SelectItem>
+                <SelectItem value="argentina">Argentina</SelectItem>
+                <SelectItem value="brasil">Brasil</SelectItem>
+                <SelectItem value="chile">Chile</SelectItem>
+                <SelectItem value="ecuador">Ecuador</SelectItem>
+                <SelectItem value="mexico">México</SelectItem>
+                <SelectItem value="peru">Perú</SelectItem>
+                <SelectItem value="venezuela">Venezuela</SelectItem>
+                <SelectItem value="espana">España</SelectItem>
+                <SelectItem value="estados_unidos">Estados Unidos</SelectItem>
+                <SelectItem value="canada">Canadá</SelectItem>
+                <SelectItem value="otro">Otro</SelectItem>
+              </SelectContent>
+            </Select>
           </FormField>
 
           <FormField id="position" label="Cargo">

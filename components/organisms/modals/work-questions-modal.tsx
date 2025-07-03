@@ -3,27 +3,24 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
+import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
 
 import { logger } from "@/lib/logging"
 
 interface WorkQuestionsData {
-  currentlyWorking: string
-  workingInField: string
-  timeToFindJob: string
-  jobSatisfaction: string
-  salaryRange: string
   profiles: string
   formationRating: string
-  competencies: string
+  competencies: string[]
   question1: string
   question2: string
   question3: string
+  updateDate?: string
 }
 
 interface WorkQuestionsModalProps {
@@ -33,7 +30,7 @@ interface WorkQuestionsModalProps {
   initialData: WorkQuestionsData
 }
 
-export default function WorkQuestionsModal({ isOpen, onClose, onSave, initialData }: WorkQuestionsModalProps) {
+export function WorkQuestionsModal({ isOpen, onClose, onSave, initialData }: WorkQuestionsModalProps) {
   const [formData, setFormData] = useState<WorkQuestionsData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -60,95 +57,35 @@ export default function WorkQuestionsModal({ isOpen, onClose, onSave, initialDat
     setFormData((prev: WorkQuestionsData) => ({ ...prev, [field]: value }))
   }
 
+  // Competency options for the MultiSelect component
+  const competencyOptions: MultiSelectOption[] = [
+    { value: "gestion_bases_datos", label: "Gestión de bases de datos" },
+    { value: "analisis_diseno_sistemas", label: "Análisis y diseño de sistemas" },
+    { value: "programacion_lenguajes", label: "Programación en múltiples lenguajes" },
+    { value: "desarrollo_web", label: "Desarrollo web" },
+    { value: "seguridad_informatica", label: "Seguridad informática" },
+    { value: "inteligencia_artificial", label: "Inteligencia artificial" },
+    { value: "gestion_proyectos", label: "Gestión de proyectos" },
+  ]
+
+  const handleCompetencyChange = (selected: string[]) => {
+    setFormData((prev) => ({ ...prev, competencies: selected }))
+  }
+
   return (
     <ModalContainer title="Editar Preguntas Laborales" isOpen={isOpen} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField id="currentlyWorking" label="¿Actualmente trabajando?">
-          <Select value={formData.currentlyWorking} onValueChange={(value) => handleInputChange("currentlyWorking", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="si">Sí</SelectItem>
-              <SelectItem value="no">No</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormField>
-
-        <FormField id="workingInField" label="¿Trabajando en su área?">
-          <Select value={formData.workingInField} onValueChange={(value) => handleInputChange("workingInField", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="si">Sí</SelectItem>
-              <SelectItem value="no">No</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormField>
-
-        <FormField id="timeToFindJob" label="Tiempo para encontrar trabajo">
-          <Select value={formData.timeToFindJob} onValueChange={(value) => handleInputChange("timeToFindJob", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="menos-1-mes">Menos de 1 mes</SelectItem>
-              <SelectItem value="1-3-meses">1-3 meses</SelectItem>
-              <SelectItem value="3-6-meses">3-6 meses</SelectItem>
-              <SelectItem value="6-12-meses">6-12 meses</SelectItem>
-              <SelectItem value="mas-12-meses">Más de 12 meses</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormField>
-
-        <FormField id="jobSatisfaction" label="Satisfacción laboral">
-          <Select value={formData.jobSatisfaction} onValueChange={(value) => handleInputChange("jobSatisfaction", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1 - Muy insatisfecho</SelectItem>
-              <SelectItem value="2">2 - Insatisfecho</SelectItem>
-              <SelectItem value="3">3 - Neutral</SelectItem>
-              <SelectItem value="4">4 - Satisfecho</SelectItem>
-              <SelectItem value="5">5 - Muy satisfecho</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormField>
-
-        <FormField id="salaryRange" label="Rango salarial">
-          <Select value={formData.salaryRange} onValueChange={(value) => handleInputChange("salaryRange", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1-2">Entre 1 y 2 SMLV</SelectItem>
-              <SelectItem value="2-3">Entre 2 y 3 SMLV</SelectItem>
-              <SelectItem value="3-4">Entre 3 y 4 SMLV</SelectItem>
-              <SelectItem value="4-5">Entre 4 y 5 SMLV</SelectItem>
-              <SelectItem value="mas-5">Más de 5 SMLV</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormField>
-
         <FormField id="profiles" label="Perfiles en los que se ha desempeñado">
-          <Select value={formData.profiles} onValueChange={(value) => handleInputChange("profiles", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="desarrollador">Desarrollador</SelectItem>
-              <SelectItem value="analista">Analista</SelectItem>
-              <SelectItem value="arquitecto">Arquitecto de Software</SelectItem>
-              <SelectItem value="gerente">Gerente de Proyectos</SelectItem>
-              <SelectItem value="consultor">Consultor</SelectItem>
-              {/* TODO: Get profiles from backend */}
-            </SelectContent>
-          </Select>
+          <Textarea
+            id="profiles"
+            value={formData.profiles || ""}
+            onChange={(e) => handleInputChange("profiles", e.target.value)}
+            maxLength={200}
+            placeholder="Ej: Desarrollador Full Stack, Analista de Sistemas..."
+          />
         </FormField>
 
-        <FormField id="formationRating" label="El perfil de formación ha sido adecuado (1-5)">
+        <FormField id="formationRating" label="El perfil de formación ofrecido por el programa para su desarrollo profesional y laboral, ha sido adecuado? (califique de 1 a 5)">
           <Select
             value={formData.formationRating}
             onValueChange={(value) => handleInputChange("formationRating", value)}
@@ -166,13 +103,18 @@ export default function WorkQuestionsModal({ isOpen, onClose, onSave, initialDat
           </Select>
         </FormField>
 
-        <FormField id="competencies" label="Competencias adecuadas">
-          <Input
-            id="competencies"
-            value={formData.competencies}
-            onChange={(e) => handleInputChange("competencies", e.target.value)}
+        <div className="space-y-2">
+          <Label>
+            De acuerdo con el proyecto formativo que cursó en el Programa, las siguientes competencias han sido
+            adecuadas para su desarrollo profesional y laboral
+          </Label>
+          <MultiSelect
+            options={competencyOptions}
+            selected={formData.competencies || []}
+            onChange={handleCompetencyChange}
+            placeholder="Seleccionar competencias..."
           />
-        </FormField>
+        </div>
 
         <FormField id="question1" label="Pregunta 1">
           <Textarea
