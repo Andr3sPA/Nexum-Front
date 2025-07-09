@@ -42,13 +42,23 @@ export function middleware(req: NextRequest) {
     styleSrc.push("'unsafe-inline'");
   }
 
+  const connectSrc = [
+    "'self'",
+    ...(isDevelopment ? [
+      'ws:', 'wss:',
+      'http://localhost:8110',
+      'http://localhost:8100',
+      'http://localhost:3000',
+    ] : []),
+  ];
+
   const cspHeader = `
     default-src 'self';
     script-src ${scriptSrc.join(' ')};
     style-src ${styleSrc.join(' ')};
     img-src 'self' data: blob:;
     font-src 'self' data:;
-    connect-src 'self' ${isDevelopment ? 'ws: wss:' : ''};
+    connect-src ${connectSrc.join(' ')};
     frame-ancestors 'none';
     form-action 'self';
     base-uri 'self';

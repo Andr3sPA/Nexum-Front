@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { User, LogOut, Shield, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -13,20 +12,34 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ROUTES, getDashboardRoute } from "@/lib/routes"
+import { ROLES } from "@/lib/services/constants/api.constants"
+import { LocalStorageService } from "@/lib/services/local-storage.service"
 
-export default function Navbar() {
-  const [user] = useState({
-    name: "Juan Carlos Pérez",
-    email: "juan.perez@udea.edu.co",
-    initials: "JP",
-    role: "egresado" as "egresado" | "administrativo" | "decano", // Default role is egresado
-  })
+interface NavbarUser {
+  firstName?: string;
+  firstLastname?: string;
+  email?: string;
+  role?: string;
+  initials?: string;
+  [key: string]: any;
+}
+
+export default function Navbar({ user }: { user: NavbarUser }) {
+  // Obtener email del user (login)
+  let email = ""
+  if (typeof window !== "undefined") {
+    const userLogin = LocalStorageService.getItem<any>("user")
+    email = userLogin?.email || ""
+  }
+  // Obtener primer nombre y primer apellido del userProfile
+  const firstName = user.name?.split(" ")[0] || ""
+  const firstLastname = user.lastname?.split(" ")[0] || ""
 
   const getRoleIcon = () => {
     switch (user.role) {
-      case "administrativo":
+      case ROLES.ADMINISTRATIVE:
         return <Shield className="w-3 h-3" />
-      case "decano":
+      case ROLES.DEAN:
         return <GraduationCap className="w-3 h-3" />
       default:
         return <User className="w-3 h-3" />
@@ -35,9 +48,9 @@ export default function Navbar() {
 
   const getRoleBadgeColor = () => {
     switch (user.role) {
-      case "administrativo":
+      case ROLES.ADMINISTRATIVE:
         return "bg-blue-100 text-blue-800 border-blue-200"
-      case "decano":
+      case ROLES.DEAN:
         return "bg-purple-100 text-purple-800 border-purple-200"
       default:
         return "bg-green-100 text-green-800 border-green-200"
@@ -50,7 +63,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link href={getDashboardRoute(user.role)} className="flex items-center space-x-2">
+            <Link href={getDashboardRoute((user.role || ROLES.GRADUATE) as keyof typeof ROLES)} className="flex items-center space-x-2">
               <div className="w-8 h-8 udea-primary rounded-full flex items-center justify-center shadow-md">
                 <span className="text-white font-bold text-sm">U</span>
               </div>
@@ -63,7 +76,7 @@ export default function Navbar() {
           <div className="flex items-center space-x-3">
             {/* User Info - Desktop */}
             <div className="hidden lg:flex flex-col items-end">
-              <span className="text-sm font-medium text-gray-900">{user.name}</span>
+              <span className="text-sm font-medium text-gray-900">{user.firstName} {user.firstLastname}</span>
               <span className="text-xs text-gray-500">{user.email}</span>
             </div>
 
@@ -78,7 +91,7 @@ export default function Navbar() {
                     <Avatar className="h-10 w-10 ring-2 ring-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
                       <AvatarImage src="/placeholder.svg" alt={user.name} />
                       <AvatarFallback className="udea-primary text-white font-semibold text-sm bg-gradient-to-br from-primary via-primary-dark to-primary-light">
-                        {user.initials}
+                        {String(user.initials || "U")}
                       </AvatarFallback>
                     </Avatar>
                     {/* Enhanced online indicator */}
@@ -95,26 +108,31 @@ export default function Navbar() {
                 <div className="flex items-center space-x-3 p-4 border-b bg-gradient-to-r from-gray-50 to-gray-100">
                   <Avatar className="h-12 w-12 ring-2 ring-primary/20">
                     <AvatarImage src="/placeholder.svg" alt={user.name} />
-                    <AvatarFallback className="udea-primary text-white font-semibold">{user.initials}</AvatarFallback>
+                    <AvatarFallback className="udea-primary text-white font-semibold">{String(user.initials || "U")}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col flex-1">
-                    <span className="text-sm font-semibold text-gray-900">{user.name}</span>
+                    <span className="text-sm font-semibold text-gray-900">{user.firstName} {user.firstLastname}</span>
                     <span className="text-xs text-gray-500">{user.email}</span>
                   </div>
                 </div>
 
-                {/* Only show profile option for egresados */}
-                {user.role === "egresado" && (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href={ROUTES.PROFILE} className="cursor-pointer w-full">
-                        <User className="mr-3 h-4 w-4" />
-                        <span>Mi Perfil</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
+                {/* Show profile option for all users */}
+                <DropdownMenuItem asChild>
+                  <Link 
+                    href={
+                      user.role === ROLES.ADMINISTRATIVE 
+                        ? ROUTES.ADMIN.VIEW_PROFILE 
+                        : user.role === ROLES.DEAN 
+                        ? ROUTES.DEAN.VIEW_PROFILE 
+                        : ROUTES.PROFILE
+                    } 
+                    className="cursor-pointer w-full"
+                  >
+                    <User className="mr-3 h-4 w-4" />
+                    <span>Mi Perfil</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
                   <Link

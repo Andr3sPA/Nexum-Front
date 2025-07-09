@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FileSpreadsheet } from "lucide-react"
+import { LocalStorageService } from "@/lib/services/local-storage.service"
 
 // Report data row interface
 interface ReportDataRow {
@@ -35,6 +36,12 @@ interface ReportData {
 }
 
 export default function ReportsPage() {
+  const userProfile = LocalStorageService.getItem<any>("userProfile")
+  const firstName = userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
+  const user = LocalStorageService.getItem<any>("user")
+  const email = user?.email || ""
+  const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
   const [reportConfig, setReportConfig] = useState({
     program: "",
     gender: "",
@@ -143,7 +150,14 @@ export default function ReportsPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar user={{
+        firstName,
+        firstLastname,
+        email,
+        role: user?.role,
+        initials,
+        ...userProfile
+      }} />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">

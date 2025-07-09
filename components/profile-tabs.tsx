@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -13,6 +13,11 @@ import EvaluationTab from "@/components/organisms/tabs/evaluation-tab"
 import { FirstJobModal } from "@/components/organisms/modals/work-first-job-modal"
 import { WorkQuestionsModal } from "@/components/organisms/modals/work-questions-modal"
 import { logger } from "@/lib/logging"
+import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
+
+interface ProfileTabsProps {
+  userProfile?: DetailedUserResponse & { email?: string };
+}
 
 // Work Questions Display Component
 const WorkQuestionsDisplay = ({ data, onEdit }: { data: WorkQuestionsData; onEdit: () => void }) => (
@@ -213,7 +218,7 @@ interface FirstJobData {
   updateDate?: string
 }
 
-export default function ProfileTabs() {
+export default function ProfileTabs({ userProfile }: ProfileTabsProps) {
   // State for work questions modal
   const [isWorkQuestionsModalOpen, setIsWorkQuestionsModalOpen] = useState(false)
   const [workQuestionsData, setWorkQuestionsData] = useState<WorkQuestionsData>({
@@ -268,6 +273,71 @@ export default function ProfileTabs() {
     updateDate: "",
   })
 
+  // Initialize data from detailed user profile
+  useEffect(() => {
+    if (userProfile) {
+      // Initialize jobs data
+      if (userProfile.jobs && userProfile.jobs.length > 0) {
+        const currentJob = userProfile.jobs.find(job => job.currentJob)
+        const firstJob = userProfile.jobs.find(job => job.firstJob)
+        
+        if (currentJob) {
+          setCurrentJobData({
+            company: currentJob.companyName || "",
+            position: currentJob.position || "",
+            startDate: "",
+            sector: "",
+            contractType: "",
+            salary: currentJob.salaryRange?.salary || "",
+            city: "",
+            country: currentJob.country || "",
+            currentSituation: "empleado",
+            companyName: currentJob.companyName || "",
+            relatedToCareer: currentJob.relatedToProgram ? "si" : "no",
+            salaryRange: currentJob.salaryRange?.salary || "",
+            timeInCompany: currentJob.jobDelay?.label || "",
+            area: currentJob.jobArea?.name || "",
+            companyType: currentJob.institutionType?.name || "",
+            updateDate: "",
+          })
+        }
+        
+        if (firstJob) {
+          setFirstJobData({
+            company: firstJob.companyName || "",
+            position: firstJob.position || "",
+            startDate: "",
+            endDate: "",
+            sector: "",
+            contractType: "",
+            salary: firstJob.salaryRange?.salary || "",
+            city: "",
+            country: firstJob.country || "",
+            companyName: firstJob.companyName || "",
+            relatedToCareer: firstJob.relatedToProgram ? "si" : "no",
+            timeToFirstJob: firstJob.jobDelay?.label || "",
+            salaryRange: firstJob.salaryRange?.salary || "",
+            area: firstJob.jobArea?.name || "",
+            companyType: firstJob.institutionType?.name || "",
+            updateDate: "",
+          })
+        }
+      }
+
+      // Initialize participation data if available
+      if (userProfile.graduateParticipation) {
+        // This could be used to populate participation tab data
+        logger.info("Graduate participation data available:", userProfile.graduateParticipation)
+      }
+
+      // Initialize academic data if available
+      if (userProfile.coursedPrograms && userProfile.coursedPrograms.length > 0) {
+        // This could be used to populate academic tab data
+        logger.info("Academic programs data available:", userProfile.coursedPrograms)
+      }
+    }
+  }, [userProfile])
+
   // Handlers for saving data
   const handleSaveWorkQuestionsData = (data: WorkQuestionsData) => {
     logger.info("Saving work questions data:", data)
@@ -299,11 +369,11 @@ export default function ProfileTabs() {
         </TabsList>
 
         <TabsContent value="personal" className="mt-6">
-          <PersonalInfoTab />
+          <PersonalInfoTab userProfile={userProfile} />
         </TabsContent>
 
         <TabsContent value="academic" className="mt-6">
-          <AcademicInfoTab />
+          <AcademicInfoTab userProfile={userProfile} />
         </TabsContent>
 
         <TabsContent value="work" className="mt-6">
@@ -313,11 +383,11 @@ export default function ProfileTabs() {
         </TabsContent>
 
         <TabsContent value="participation" className="mt-6">
-          <ParticipationTab />
+          <ParticipationTab userProfile={userProfile} />
         </TabsContent>
 
         <TabsContent value="evaluation" className="mt-6">
-          <EvaluationTab />
+          <EvaluationTab userProfile={userProfile} />
         </TabsContent>
       </Tabs>
 

@@ -3,6 +3,8 @@
  * Defines all available routes and role-based access
  */
 
+import { ROLES } from "./services/constants/api.constants"
+
 export const ROUTES = {
   // Public routes
   HOME: "/",
@@ -19,6 +21,7 @@ export const ROUTES = {
     SEARCH_GRADUATES: "/admin/search-graduates",
     REPORTS: "/admin/reports",
     COMPLETE_PROFILE: "/admin/complete-profile", // For completing graduate profile after registration
+    VIEW_PROFILE: "/admin/profile", // For viewing specific user profiles
   },
 
   // Dean routes (Decano role)
@@ -26,18 +29,25 @@ export const ROUTES = {
     DASHBOARD: "/dean/dashboard",
     SEARCH_GRADUATES: "/dean/search-graduates",
     REPORTS: "/dean/reports",
+    VIEW_PROFILE: "/dean/profile", // For viewing specific user profiles
   },
 } as const
 
 export const ROLE_ROUTES = {
-  egresado: [ROUTES.DASHBOARD, ROUTES.PROFILE],
-  administrativo: [
+  [ROLES.GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE],
+  [ROLES.ADMINISTRATIVE]: [
     ROUTES.ADMIN.DASHBOARD,
     ROUTES.ADMIN.SEARCH_GRADUATES,
     ROUTES.ADMIN.REPORTS,
     ROUTES.ADMIN.COMPLETE_PROFILE,
+    ROUTES.ADMIN.VIEW_PROFILE,
   ],
-  decano: [ROUTES.DEAN.DASHBOARD, ROUTES.DEAN.SEARCH_GRADUATES, ROUTES.DEAN.REPORTS],
+  [ROLES.DEAN]: [
+    ROUTES.DEAN.DASHBOARD, 
+    ROUTES.DEAN.SEARCH_GRADUATES, 
+    ROUTES.DEAN.REPORTS,
+    ROUTES.DEAN.VIEW_PROFILE,
+  ],
 } as const
 
 export type UserRole = keyof typeof ROLE_ROUTES
@@ -48,9 +58,9 @@ export type RouteKey = (typeof ROUTES)[keyof typeof ROUTES]
  */
 export function getDashboardRoute(role: UserRole): string {
   switch (role) {
-    case "administrativo":
+    case ROLES.ADMINISTRATIVE:
       return ROUTES.ADMIN.DASHBOARD
-    case "decano":
+    case ROLES.DEAN:
       return ROUTES.DEAN.DASHBOARD
     default:
       return ROUTES.DASHBOARD

@@ -8,13 +8,38 @@ import { Button } from "@/components/ui/button"
 import { Search, FileText, UserPlus } from "lucide-react"
 import { ROUTES } from "@/lib/routes"
 import RegisterGraduateModal from "@/components/organisms/modals/register-graduate-modal"
+import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { ROLES } from "@/lib/services/constants/api.constants"
 
 export default function AdminDashboardPage() {
+  const router = useRouter()
+  const userProfile = LocalStorageService.getItem<any>("userProfile")
+  useEffect(() => {
+    if (!userProfile || userProfile.role !== ROLES.ADMINISTRATIVE) {
+      router.replace("/login")
+    }
+  }, [router, userProfile])
+
   const [showRegisterModal, setShowRegisterModal] = useState(false)
+
+  const firstName = userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
+  const user = LocalStorageService.getItem<any>("user")
+  const email = user?.email || ""
+  const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
 
   return (
     <>
-      <Navbar />
+      <Navbar user={{
+        firstName,
+        firstLastname,
+        email,
+        role: user?.role,
+        initials,
+        ...userProfile
+      }} />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">

@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { DataSection } from "@/components/organisms/data-section"
 import { EditButton } from "@/components/atoms/edit-button"
 import EvaluationModal from "@/components/organisms/modals/evaluation-modal"
+import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
 
 // Import the EvaluationData type from the modal to ensure consistency
 interface EvaluationData {
@@ -21,7 +22,11 @@ interface EvaluationData {
   question3: string
 }
 
-export default function EvaluationTab() {
+interface EvaluationTabProps {
+  userProfile?: DetailedUserResponse;
+}
+
+export default function EvaluationTab({ userProfile }: EvaluationTabProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [evaluationData, setEvaluationData] = useState<EvaluationData>({
@@ -38,6 +43,26 @@ export default function EvaluationTab() {
     question2: "",
     question3: "",
   })
+
+  // Update data when userProfile changes
+  useEffect(() => {
+    if (userProfile) {
+      setEvaluationData({
+        programSatisfaction: "",
+        teacherQuality: "",
+        infrastructureQuality: "",
+        administrativeSupport: "",
+        overallExperience: "",
+        comments: "",
+        strengths: userProfile?.coursedPrograms?.[0]?.strengths?.join(", ") || "",
+        weaknesses: userProfile?.coursedPrograms?.[0]?.weaknesses?.join(", ") || "",
+        additionalCompetencies: userProfile?.coursedPrograms?.[0]?.improvementSuggestions?.join(", ") || "",
+        question1: "",
+        question2: "",
+        question3: "",
+      })
+    }
+  }, [userProfile])
 
   const handleSave = (data: EvaluationData) => {
     setEvaluationData(data)

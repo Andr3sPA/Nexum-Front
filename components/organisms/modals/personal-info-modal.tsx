@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
@@ -39,154 +39,177 @@ export default function PersonalInfoModal({ isOpen, onClose, onSave, initialData
   const [formData, setFormData] = useState<PersonalInfoData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Update form data when modal opens or initial data changes
   useEffect(() => {
-    setFormData(initialData)
-  }, [initialData])
+    if (isOpen) {
+      setFormData(initialData)
+    }
+  }, [isOpen, initialData])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  // Memoized submit handler
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (isSubmitting) return // Prevent double submission
+    
+    setIsSubmitting(true)
   
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      onSave({ ...formData, lastUpdateDate: new Date().toISOString().split('T')[0] });
-      onClose(); // Esta línea ya está presente, pero no funciona correctamente
+      await onSave({ ...formData, lastUpdateDate: new Date().toISOString().split('T')[0] })
+      onClose()
     } catch (error) {
-    
-      
-      logger.error('Error saving data:', error);
+      logger.error('Error saving data:', error)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }, [formData, onSave, onClose, isSubmitting])
 
-  const handleInputChange = (field: keyof PersonalInfoData, value: string) => {
+  // Memoized input change handler
+  const handleInputChange = useCallback((field: keyof PersonalInfoData, value: string) => {
     setFormData((prev: PersonalInfoData) => ({ ...prev, [field]: value }))
-  }
+  }, [])
+
+  // Memoized select options to prevent re-renders
+  const maritalStatusOptions = useMemo(() => [
+    { value: "SINGLE", label: "Soltero(a)" },
+    { value: "MARRIED", label: "Casado(a)" },
+    { value: "FREE_UNION", label: "Unión Libre" },
+    { value: "DIVORCED", label: "Divorciado(a)" }
+  ], [])
+
+  const socioeconomicOptions = useMemo(() => [
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "3", label: "3" },
+    { value: "4", label: "4" },
+    { value: "5", label: "5" },
+    { value: "6", label: "6" }
+  ], [])
+
+  const whatsappOptions = useMemo(() => [
+    { value: "Sí", label: "Sí" },
+    { value: "No", label: "No" }
+  ], [])
+
+  // Memoized form fields to prevent unnecessary re-renders
+  const formFields = useMemo(() => [
+    {
+      id: "maritalStatus",
+      label: "Estado Civil",
+      type: "select" as const,
+      options: maritalStatusOptions,
+      value: formData.maritalStatus
+    },
+    {
+      id: "children",
+      label: "Número de Hijos",
+      type: "number" as const,
+      value: formData.children
+    },
+    {
+      id: "socioeconomicLevel",
+      label: "Estrato Socioeconómico",
+      type: "select" as const,
+      options: socioeconomicOptions,
+      value: formData.socioeconomicLevel
+    },
+    {
+      id: "address",
+      label: "Dirección",
+      type: "text" as const,
+      value: formData.address
+    },
+    {
+      id: "country",
+      label: "País",
+      type: "text" as const,
+      value: formData.country
+    },
+    {
+      id: "department",
+      label: "Departamento",
+      type: "text" as const,
+      value: formData.department
+    },
+    {
+      id: "city",
+      label: "Ciudad",
+      type: "text" as const,
+      value: formData.city
+    },
+    {
+      id: "landlinePhone",
+      label: "Teléfono Fijo",
+      type: "text" as const,
+      value: formData.landlinePhone
+    },
+    {
+      id: "cellPhone",
+      label: "Celular",
+      type: "text" as const,
+      value: formData.cellPhone
+    },
+    {
+      id: "whatsapp",
+      label: "WhatsApp",
+      type: "text" as const,
+      value: formData.whatsapp
+    },
+    {
+      id: "whatsappAuthorization",
+      label: "Autoriza WhatsApp de la U",
+      type: "select" as const,
+      options: whatsappOptions,
+      value: formData.whatsappAuthorization
+    },
+    {
+      id: "graduationDate",
+      label: "Fecha de Egreso",
+      type: "date" as const,
+      value: formData.graduationDate
+    }
+  ], [formData, maritalStatusOptions, socioeconomicOptions, whatsappOptions])
+
+  // Memoized render field function
+  const renderField = useCallback((field: typeof formFields[0]) => {
+    const { id, label, type, value, options } = field
+
+    if (type === "select") {
+      return (
+        <FormField key={id} id={id} label={label}>
+          <Select value={value} onValueChange={(val) => handleInputChange(id as keyof PersonalInfoData, val)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar" />
+            </SelectTrigger>
+            <SelectContent>
+              {options?.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormField>
+      )
+    }
+
+    return (
+      <FormField key={id} id={id} label={label}>
+        <Input
+          id={id}
+          type={type}
+          value={value}
+          onChange={(e) => handleInputChange(id as keyof PersonalInfoData, e.target.value)}
+        />
+      </FormField>
+    )
+  }, [handleInputChange])
 
   return (
     <ModalContainer title="Editar Información Personal" isOpen={isOpen} onClose={onClose} maxWidth="max-w-4xl">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField id="maritalStatus" label="Estado Civil">
-            <Select value={formData.maritalStatus} onValueChange={(value) => handleInputChange("maritalStatus", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="soltero">Soltero(a)</SelectItem>
-                <SelectItem value="casado">Casado(a)</SelectItem>
-                <SelectItem value="union-libre">Unión Libre</SelectItem>
-                <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-                <SelectItem value="viudo">Viudo(a)</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
-
-          <FormField id="children" label="Número de Hijos">
-            <Input
-              id="children"
-              type="number"
-              value={formData.children}
-              onChange={(e) => handleInputChange("children", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="socioeconomicLevel" label="Estrato Socioeconómico">
-            <Select
-              value={formData.socioeconomicLevel}
-              onValueChange={(value) => handleInputChange("socioeconomicLevel", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="6">6</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
-
-          <FormField id="address" label="Dirección">
-            <Input
-              id="address"
-              value={formData.address}
-              onChange={(e) => handleInputChange("address", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="country" label="País">
-            <Input
-              id="country"
-              value={formData.country}
-              onChange={(e) => handleInputChange("country", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="department" label="Departamento">
-            <Input
-              id="department"
-              value={formData.department}
-              onChange={(e) => handleInputChange("department", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="city" label="Ciudad">
-            <Input id="city" value={formData.city} onChange={(e) => handleInputChange("city", e.target.value)} />
-          </FormField>
-
-          <FormField id="landlinePhone" label="Teléfono Fijo">
-            <Input
-              id="landlinePhone"
-              value={formData.landlinePhone}
-              onChange={(e) => handleInputChange("landlinePhone", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="cellPhone" label="Celular">
-            <Input
-              id="cellPhone"
-              value={formData.cellPhone}
-              onChange={(e) => handleInputChange("cellPhone", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="whatsapp" label="WhatsApp">
-            <Input
-              id="whatsapp"
-              value={formData.whatsapp}
-              onChange={(e) => handleInputChange("whatsapp", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="whatsappAuthorization" label="Autoriza WhatsApp de la U">
-            <Select
-              value={formData.whatsappAuthorization}
-              onValueChange={(value) => handleInputChange("whatsappAuthorization", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
-
-          <FormField id="graduationDate" label="Fecha de Egreso">
-            <Input
-              id="graduationDate"
-              type="date"
-              value={formData.graduationDate}
-              onChange={(e) => handleInputChange("graduationDate", e.target.value)}
-            />
-          </FormField>
+          {formFields.map(renderField)}
         </div>
 
         <ModalActions onCancel={onClose} isSubmitting={isSubmitting} />

@@ -26,7 +26,7 @@ export function validateApiConfig(): boolean {
 
 // API Configuration with security defaults
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.udea.edu.co",
+  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8100/nexum/v1",
   TIMEOUT: 30000, // 30 seconds
   ENVIRONMENT: process.env.NODE_ENV || "production",
 } as const
@@ -81,8 +81,6 @@ export const API_ENDPOINTS = {
 export const DEFAULT_HEADERS = {
   "Content-Type": "application/json",
   Accept: "application/json",
-  // Security headers
-  "X-Requested-With": "XMLHttpRequest",
 } as const
 
 // HTTP Status Codes for better error handling

@@ -4,11 +4,38 @@ import Navbar from "@/components/navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { User, ArrowRight, Users, BarChart3 } from "lucide-react"
 import { ROUTES } from "@/lib/routes"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { ROLES } from "@/lib/services/constants/api.constants"
 
 export default function EgresadoDashboardPage() {
+  const router = useRouter()
+  const user = LocalStorageService.getItem<{ name?: string; email?: string; initials?: string; role?: string }>("user")
+  const userProfile = LocalStorageService.getItem<any>("userProfile")
+  useEffect(() => {
+    console.log("user:", user);
+    console.log("userProfile:", userProfile);
+    console.log("user.role:", user?.role);
+    console.log("ROLES.GRADUATE:", ROLES.GRADUATE);
+    if (!user || user.role !== ROLES.GRADUATE) {
+      router.replace("/login")
+    }
+  }, [router, user])
+  const firstName = userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
+  const email = user?.email || ""
+  const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
   return (
     <>
-      <Navbar />
+      <Navbar user={{
+        firstName,
+        firstLastname,
+        email,
+        role: user?.role,
+        initials,
+        ...userProfile
+      }} />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">

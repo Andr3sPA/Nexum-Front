@@ -2,7 +2,7 @@
  * Secure API client for Universidad de Antioquia graduates platform
  */
 import { logger } from "@/lib/logging"
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.udea.edu.co"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8100/nexum/v1"
 
 // User registration data interface
 interface UserRegistrationData {
@@ -76,21 +76,6 @@ class ApiClient {
     }
   }
 
-  // Authentication
-  async login(credentials: { email: string; password: string }) {
-    return this.request("/auth/login", {
-      method: "POST",
-      body: JSON.stringify(credentials),
-    })
-  }
-
-  async register(userData: UserRegistrationData) {
-    return this.request("/auth/register", {
-      method: "POST",
-      body: JSON.stringify(userData),
-    })
-  }
-
   // Profile management
   async getProfile() {
     return this.request("/profile")
@@ -126,3 +111,5 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient()
+
+// Eliminar tipos y funciones de autenticación, solo dejar lo que no sea de auth ni de identity document type

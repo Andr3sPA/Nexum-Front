@@ -13,25 +13,26 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Download, Search } from "lucide-react"
 import { sanitizeInput } from "@/lib/security"
 import Navbar from "@/components/navbar"
+import { useRouter } from "next/navigation"
+import { ROUTES } from "@/lib/routes"
 
 import { logger } from "@/lib/logging"
-
-// Graduate data interface
-interface Graduate {
-  id: number
-  name: string
-  email: string
-  program: string
-  graduationYear: string
-  location: string
-}
+import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { GraduateSearchService, GraduateSearchResult, GraduateSearchFilters } from "@/lib/services/profile/graduate-search.service"
 
 export default function SearchGraduatesPage() {
+  const router = useRouter()
+  const userProfile = LocalStorageService.getItem<any>("userProfile")
+  const firstName = userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
+  const user = LocalStorageService.getItem<any>("user")
+  const email = user?.email || ""
+  const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
   const [searchTerm, setSearchTerm] = useState("")
   const [program, setProgram] = useState("")
   const [graduationYear, setGraduationYear] = useState("")
   const [location, setLocation] = useState("")
-  const [searchResults, setSearchResults] = useState<Graduate[]>([])
+  const [searchResults, setSearchResults] = useState<GraduateSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -42,39 +43,18 @@ export default function SearchGraduatesPage() {
       // Sanitize inputs
       const sanitizedSearchTerm = sanitizeInput(searchTerm)
 
-      // TODO: Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Prepare search filters
+      const filters: GraduateSearchFilters = {
+        searchTerm: sanitizedSearchTerm,
+        program: program || undefined,
+        graduationYear: graduationYear || undefined,
+        location: location || undefined,
+      }
 
-      // Mock results
-      setSearchResults([
-        {
-          id: 1,
-          name: "Ana María Rodríguez",
-          email: "ana.rodriguez@example.com",
-          program: "Ingeniería de Sistemas",
-          graduationYear: "2020",
-          location: "Medellín",
-        },
-        {
-          id: 2,
-          name: "Carlos Gómez",
-          email: "carlos.gomez@example.com",
-          program: "Ingeniería de Sistemas",
-          graduationYear: "2019",
-          location: "Bogotá",
-        },
-        {
-          id: 3,
-          name: "Laura Martínez",
-          email: "laura.martinez@example.com",
-          program: "Ingeniería de Sistemas",
-          graduationYear: "2021",
-          location: "Medellín",
-        },
-      ])
+      // Use mock service for now (replace with real API call when ready)
+      const result = await GraduateSearchService.searchGraduatesMock(filters)
+      setSearchResults(result.graduates)
     } catch (error) {
-     
-      
       logger.error("Error searching graduates:", error)
       setSearchResults([])
     } finally {
@@ -89,7 +69,14 @@ export default function SearchGraduatesPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar user={{
+        firstName,
+        firstLastname,
+        email,
+        role: user?.role,
+        initials,
+        ...userProfile
+      }} />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
@@ -201,13 +188,17 @@ export default function SearchGraduatesPage() {
                           <TableBody>
                             {searchResults.map((graduate) => (
                               <TableRow key={graduate.id}>
-                                <TableCell>{graduate.name}</TableCell>
-                                <TableCell>{graduate.email}</TableCell>
+                                <TableCell>{graduate.name} {graduate.lastname}</TableCell>
+                                <TableCell>{graduate.institutionalEmail}</TableCell>
                                 <TableCell>{graduate.program}</TableCell>
                                 <TableCell>{graduate.graduationYear}</TableCell>
                                 <TableCell>{graduate.location}</TableCell>
                                 <TableCell>
-                                  <Button variant="ghost" size="sm">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm"
+                                    onClick={() => router.push(`${ROUTES.ADMIN.VIEW_PROFILE}?userId=${graduate.id}`)}
+                                  >
                                     Ver Perfil
                                   </Button>
                                 </TableCell>

@@ -1,12 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { DataSection } from "@/components/organisms/data-section"
 import { DataField } from "@/components/atoms/data-field"
 import { EditButton } from "@/components/atoms/edit-button"
 import ParticipationModal from "@/components/organisms/modals/participation-modal"
+import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
 
-export default function ParticipationTab() {
+interface ParticipationTabProps {
+  userProfile?: DetailedUserResponse;
+}
+
+export default function ParticipationTab({ userProfile }: ParticipationTabProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // FIXED: Now includes ALL properties from ParticipationData interface
@@ -29,6 +34,29 @@ export default function ParticipationTab() {
     meetingsInterest: "",
     activitiesInterest: "",
   })
+
+  // Update data when userProfile changes
+  useEffect(() => {
+    if (userProfile) {
+      setParticipationData({
+        participationType: "",
+        eventName: "",
+        eventDate: "",
+        role: "",
+        description: "",
+        participation: userProfile?.graduateParticipation?.participatedInnovationProcesses?.map(p => p.name).join(", ") || "",
+        conferenceInterest: userProfile?.graduateParticipation?.willingToBeSpeaker ? "Sí" : "No",
+        professorInterest: userProfile?.graduateParticipation?.willingToBeProfessor ? "Sí" : "No",
+        nonFormalProfessorInterest: userProfile?.graduateParticipation?.willingToTeachNonFormalEducation ? "Sí" : "No",
+        postgraduateInterest: userProfile?.graduateParticipation?.willingToBePostgraduateStudent ? "Sí" : "No",
+        nonFormalStudentInterest: userProfile?.graduateParticipation?.willingToBeNonFormalStudent ? "Sí" : "No",
+        continuousFormationTopics: userProfile?.graduateParticipation?.continuousEducationInterests?.join(", ") || "",
+        representativeInterest: userProfile?.graduateParticipation?.willingToBeGraduateRepresentative ? "Sí" : "No",
+        meetingsInterest: userProfile?.graduateParticipation?.willingToAttendAlumniMeetings ? "Sí" : "No",
+        activitiesInterest: userProfile?.graduateParticipation?.willingToParticipateInAlumniActivities ? "Sí" : "No",
+      })
+    }
+  }, [userProfile])
 
   const handleSave = (data: typeof participationData) => {
     setParticipationData(data)

@@ -10,16 +10,41 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import AuthTemplate from "@/components/templates/auth-template"
+import { AuthenticationService } from "@/lib/services/profile/auth.service"
+import { useSearchParams } from "next/navigation"
+import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { ROLES } from "@/lib/services/constants/api.constants"
+import { DetailedUserService } from "@/lib/services/profile/detailed-user.service"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const success = searchParams.get("success") === "1"
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement login logic with backend
-    router.push("/dashboard")
+    setError(null)
+    try {
+      const user = await AuthenticationService.login({ email, password })
+      LocalStorageService.setItem("user", user)
+      // Buscar y guardar el perfil detallado del usuario
+      try {
+        const userProfile = await DetailedUserService.getCurrentUserDetailed()
+        LocalStorageService.setItem("userProfile", userProfile)
+      } catch (profileErr) {
+        // Si falla, continuar pero podrías mostrar un warning si lo deseas
+        console.warn("No se pudo obtener el perfil detallado:", profileErr)
+      }
+      let dashboardRoute = "/dashboard"
+      if (user.role === ROLES.ADMINISTRATIVE) dashboardRoute = "/admin/dashboard"
+      else if (user.role === ROLES.DEAN) dashboardRoute = "/dean/dashboard"
+      router.push(dashboardRoute)
+    } catch (err: any) {
+      setError(err.message || "Error al iniciar sesión")
+    }
   }
 
   return (
@@ -30,6 +55,11 @@ export default function LoginPage() {
           <CardDescription className="text-center">Ingresa tus credenciales para acceder</CardDescription>
         </CardHeader>
         <CardContent>
+          {success && (
+            <div className="text-green-600 text-sm text-center mb-2">
+              ¡Registro exitoso! Ahora puedes iniciar sesión.
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Correo Electrónico</Label>
@@ -45,6 +75,7 @@ export default function LoginPage() {
                 required
               />
             </div>
+            {error && <div className="text-red-600 text-sm text-center">{error}</div>}
             <Button type="submit" className="w-full udea-primary">
               Iniciar Sesión
             </Button>

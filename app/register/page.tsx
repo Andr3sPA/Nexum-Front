@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AuthenticationService } from "@/lib/services/profile/auth.service"
+import { IdentityDocumentTypeService, IdentityDocumentTypeResponse } from "@/lib/services/catalog/identity-document-type.service"
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -26,13 +28,36 @@ export default function RegisterPage() {
     confirmPassword: "",
     role: "egresado", // Default role is always egresado
   })
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const [documentTypes, setDocumentTypes] = useState<IdentityDocumentTypeResponse[]>([])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  React.useEffect(() => {
+    IdentityDocumentTypeService.getAll().then(setDocumentTypes).catch(() => setDocumentTypes([]))
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement registration logic with backend
-    // All new registrations are egresados by default
-    router.push("/dashboard")
+    setError(null)
+    try {
+      await AuthenticationService.register({
+        identityDocument: formData.idNumber,
+        idIdentityDocumentType: parseInt(formData.idType) || 1,
+        name: formData.firstName,
+        middleName: formData.secondName,
+        lastname: formData.firstLastName,
+        secondLastname: formData.secondLastName,
+        birthdate: formData.birthDate,
+        gender: formData.gender,
+        email: formData.email,
+        password: formData.password,
+      })
+      console.log("Registro exitoso, redirigiendo...");
+      router.push("/login?success=1");
+      console.log("Redirección ejecutada");
+    } catch (err: any) {
+      setError(err.message || "Error al registrarse")
+    }
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -68,9 +93,11 @@ export default function RegisterPage() {
                     <SelectValue placeholder="Seleccionar" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="cc">Cédula de Ciudadanía</SelectItem>
-                    <SelectItem value="ce">Cédula de Extranjería</SelectItem>
-                    <SelectItem value="passport">Pasaporte</SelectItem>
+                    {documentTypes.map((type) => (
+                      <SelectItem key={type.id} value={String(type.id)}>
+                        {type.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -134,9 +161,10 @@ export default function RegisterPage() {
                     <SelectValue placeholder="Seleccionar género" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="hombre">Hombre</SelectItem>
-                    <SelectItem value="mujer">Mujer</SelectItem>
-                    <SelectItem value="no-binario">No binario</SelectItem>
+                    <SelectItem value="Hombre">Hombre</SelectItem>
+                    <SelectItem value="Mujer">Mujer</SelectItem>
+                    <SelectItem value="No binario">No binario</SelectItem>
+                    <SelectItem value="Otro">Otro</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -161,6 +189,7 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
+            {error && <div className="text-red-600 text-sm text-center">{error}</div>}
             <Button type="submit" className="w-full udea-primary">
               Registrarse como Egresado
             </Button>

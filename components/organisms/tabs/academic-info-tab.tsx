@@ -1,14 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { DataSection } from "@/components/organisms/data-section"
 import { DataField } from "@/components/atoms/data-field"
 import { EditButton } from "@/components/atoms/edit-button"
 import { AddButton } from "@/components/atoms/add-button"
 import AcademicInfoModal from "@/components/organisms/modals/academic-info-modal"
 import PostGraduateModal from "@/components/organisms/modals/post-graduate-modal"
+import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
 
-export default function AcademicInfoTab() {
+interface AcademicInfoTabProps {
+  userProfile?: DetailedUserResponse;
+}
+
+export default function AcademicInfoTab({ userProfile }: AcademicInfoTabProps) {
   const [isAcademicModalOpen, setIsAcademicModalOpen] = useState(false)
   const [isPostGradModalOpen, setIsPostGradModalOpen] = useState(false)
 
@@ -28,6 +33,36 @@ export default function AcademicInfoTab() {
       country: "",
     },
   ])
+
+  // Update data when userProfile changes
+  useEffect(() => {
+    if (userProfile) {
+      setAcademicData({
+        graduationYear: userProfile?.coursedPrograms?.[0]?.graduationYear?.toString() || "",
+        program: userProfile?.coursedPrograms?.[0]?.programVersion?.name || "",
+        studyPlan: userProfile?.coursedPrograms?.[0]?.programVersion?.version || "",
+        role: "",
+      })
+
+      setPostGradData(
+        userProfile?.academicEducationList?.map((education, index) => ({
+          id: index + 1,
+          type: education.type || "",
+          name: education.studyName || "",
+          institution: education.institution || "",
+          country: education.country || "",
+        })) || [
+          {
+            id: 1,
+            type: "",
+            name: "",
+            institution: "",
+            country: "",
+          },
+        ]
+      )
+    }
+  }, [userProfile])
 
   const handleAcademicSave = (data: typeof academicData) => {
     setAcademicData(data)
