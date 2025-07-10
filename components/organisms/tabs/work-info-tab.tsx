@@ -1,195 +1,399 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ModalContainer } from "@/components/organisms/modal-container"
-import { FormField } from "@/components/molecules/form-field"
-import { ModalActions } from "@/components/molecules/modal-actions"
-
+import { useState, useEffect, useCallback, useMemo } from "react"
+import { DataSection } from "@/components/organisms/data-section"
+import { DataField } from "@/components/atoms/data-field"
+import { EditButton } from "@/components/atoms/edit-button"
+import { SectionTitle } from "@/components/atoms/section-title"
+import { AddButton } from "@/components/atoms/add-button"
+import { WorkCurrentJobModal } from "@/components/organisms/modals/work-current-job-modal"
+import { WorkFirstJobModal } from "@/components/organisms/modals/work-first-job-modal"
+import { WorkQuestionsModal } from "@/components/organisms/modals/work-questions-modal"
+import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { JobService, JobRequest, JobResponse } from "@/lib/services/profile/job.service"
+import { useCatalogData } from "@/hooks/use-catalog-data"
 import { logger } from "@/lib/logging"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
 
-export interface CurrentJobData {
-  company: string
-  position: string
-  startDate: string
-  sector: string
-  contractType: string
-  salary: string
-  city: string
-  country: string
-  currentSituation: string
-  companyName: string
-  relatedToCareer: string
-  salaryRange: string
-  timeInCompany: string
-  area: string
-  companyType: string
-  updateDate: string
+interface WorkInfoTabProps {
+  userProfile?: any;
 }
 
-export interface CurrentJobModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (data: CurrentJobData) => void
-  initialData: CurrentJobData
-}
+export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
+  const [isCurrentJobModalOpen, setIsCurrentJobModalOpen] = useState(false)
+  const [isFirstJobModalOpen, setIsFirstJobModalOpen] = useState(false)
+  const [isQuestionsModalOpen, setIsQuestionsModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [jobs, setJobs] = useState<JobResponse[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [hasInitialized, setHasInitialized] = useState(false)
 
-export default function CurrentJobModal({ isOpen, onClose, onSave, initialData }: CurrentJobModalProps) {
-  const [formData, setFormData] = useState<CurrentJobData>(initialData)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  // Get catalog data
+  const {
+    salaryRanges,
+    jobDelays,
+    jobAreas,
+    institutionTypes,
+    isLoading: isLoadingCatalog,
+    error: catalogError,
+    loadProgramSpecificData
+  } = useCatalogData()
 
-  useEffect(() => {
-    setFormData(initialData)
-  }, [initialData])
+  // Get user from localStorage
+  const user = useMemo(() => {
+    try {
+      return LocalStorageService.getItem<any>("user")
+    } catch (error) {
+      console.error("Error getting user from localStorage:", error)
+      return null
+    }
+  }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+  // Get user profile from localStorage
+  const userProfileData = useMemo(() => {
+    try {
+      return LocalStorageService.getItem<any>("userProfile")
+    } catch (error) {
+      console.error("Error getting userProfile from localStorage:", error)
+      return null
+    }
+  }, [])
+
+  // Check if user has academic information
+  const hasAcademicInfo = useMemo(() => {
+    return userProfileData?.coursedPrograms && userProfileData.coursedPrograms.length > 0
+  }, [userProfileData])
+
+  // Get program ID for catalog data
+  const programId = useMemo(() => {
+    if (userProfileData?.coursedPrograms && userProfileData.coursedPrograms.length > 0) {
+      return userProfileData.coursedPrograms[0]?.programVersion?.program?.id
+    }
+    return null
+  }, [userProfileData])
+
+  // Fetch jobs data
+  const fetchJobs = useCallback(async () => {
+    if (!userProfileData?.id || hasInitialized) return
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      onSave(formData)
+      setIsLoading(true)
+      setError(null)
+
+      const jobsData = await JobService.getByUserId(userProfileData.id)
+      setJobs(jobsData)
+      setHasInitialized(true)
     } catch (error) {
-      logger.error("Error saving data:", error)
+      console.error("Error loading jobs:", error)
+      setError("Error al cargar la información laboral")
     } finally {
-      setIsSubmitting(false)
+      setIsLoading(false)
     }
+  }, [userProfileData, hasInitialized])
+
+  // Fetch data only once on mount
+  useEffect(() => {
+    fetchJobs()
+  }, [fetchJobs])
+
+  // Load program-specific catalog data when program ID is available
+  useEffect(() => {
+    if (programId) {
+      loadProgramSpecificData(programId)
+    }
+  }, [programId, loadProgramSpecificData])
+
+  // Get current and first job
+  const currentJob = useMemo(() => jobs.find(job => job.currentJob), [jobs])
+  const firstJob = useMemo(() => jobs.find(job => job.firstJob), [jobs])
+
+  // Current job handlers
+  const handleCurrentJobSave = useCallback(async (formData: any) => {
+    if (!userProfileData?.id) {
+      setError("No se pudo identificar al usuario")
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const jobRequest: JobRequest = {
+        userId: userProfileData.id,
+        companyName: formData.companyName,
+        country: formData.country,
+        position: formData.position,
+        relatedToProgram: formData.relatedToCareer === "si",
+        salaryRangeId: parseInt(formData.salaryRangeId),
+        jobDelayId: parseInt(formData.jobDelayId),
+        jobAreaId: parseInt(formData.jobAreaId),
+        institutionTypeId: parseInt(formData.institutionTypeId),
+        firstJob: false,
+        currentJob: true
+      }
+
+      let savedJob: JobResponse
+
+      if (currentJob) {
+        // Update existing current job
+        savedJob = await JobService.updateById(currentJob.id, jobRequest)
+      } else {
+        // Create new current job
+        savedJob = await JobService.create(jobRequest)
+      }
+
+      // Update jobs list
+      setJobs(prev => {
+        const filtered = prev.filter(job => !job.currentJob)
+        return [...filtered, savedJob]
+      })
+
+      setIsCurrentJobModalOpen(false)
+      logger.info("Current job saved successfully")
+    } catch (error) {
+      console.error("Error saving current job:", error)
+      setError("Error al guardar el trabajo actual")
+    } finally {
+      setIsLoading(false)
+    }
+  }, [userProfileData, currentJob])
+
+  // First job handlers
+  const handleFirstJobSave = useCallback(async (formData: any) => {
+    if (!userProfileData?.id) {
+      setError("No se pudo identificar al usuario")
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const jobRequest: JobRequest = {
+        userId: userProfileData.id,
+        companyName: formData.companyName,
+        country: formData.country,
+        position: formData.position,
+        relatedToProgram: formData.relatedToCareer === "si",
+        salaryRangeId: parseInt(formData.salaryRangeId),
+        jobDelayId: parseInt(formData.jobDelayId),
+        jobAreaId: parseInt(formData.jobAreaId),
+        institutionTypeId: parseInt(formData.institutionTypeId),
+        firstJob: true,
+        currentJob: false
+      }
+
+      let savedJob: JobResponse
+
+      if (firstJob) {
+        // Update existing first job
+        savedJob = await JobService.updateById(firstJob.id, jobRequest)
+      } else {
+        // Create new first job
+        savedJob = await JobService.create(jobRequest)
+      }
+
+      // Update jobs list
+      setJobs(prev => {
+        const filtered = prev.filter(job => !job.firstJob)
+        return [...filtered, savedJob]
+      })
+
+      setIsFirstJobModalOpen(false)
+      logger.info("First job saved successfully")
+    } catch (error) {
+      console.error("Error saving first job:", error)
+      setError("Error al guardar el primer trabajo")
+    } finally {
+      setIsLoading(false)
+    }
+  }, [userProfileData, firstJob])
+
+  if (isLoading && !hasInitialized) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Cargando información laboral...</p>
+        </div>
+      </div>
+    )
   }
 
-  const handleInputChange = (field: keyof CurrentJobData, value: string) => {
-    setFormData((prev: CurrentJobData) => ({ ...prev, [field]: value }))
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center py-8">
+          <div className="text-red-600 text-lg mb-2">Error</div>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => {
+              setError(null)
+              setHasInitialized(false)
+              fetchJobs()
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <ModalContainer title="Editar Información Laboral Actual" isOpen={isOpen} onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField id="currentSituation" label="Su situación actual es">
-            <Select
-              value={formData.currentSituation}
-              onValueChange={(value) => handleInputChange("currentSituation", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="empleado-ejerciendo">Empleado ejerciendo la profesión</SelectItem>
-                <SelectItem value="empleado-no-ejerciendo">Empleado no ejerciendo la profesión</SelectItem>
-                <SelectItem value="independiente-ejerciendo">Independiente ejerciendo la profesión</SelectItem>
-                <SelectItem value="independiente-no-ejerciendo">Independiente no ejerciendo la profesión</SelectItem>
-                <SelectItem value="desempleado">Desempleado</SelectItem>
-                <SelectItem value="empresario">Empresario</SelectItem>
-                <SelectItem value="otros">Otros</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
+    <div className="space-y-6">
+      {/* Academic Information Warning */}
+      {!hasAcademicInfo && (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Para mostrar información laboral específica de tu carrera, necesitas registrar tu información académica en la pestaña "Información Académica".
+          </AlertDescription>
+        </Alert>
+      )}
 
-          <FormField id="companyName" label="Nombre de la empresa">
-            <Input
-              id="companyName"
-              value={formData.companyName}
-              onChange={(e) => handleInputChange("companyName", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="position" label="Cargo">
-            <Input
-              id="position"
-              value={formData.position}
-              onChange={(e) => handleInputChange("position", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="relatedToCareer" label="Cargo relacionado con la carrera">
-            <Select
-              value={formData.relatedToCareer}
-              onValueChange={(value) => handleInputChange("relatedToCareer", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
-
-          <FormField id="salaryRange" label="Rango salarial actual (SMLV)">
-            <Select value={formData.salaryRange} onValueChange={(value) => handleInputChange("salaryRange", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1-2">Entre 1 y 2</SelectItem>
-                <SelectItem value="2-3">Entre 2 y 3</SelectItem>
-                <SelectItem value="3-4">Entre 3 y 4</SelectItem>
-                <SelectItem value="4-5">Entre 4 y 5</SelectItem>
-                <SelectItem value="4-6">Entre 4 y 6</SelectItem>
-                <SelectItem value="6-7">Entre 6 y 7</SelectItem>
-                <SelectItem value="7-8">Entre 7 y 8</SelectItem>
-                <SelectItem value="8-9">Entre 8 y 9</SelectItem>
-                <SelectItem value="mas-9">Más de 9</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
-
-          <FormField id="timeInCompany" label="Tiempo en la empresa">
-            <Select value={formData.timeInCompany} onValueChange={(value) => handleInputChange("timeInCompany", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="menos-6-meses">Menos de 6 meses</SelectItem>
-                <SelectItem value="6-meses-1-año">Entre 6 meses a 1 año</SelectItem>
-                <SelectItem value="1-2-años">Entre 1 y 2 años</SelectItem>
-                <SelectItem value="2-3-años">Entre 2 y 3 años</SelectItem>
-                <SelectItem value="3-6-años">Entre 3 y 6 años</SelectItem>
-                <SelectItem value="mas-6-años">Más de 6 años</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
-
-          <FormField id="area" label="Área de empleo actual">
-            <Select value={formData.area} onValueChange={(value) => handleInputChange("area", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="desarrollo">Desarrollo de Software</SelectItem>
-                <SelectItem value="analisis">Análisis de Datos</SelectItem>
-                <SelectItem value="redes">Redes y Comunicaciones</SelectItem>
-                <SelectItem value="seguridad">Seguridad Informática</SelectItem>
-                <SelectItem value="soporte">Soporte Técnico</SelectItem>
-                {/* TODO: Get areas from backend */}
-              </SelectContent>
-            </Select>
-          </FormField>
-
-          <FormField id="companyType" label="Tipo de empresa">
-            <Input
-              id="companyType"
-              value={formData.companyType}
-              onChange={(e) => handleInputChange("companyType", e.target.value)}
-            />
-          </FormField>
-
-          <FormField id="updateDate" label="Fecha de actualización">
-            <Input
-              id="updateDate"
-              type="date"
-              value={formData.updateDate}
-              onChange={(e) => handleInputChange("updateDate", e.target.value)}
-            />
-          </FormField>
+      {/* Current Job Section */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <SectionTitle>Trabajo Actual</SectionTitle>
+          <EditButton onClick={() => setIsCurrentJobModalOpen(true)} />
         </div>
+        
+        {currentJob ? (
+          <DataSection title="Información del Trabajo Actual">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <DataField label="Empresa" value={currentJob.companyName} />
+              <DataField label="Cargo" value={currentJob.position} />
+              <DataField label="País" value={currentJob.country} />
+              <DataField label="Relacionado con la carrera" value={currentJob.relatedToProgram ? "Sí" : "No"} />
+              <DataField label="Rango salarial" value={currentJob.salaryRange?.salary} />
+              <DataField label="Tiempo en la empresa" value={currentJob.jobDelay?.label} />
+              <DataField label="Área" value={currentJob.jobArea?.name} />
+              <DataField label="Tipo de empresa" value={currentJob.institutionType?.name} />
+            </div>
+          </DataSection>
+        ) : (
+          <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+            <p className="text-gray-500">No hay información del trabajo actual</p>
+          </div>
+        )}
+      </div>
 
-        <ModalActions onCancel={onClose} isSubmitting={isSubmitting} />
-      </form>
-    </ModalContainer>
+      {/* First Job Section */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <SectionTitle>Primer Trabajo</SectionTitle>
+          <EditButton onClick={() => setIsFirstJobModalOpen(true)} />
+        </div>
+        
+        {firstJob ? (
+          <DataSection title="Información del Primer Trabajo">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <DataField label="Empresa" value={firstJob.companyName} />
+              <DataField label="Cargo" value={firstJob.position} />
+              <DataField label="País" value={firstJob.country} />
+              <DataField label="Relacionado con la carrera" value={firstJob.relatedToProgram ? "Sí" : "No"} />
+              <DataField label="Rango salarial" value={firstJob.salaryRange?.salary} />
+              <DataField label="Tiempo para conseguir trabajo" value={firstJob.jobDelay?.label} />
+              <DataField label="Área" value={firstJob.jobArea?.name} />
+              <DataField label="Tipo de empresa" value={firstJob.institutionType?.name} />
+            </div>
+          </DataSection>
+        ) : (
+          <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+            <p className="text-gray-500">No hay información del primer trabajo</p>
+          </div>
+        )}
+      </div>
+
+      {/* Questions Section */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <SectionTitle>Preguntas Laborales</SectionTitle>
+          <AddButton onClick={() => setIsQuestionsModalOpen(true)} />
+        </div>
+        
+        <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+          <p className="text-gray-500">No hay preguntas laborales registradas</p>
+        </div>
+      </div>
+
+      {/* Modals */}
+      <WorkCurrentJobModal
+        isOpen={isCurrentJobModalOpen}
+        onClose={() => setIsCurrentJobModalOpen(false)}
+        onSave={handleCurrentJobSave}
+        initialData={currentJob ? {
+          companyName: currentJob.companyName,
+          country: currentJob.country,
+          position: currentJob.position,
+          relatedToCareer: currentJob.relatedToProgram ? "si" : "no",
+          salaryRangeId: currentJob.salaryRange?.id?.toString() || "",
+          jobDelayId: currentJob.jobDelay?.id?.toString() || "",
+          jobAreaId: currentJob.jobArea?.id?.toString() || "",
+          institutionTypeId: currentJob.institutionType?.id?.toString() || ""
+        } : {
+          companyName: "",
+          country: "",
+          position: "",
+          relatedToCareer: "",
+          salaryRangeId: "",
+          jobDelayId: "",
+          jobAreaId: "",
+          institutionTypeId: ""
+        }}
+        salaryRanges={salaryRanges}
+        jobDelays={jobDelays}
+        jobAreas={jobAreas}
+        institutionTypes={institutionTypes}
+        hasAcademicInfo={hasAcademicInfo}
+      />
+
+      <WorkFirstJobModal
+        isOpen={isFirstJobModalOpen}
+        onClose={() => setIsFirstJobModalOpen(false)}
+        onSave={handleFirstJobSave}
+        initialData={firstJob ? {
+          companyName: firstJob.companyName,
+          country: firstJob.country,
+          position: firstJob.position,
+          relatedToCareer: firstJob.relatedToProgram ? "si" : "no",
+          salaryRangeId: firstJob.salaryRange?.id?.toString() || "",
+          jobDelayId: firstJob.jobDelay?.id?.toString() || "",
+          jobAreaId: firstJob.jobArea?.id?.toString() || "",
+          institutionTypeId: firstJob.institutionType?.id?.toString() || ""
+        } : {
+          companyName: "",
+          country: "",
+          position: "",
+          relatedToCareer: "",
+          salaryRangeId: "",
+          jobDelayId: "",
+          jobAreaId: "",
+          institutionTypeId: ""
+        }}
+        salaryRanges={salaryRanges}
+        jobDelays={jobDelays}
+        jobAreas={jobAreas}
+        institutionTypes={institutionTypes}
+        hasAcademicInfo={hasAcademicInfo}
+      />
+
+      <WorkQuestionsModal
+        isOpen={isQuestionsModalOpen}
+        onClose={() => setIsQuestionsModalOpen(false)}
+        onSave={() => {}}
+        initialData={{
+          profiles: "",
+          formationRating: "",
+          competencies: [],
+          question1: "",
+          question2: "",
+          question3: ""
+        }}
+      />
+    </div>
   )
 }

@@ -1,44 +1,55 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
+import { 
+  SalaryRangeResponse,
+  JobDelayResponse,
+  JobAreaResponse,
+  JobInstitutionTypeResponse
+} from "@/lib/services/catalog"
 
-import { logger } from "@/lib/logging"
-
-interface FirstJobData {
-  company: string
-  position: string
-  startDate: string
-  endDate: string
-  sector: string
-  contractType: string
-  salary: string
-  city: string
-  country: string
-  companyName: string
-  relatedToCareer: string
-  timeToFirstJob: string
-  salaryRange: string
-  area: string
-  companyType: string
-  updateDate?: string
-}
-
-interface FirstJobModalProps {
+interface WorkFirstJobModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: FirstJobData) => void
-  initialData: FirstJobData
+  onSave: (formData: FirstJobFormData) => void
+  initialData: FirstJobFormData
+  salaryRanges: SalaryRangeResponse[]
+  jobDelays: JobDelayResponse[]
+  jobAreas: JobAreaResponse[]
+  institutionTypes: JobInstitutionTypeResponse[]
+  hasAcademicInfo: boolean
 }
 
-export function FirstJobModal({ isOpen, onClose, onSave, initialData }: FirstJobModalProps) {
-  const [formData, setFormData] = useState<FirstJobData>(initialData)
+interface FirstJobFormData {
+  companyName: string
+  country: string
+  position: string
+  relatedToCareer: string
+  salaryRangeId: string
+  jobDelayId: string
+  jobAreaId: string
+  institutionTypeId: string
+}
+
+export function WorkFirstJobModal({
+  isOpen,
+  onClose,
+  onSave,
+  initialData,
+  salaryRanges,
+  jobDelays,
+  jobAreas,
+  institutionTypes,
+  hasAcademicInfo
+}: WorkFirstJobModalProps) {
+  const [formData, setFormData] = useState<FirstJobFormData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -50,145 +61,170 @@ export function FirstJobModal({ isOpen, onClose, onSave, initialData }: FirstJob
     setIsSubmitting(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
       onSave(formData)
     } catch (error) {
-      logger.error("Error saving data:", error)
+      console.error("Error saving first job:", error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleInputChange = (field: keyof FirstJobData, value: string) => {
-    setFormData((prev: FirstJobData) => ({ ...prev, [field]: value }))
+  const handleInputChange = (field: keyof FirstJobFormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
   }
 
   return (
-    <ModalContainer title="Editar Información Laboral Primer Empleo" isOpen={isOpen} onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField id="companyName" label="Nombre de la empresa">
-            <Input
-              id="companyName"
-              value={formData.companyName}
-              onChange={(e) => handleInputChange("companyName", e.target.value)}
-            />
-          </FormField>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Editar Primer Trabajo</DialogTitle>
+        </DialogHeader>
 
-          <FormField id="country" label="País">
-            <Select
-              value={formData.country}
-              onValueChange={(value) => handleInputChange("country", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="colombia">Colombia</SelectItem>
-                <SelectItem value="argentina">Argentina</SelectItem>
-                <SelectItem value="brasil">Brasil</SelectItem>
-                <SelectItem value="chile">Chile</SelectItem>
-                <SelectItem value="ecuador">Ecuador</SelectItem>
-                <SelectItem value="mexico">México</SelectItem>
-                <SelectItem value="peru">Perú</SelectItem>
-                <SelectItem value="venezuela">Venezuela</SelectItem>
-                <SelectItem value="espana">España</SelectItem>
-                <SelectItem value="estados_unidos">Estados Unidos</SelectItem>
-                <SelectItem value="canada">Canadá</SelectItem>
-                <SelectItem value="otro">Otro</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
+        {!hasAcademicInfo && (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Para mostrar opciones específicas de tu carrera, registra tu información académica en la pestaña "Información Académica".
+            </AlertDescription>
+          </Alert>
+        )}
 
-          <FormField id="position" label="Cargo">
-            <Input
-              id="position"
-              value={formData.position}
-              onChange={(e) => handleInputChange("position", e.target.value)}
-            />
-          </FormField>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField id="companyName" label="Nombre de la empresa">
+              <Input
+                id="companyName"
+                value={formData.companyName}
+                onChange={(e) => handleInputChange("companyName", e.target.value)}
+                placeholder="Ingrese el nombre de la empresa"
+              />
+            </FormField>
 
-          <FormField id="relatedToCareer" label="Cargo relacionado con la carrera">
-            <Select
-              value={formData.relatedToCareer}
-              onValueChange={(value) => handleInputChange("relatedToCareer", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
+            <FormField id="position" label="Cargo">
+              <Input
+                id="position"
+                value={formData.position}
+                onChange={(e) => handleInputChange("position", e.target.value)}
+                placeholder="Ingrese el cargo"
+              />
+            </FormField>
 
-          <FormField id="timeToFirstJob" label="Tiempo promedio primer empleo">
-            <Select
-              value={formData.timeToFirstJob}
-              onValueChange={(value) => handleInputChange("timeToFirstJob", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="menos-6-meses">Menos de 6 meses</SelectItem>
-                <SelectItem value="6-meses-1-año">Entre 6 meses a 1 año</SelectItem>
-                <SelectItem value="1-2-años">Entre 1 y 2 años</SelectItem>
-                <SelectItem value="2-3-años">Entre 2 y 3 años</SelectItem>
-                <SelectItem value="nunca">Nunca he trabajado en nada relacionado</SelectItem>
-                <SelectItem value="otro">Otro</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
+            <FormField id="country" label="País">
+              <Input
+                id="country"
+                value={formData.country}
+                onChange={(e) => handleInputChange("country", e.target.value)}
+                placeholder="Ingrese el país"
+              />
+            </FormField>
 
-          <FormField id="salaryRange" label="Rango salarial primer empleo (SMLV)">
-            <Select value={formData.salaryRange} onValueChange={(value) => handleInputChange("salaryRange", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1-2">Entre 1 y 2</SelectItem>
-                <SelectItem value="2-3">Entre 2 y 3</SelectItem>
-                <SelectItem value="3-4">Entre 3 y 4</SelectItem>
-                <SelectItem value="4-5">Entre 4 y 5</SelectItem>
-                <SelectItem value="4-6">Entre 4 y 6</SelectItem>
-                <SelectItem value="6-7">Entre 6 y 7</SelectItem>
-                <SelectItem value="7-8">Entre 7 y 8</SelectItem>
-                <SelectItem value="8-9">Entre 8 y 9</SelectItem>
-                <SelectItem value="mas-9">Más de 9</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormField>
+            <FormField id="relatedToCareer" label="Cargo relacionado con la carrera">
+              <Select
+                value={formData.relatedToCareer}
+                onValueChange={(value) => handleInputChange("relatedToCareer", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="si">Sí</SelectItem>
+                  <SelectItem value="no">No</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormField>
 
-          <FormField id="area" label="Área de su primer empleo">
-            <Select value={formData.area} onValueChange={(value) => handleInputChange("area", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="desarrollo">Desarrollo de Software</SelectItem>
-                <SelectItem value="analisis">Análisis de Datos</SelectItem>
-                <SelectItem value="redes">Redes y Comunicaciones</SelectItem>
-                <SelectItem value="seguridad">Seguridad Informática</SelectItem>
-                <SelectItem value="soporte">Soporte Técnico</SelectItem>
-                {/* TODO: Get areas from backend */}
-              </SelectContent>
-            </Select>
-          </FormField>
+            <FormField id="salaryRange" label="Rango salarial inicial (SMLV)">
+              <Select 
+                value={formData.salaryRangeId} 
+                onValueChange={(value) => handleInputChange("salaryRangeId", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {salaryRanges.map((range) => (
+                    <SelectItem key={range.id} value={range.id.toString()}>
+                      {range.salary}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
 
-          <FormField id="companyType" label="Tipo de empresa">
-            <Input
-              id="companyType"
-              value={formData.companyType}
-              onChange={(e) => handleInputChange("companyType", e.target.value)}
-            />
-          </FormField>
-        </div>
+            <FormField id="timeToFirstJob" label="Tiempo para conseguir el primer trabajo">
+              <Select 
+                value={formData.jobDelayId} 
+                onValueChange={(value) => handleInputChange("jobDelayId", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobDelays.map((delay) => (
+                    <SelectItem key={delay.id} value={delay.id.toString()}>
+                      {delay.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
 
-        <ModalActions onCancel={onClose} isSubmitting={isSubmitting} />
-      </form>
-    </ModalContainer>
+            <FormField id="area" label="Área del primer trabajo">
+              <Select 
+                value={formData.jobAreaId} 
+                onValueChange={(value) => handleInputChange("jobAreaId", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobAreas.length > 0 ? (
+                    jobAreas.map((area) => (
+                      <SelectItem key={area.id} value={area.id.toString()}>
+                        {area.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="" disabled>
+                      {hasAcademicInfo ? "No hay áreas disponibles" : "Registra tu información académica"}
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </FormField>
+
+            <FormField id="companyType" label="Tipo de empresa">
+              <Select 
+                value={formData.institutionTypeId} 
+                onValueChange={(value) => handleInputChange("institutionTypeId", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {institutionTypes.length > 0 ? (
+                    institutionTypes.map((type) => (
+                      <SelectItem key={type.id} value={type.id.toString()}>
+                        {type.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="" disabled>
+                      {hasAcademicInfo ? "No hay tipos disponibles" : "Registra tu información académica"}
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </FormField>
+          </div>
+
+          <ModalActions
+            onCancel={onClose}
+            isSubmitting={isSubmitting}
+            submitText="Guardar"
+          />
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

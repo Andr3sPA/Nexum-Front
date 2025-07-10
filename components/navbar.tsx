@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ROUTES, getDashboardRoute } from "@/lib/routes"
 import { ROLES } from "@/lib/services/constants/api.constants"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { useState, useEffect } from "react"
 
 interface NavbarUser {
   firstName?: string;
@@ -25,12 +26,15 @@ interface NavbarUser {
 }
 
 export default function Navbar({ user }: { user: NavbarUser }) {
-  // Obtener email del user (login)
-  let email = ""
-  if (typeof window !== "undefined") {
+  const [email, setEmail] = useState("")
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
     const userLogin = LocalStorageService.getItem<any>("user")
-    email = userLogin?.email || ""
-  }
+    setEmail(userLogin?.email || "")
+  }, [])
+
   // Obtener primer nombre y primer apellido del userProfile
   const firstName = user.name?.split(" ")[0] || ""
   const firstLastname = user.lastname?.split(" ")[0] || ""
@@ -76,8 +80,12 @@ export default function Navbar({ user }: { user: NavbarUser }) {
           <div className="flex items-center space-x-3">
             {/* User Info - Desktop */}
             <div className="hidden lg:flex flex-col items-end">
-              <span className="text-sm font-medium text-gray-900">{user.firstName} {user.firstLastname}</span>
-              <span className="text-xs text-gray-500">{user.email}</span>
+              <span className="text-sm font-medium text-gray-900">
+                {isClient ? `${firstName} ${firstLastname}` : "Cargando..."}
+              </span>
+              <span className="text-xs text-gray-500">
+                {isClient ? email : "cargando@email.com"}
+              </span>
             </div>
 
             {/* Enhanced Profile Avatar */}
@@ -111,8 +119,12 @@ export default function Navbar({ user }: { user: NavbarUser }) {
                     <AvatarFallback className="udea-primary text-white font-semibold">{String(user.initials || "U")}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col flex-1">
-                    <span className="text-sm font-semibold text-gray-900">{user.firstName} {user.firstLastname}</span>
-                    <span className="text-xs text-gray-500">{user.email}</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {isClient ? `${firstName} ${firstLastname}` : "Cargando..."}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {isClient ? email : "cargando@email.com"}
+                    </span>
                   </div>
                 </div>
 

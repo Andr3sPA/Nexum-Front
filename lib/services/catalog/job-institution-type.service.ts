@@ -42,6 +42,17 @@ export const JobInstitutionTypeService = {
     return body;
   },
 
+  // Get job institution types by program ID
+  async getAllByProgramId(programId: number): Promise<JobInstitutionTypeResponse[]> {
+    const { body } = await serviceWithAuth(
+      `${CATALOG_JOB_INSTITUTION_TYPE_ENDPOINT}/program?programId=${programId}`,
+      METHOD.get,
+      undefined,
+      CATALOG_HOST
+    );
+    return body;
+  },
+
   // Get job institution type by ID
   async getById(id: number): Promise<JobInstitutionTypeResponse> {
     const { body } = await serviceWithAuth(

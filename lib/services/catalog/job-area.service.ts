@@ -42,6 +42,17 @@ export const JobAreaService = {
     return body;
   },
 
+  // Get job areas by program ID
+  async getAllByProgramId(programId: number): Promise<JobAreaResponse[]> {
+    const { body } = await serviceWithAuth(
+      `${CATALOG_JOB_AREA_ENDPOINT}/program?programId=${programId}`,
+      METHOD.get,
+      undefined,
+      CATALOG_HOST
+    );
+    return body;
+  },
+
   // Get job area by ID
   async getById(id: number): Promise<JobAreaResponse> {
     const { body } = await serviceWithAuth(
