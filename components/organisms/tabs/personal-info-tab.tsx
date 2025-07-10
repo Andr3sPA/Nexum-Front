@@ -67,8 +67,6 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
       setIsLoading(true)
       setError(null)
 
-      console.log("Loading data from userProfile:", userProfileData.id)
-      
       // Get contact information from userProfile
       if (userProfileData.contactInformation) {
         setContactInfo(userProfileData.contactInformation)
@@ -115,11 +113,11 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
         state: formData.state,
         city: formData.city,
         landline: formData.landline,
-        mobile: formData.cellphone,
+        mobile: formData.mobile,
         email: formData.email,
         academicEmail: formData.academicEmail,
         whatsappAuthorization: formData.whatsappAuthorization,
-        isCurrent: true
+        current: true
       }
       console.log("Contact request:", contactRequest)
 

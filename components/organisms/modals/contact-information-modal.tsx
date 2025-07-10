@@ -63,7 +63,7 @@ export function ContactInformationModal({
         mobile: contactData.mobile || "",
         email: contactData.email || "",
         academicEmail: contactData.academicEmail || "",
-        whatsappAuthorization: contactData.whatsappAuthorization || false,
+        whatsappAuthorization: contactData.whatsappAuthorization === true,
       })
     } else {
       setFormData({

@@ -13,7 +13,7 @@ export interface ContactInformationRequest {
   email: string
   academicEmail: string
   whatsappAuthorization: boolean
-  isCurrent: boolean
+  current: boolean
 }
 
 // Response interfaces
@@ -35,7 +35,7 @@ export interface ContactInformationResponse {
   email: string
   academicEmail: string
   whatsappAuthorization: boolean
-  isCurrent: boolean
+  current: boolean
   creationDate: string
   lastUpdate: string
 }

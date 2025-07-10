@@ -66,7 +66,7 @@ export interface DetailedContactInformationResponse {
   email: string;
   academicEmail: string;
   whatsappGroupAuthorized: boolean;
-  isCurrent: boolean;
+  current: boolean;
 }
 
 export interface DetailedFamilyInformationResponse {

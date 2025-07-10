@@ -38,7 +38,7 @@ export function ContactInformationCard({
             <CardTitle className="text-lg">Información de Contacto</CardTitle>
           </div>
           <div className="flex items-center space-x-2">
-            {contactInfo.isCurrent && (
+            {contactInfo.current && (
               <Badge variant="default" className="bg-green-100 text-green-800">
                 Actual
               </Badge>
@@ -88,7 +88,7 @@ export function ContactInformationCard({
             <p className="text-sm font-medium text-gray-500">Celular</p>
             <div className="flex items-center space-x-1">
               <Phone className="h-3 w-3 text-gray-400" />
-              <p className="text-sm">{contactInfo.cellphone || "No disponible"}</p>
+              <p className="text-sm">{contactInfo.mobile || "No disponible"}</p>
             </div>
           </div>
           
