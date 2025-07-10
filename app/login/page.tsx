@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -24,28 +24,32 @@ export default function LoginPage() {
   const searchParams = useSearchParams()
   const success = searchParams.get("success") === "1"
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    e.stopPropagation()
+    console.log("Form submitted, starting login...")
     setError(null)
     try {
+      
       const user = await AuthenticationService.login({ email, password })
+
       LocalStorageService.setItem("user", user)
-      // Buscar y guardar el perfil detallado del usuario
       try {
         const userProfile = await DetailedUserService.getCurrentUserDetailed()
         LocalStorageService.setItem("userProfile", userProfile)
       } catch (profileErr) {
-        // Si falla, continuar pero podrías mostrar un warning si lo deseas
         console.warn("No se pudo obtener el perfil detallado:", profileErr)
       }
+
       let dashboardRoute = "/dashboard"
       if (user.role === ROLES.ADMINISTRATIVE) dashboardRoute = "/admin/dashboard"
       else if (user.role === ROLES.DEAN) dashboardRoute = "/dean/dashboard"
-      router.push(dashboardRoute)
+      await router.replace(dashboardRoute)
     } catch (err: any) {
+      console.error("Login error:", err)
       setError(err.message || "Error al iniciar sesión")
     }
-  }
+  }, [email, password, router])
 
   return (
     <AuthTemplate>

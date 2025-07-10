@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Edit } from "lucide-react"
 import PersonalInfoTab from "@/components/organisms/tabs/personal-info-tab"
-import AcademicInfoTab from "@/components/organisms/tabs/academic-info-tab"
+import { AcademicInfoTab } from "@/components/organisms/tabs/academic-info-tab"
 import CurrentJobModal, { type CurrentJobData } from "@/components/organisms/tabs/work-info-tab"
 import ParticipationTab from "@/components/organisms/tabs/participation-tab"
 import EvaluationTab from "@/components/organisms/tabs/evaluation-tab"
@@ -373,7 +373,14 @@ export default function ProfileTabs({ userProfile }: ProfileTabsProps) {
         </TabsContent>
 
         <TabsContent value="academic" className="mt-6">
-          <AcademicInfoTab userProfile={userProfile} />
+          <AcademicInfoTab 
+            academicData={userProfile?.coursedPrograms || []}
+            postGraduateData={userProfile?.academicEducationList || []}
+            onDataUpdate={() => {
+              // TODO: Implement data update logic
+              logger.info("Academic data updated")
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="work" className="mt-6">

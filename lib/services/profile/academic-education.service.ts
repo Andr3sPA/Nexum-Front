@@ -30,7 +30,7 @@ export const AcademicEducationService = {
   // Get all academic education
   async getAll(): Promise<AcademicEducationResponse[]> {
     const { status, body } = await serviceWithAuth<undefined, AcademicEducationResponse[]>(
-      `/v1/academic-education`,
+      `/academic-education`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo obtener la información académica")
@@ -40,7 +40,7 @@ export const AcademicEducationService = {
   // Get academic education by ID
   async getById(id: number): Promise<AcademicEducationResponse> {
     const { status, body } = await serviceWithAuth<undefined, AcademicEducationResponse>(
-      `/v1/academic-education/${id}`,
+      `/academic-education/${id}`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo obtener la información académica")
@@ -50,7 +50,7 @@ export const AcademicEducationService = {
   // Create new academic education
   async create(data: AcademicEducationRequest): Promise<AcademicEducationResponse> {
     const { status, body } = await serviceWithAuth<AcademicEducationRequest, AcademicEducationResponse>(
-      `/v1/academic-education`,
+      `/academic-education`,
       METHOD.post,
       data
     )
@@ -61,7 +61,7 @@ export const AcademicEducationService = {
   // Update academic education by ID
   async updateById(id: number, data: AcademicEducationRequest): Promise<AcademicEducationResponse> {
     const { status, body } = await serviceWithAuth<AcademicEducationRequest, AcademicEducationResponse>(
-      `/v1/academic-education/${id}`,
+      `/academic-education/${id}`,
       METHOD.put,
       data
     )
@@ -72,7 +72,7 @@ export const AcademicEducationService = {
   // Delete academic education by ID
   async deleteById(id: number): Promise<AcademicEducationResponse> {
     const { status, body } = await serviceWithAuth<undefined, AcademicEducationResponse>(
-      `/v1/academic-education/${id}`,
+      `/academic-education/${id}`,
       METHOD.delete
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo eliminar la información académica")

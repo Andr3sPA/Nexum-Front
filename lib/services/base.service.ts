@@ -28,14 +28,10 @@ export async function service<Request, Response = any>(
   const apiUrl = host ?? defaultApiUrl;
   const body = requestBody ? JSON.stringify(requestBody) : undefined;
   const response = await fetch(`${apiUrl}${endpoint}`, { method, headers, body });
-  const text = await response.text();
-  let parsed;
-  try {
-    parsed = JSON.parse(text);
-  } catch {
-    parsed = text as any;
-  }
-  return { status: response.status, ok: response.ok, body: parsed };
+  const responseBody = await response.json();
+
+  console.log("body:", responseBody)
+  return { status: response.status, ok: response.ok, body: responseBody };
 }
 
 export async function serviceWithAuth<Request, Response = any>(

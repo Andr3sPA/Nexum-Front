@@ -14,20 +14,33 @@ import { logger } from "@/lib/logging"
 export default function ProfilePage() {
   const router = useRouter()
   const [detailedUser, setDetailedUser] = useState<DetailedUserResponse | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [userProfile, setUserProfile] = useState<any>(null)
+  const [user, setUser] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false)
   const hasFetched = useRef(false)
 
-  // Get user info from localStorage - use useMemo to prevent recreations
-  const userProfile = LocalStorageService.getItem<any>("userProfile")
-  const user = LocalStorageService.getItem<any>("user")
-  const userRole = userProfile?.role
+  // Load user data from localStorage on client only
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUserProfile = LocalStorageService.getItem<any>("userProfile")
+      const storedUser = LocalStorageService.getItem<any>("user")
+      setUserProfile(storedUserProfile)
+      setUser(storedUser)
+      setHasLoadedFromStorage(true)
+    }
+  }, [])
 
   useEffect(() => {
+    if (!hasLoadedFromStorage) return // Wait for localStorage to load
+
     if (!userProfile) {
       router.replace("/login")
       return
     }
+    
+    const userRole = userProfile?.role
     
     // Redirect admins and deans to their respective profile pages
     if (userRole === ROLES.ADMINISTRATIVE) {
@@ -61,13 +74,25 @@ export default function ProfilePage() {
 
       fetchDetailedUser()
     }
-  }, [userRole, router])
+  }, [userProfile, hasLoadedFromStorage, router])
 
   // Use detailed user data for navbar
   const firstName = detailedUser?.name?.split(" ")[0] || userProfile?.name?.split(" ")[0] || ""
   const firstLastname = detailedUser?.lastname?.split(" ")[0] || userProfile?.lastname?.split(" ")[0] || ""
   const email = detailedUser?.institutionalEmail || user?.email || ""
   const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
+
+  // Show loading while localStorage is being checked
+  if (!hasLoadedFromStorage) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (

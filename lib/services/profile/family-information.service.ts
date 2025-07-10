@@ -28,7 +28,7 @@ export const FamilyInformationService = {
   // Get family information by ID
   async getById(id: number): Promise<FamilyInformationResponse> {
     const { status, body } = await serviceWithAuth<undefined, FamilyInformationResponse>(
-      `/v1/family-information/${id}`,
+      `/family-information/${id}`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo obtener la información familiar")
@@ -38,7 +38,7 @@ export const FamilyInformationService = {
   // Create new family information
   async create(data: FamilyInformationRequest): Promise<FamilyInformationResponse> {
     const { status, body } = await serviceWithAuth<FamilyInformationRequest, FamilyInformationResponse>(
-      `/v1/family-information`,
+      `/family-information`,
       METHOD.post,
       data
     )
@@ -49,7 +49,7 @@ export const FamilyInformationService = {
   // Update family information by ID
   async updateById(id: number, data: FamilyInformationRequest): Promise<FamilyInformationResponse> {
     const { status, body } = await serviceWithAuth<FamilyInformationRequest, FamilyInformationResponse>(
-      `/v1/family-information/${id}`,
+      `/family-information/${id}`,
       METHOD.put,
       data
     )

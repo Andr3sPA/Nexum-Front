@@ -50,7 +50,7 @@ export const GraduateParticipationService = {
   // Get all graduate participations
   async getAll(): Promise<GraduateParticipationResponse[]> {
     const { status, body } = await serviceWithAuth<undefined, GraduateParticipationResponse[]>(
-      `/v1/graduate-participation`,
+      `/graduate-participation`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudieron obtener las participaciones")
@@ -60,7 +60,7 @@ export const GraduateParticipationService = {
   // Get graduate participation by ID
   async getById(id: number): Promise<GraduateParticipationResponse> {
     const { status, body } = await serviceWithAuth<undefined, GraduateParticipationResponse>(
-      `/v1/graduate-participation/${id}`,
+      `/graduate-participation/${id}`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo obtener la participación")
@@ -70,7 +70,7 @@ export const GraduateParticipationService = {
   // Get graduate participations by user ID
   async getByUserId(userId: string): Promise<GraduateParticipationResponse[]> {
     const { status, body } = await serviceWithAuth<undefined, GraduateParticipationResponse[]>(
-      `/v1/graduate-participation/user?userId=${userId}`,
+      `/graduate-participation/user?userId=${userId}`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudieron obtener las participaciones del usuario")
@@ -80,7 +80,7 @@ export const GraduateParticipationService = {
   // Create new graduate participation
   async create(data: GraduateParticipationRequest): Promise<GraduateParticipationResponse> {
     const { status, body } = await serviceWithAuth<GraduateParticipationRequest, GraduateParticipationResponse>(
-      `/v1/graduate-participation`,
+      `/graduate-participation`,
       METHOD.post,
       data
     )
@@ -91,7 +91,7 @@ export const GraduateParticipationService = {
   // Update graduate participation by ID
   async updateById(id: number, data: GraduateParticipationRequest): Promise<GraduateParticipationResponse> {
     const { status, body } = await serviceWithAuth<GraduateParticipationRequest, GraduateParticipationResponse>(
-      `/v1/graduate-participation/${id}`,
+      `/graduate-participation/${id}`,
       METHOD.put,
       data
     )
@@ -102,7 +102,7 @@ export const GraduateParticipationService = {
   // Delete graduate participation by ID
   async deleteById(id: number): Promise<GraduateParticipationResponse> {
     const { status, body } = await serviceWithAuth<undefined, GraduateParticipationResponse>(
-      `/v1/graduate-participation/${id}`,
+      `/graduate-participation/${id}`,
       METHOD.delete
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo eliminar la participación")

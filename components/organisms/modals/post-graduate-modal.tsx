@@ -1,152 +1,173 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ModalContainer } from "@/components/organisms/modal-container"
-import { FormField } from "@/components/molecules/form-field"
-import { ModalActions } from "@/components/molecules/modal-actions"
-import { Trash2 } from "lucide-react"
+import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ModalActions } from "@/components/molecules/modal-actions"
 import { logger } from "@/lib/logging"
-
-interface PostGraduateEntry {
-  id: number
-  type: string
-  name: string
-  institution: string
-  country: string
-}
+import { AcademicEducationService } from "@/lib/services/profile/academic-education.service"
+import { DetailedAcademicEducationResponse } from "@/lib/services/profile/detailed-user.service"
+import { LocalStorageService } from "@/lib/services/local-storage.service"
 
 interface PostGraduateModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: PostGraduateEntry[]) => void
-  initialData: PostGraduateEntry[]
+  onSave: () => void
+  postGraduateData: DetailedAcademicEducationResponse[]
+  editingItem?: DetailedAcademicEducationResponse | null
 }
 
-export default function PostGraduateModal({ isOpen, onClose, onSave, initialData }: PostGraduateModalProps) {
-  const [formData, setFormData] = useState<PostGraduateEntry[]>(initialData)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+export function PostGraduateModal({
+  isOpen,
+  onClose,
+  onSave,
+  postGraduateData,
+  editingItem
+}: PostGraduateModalProps) {
+  const [type, setType] = useState<"COURSE" | "DIPLOMA" | "WORKSHOP" | "HACKATHON" | "OTHER">("COURSE")
+  const [studyName, setStudyName] = useState("")
+  const [institution, setInstitution] = useState("")
+  const [country, setCountry] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
 
+  // Initialize form when modal opens or editing item changes
   useEffect(() => {
-    setFormData(initialData)
-  }, [initialData])
+    if (isOpen) {
+      if (editingItem) {
+        const validType = editingItem.type as "COURSE" | "DIPLOMA" | "WORKSHOP" | "HACKATHON" | "OTHER"
+        setType(validType || "COURSE")
+        setStudyName(editingItem.studyName || "")
+        setInstitution(editingItem.institution || "")
+        setCountry(editingItem.country || "")
+      } else {
+        setType("COURSE")
+        setStudyName("")
+        setInstitution("")
+        setCountry("")
+      }
+    }
+  }, [isOpen, editingItem])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+  const handleSave = async () => {
+    if (!type || !studyName || !institution || !country) {
+      logger.warn("All fields must be filled")
+      return
+    }
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      onSave(formData)
+      setIsSaving(true)
+      
+      // Get user from localStorage
+      const user = LocalStorageService.getItem<{ id: string }>("user")
+      const userProfile = LocalStorageService.getItem<{ id: string }>("userProfile")
+      const userId = userProfile?.id || user?.id
+      
+      if (!userId) {
+        throw new Error("No se pudo obtener el ID del usuario")
+      }
+
+      if (editingItem) {
+        // Update existing academic education
+        await AcademicEducationService.updateById(editingItem.id, {
+          userId: userId,
+          type: type,
+          studyName: studyName,
+          institution: institution,
+          country: country
+        })
+      } else {
+        // Create new academic education
+        await AcademicEducationService.create({
+          userId: userId,
+          type: type,
+          studyName: studyName,
+          institution: institution,
+          country: country
+        })
+      }
+
+      onSave()
+      onClose()
     } catch (error) {
-      logger.error("Error saving data:", error)
+      logger.error("Error saving post-graduate info:", error)
     } finally {
-      setIsSubmitting(false)
+      setIsSaving(false)
     }
   }
 
-  const handleInputChange = (index: number, field: string, value: string) => {
-    setFormData((prev: PostGraduateEntry[]) => {
-      const newData = [...prev]
-      newData[index] = { ...newData[index], [field]: value }
-      return newData
-    })
-  }
-
-  const removeEntry = (index: number) => {
-    setFormData((prev: PostGraduateEntry[]) => prev.filter((_, i: number) => i !== index))
-  }
+  if (!isOpen) return null
 
   return (
-    <ModalContainer
-      title="Editar Información Académica Pos Pregrado"
-      isOpen={isOpen}
-      onClose={onClose}
-      maxWidth="max-w-4xl"
-    >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {formData.map((entry: PostGraduateEntry, index: number) => (
-          <div key={entry.id} className="p-4 border rounded-lg space-y-4">
-            <div className="flex justify-between items-center">
-              <h4 className="font-medium">Estudio {index + 1}</h4>
-              {formData.length > 1 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeEntry(index)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-4">
+          {editingItem ? "Editar Estudio Post Graduación" : "Nuevo Estudio Post Graduación"}
+        </h2>
+        
+        <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+          <div className="space-y-4">
+            {/* Type */}
+            <div>
+              <Label htmlFor="type">Tipo de Estudio Post Graduación</Label>
+              <Select value={type} onValueChange={(value) => setType(value as "COURSE" | "DIPLOMA" | "WORKSHOP" | "HACKATHON" | "OTHER")}>
+                <SelectTrigger id="type" className="w-full">
+                  <SelectValue placeholder="Selecciona un tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="COURSE">Curso</SelectItem>
+                  <SelectItem value="DIPLOMA">Diploma</SelectItem>
+                  <SelectItem value="WORKSHOP">Taller</SelectItem>
+                  <SelectItem value="HACKATHON">Hackathon</SelectItem>
+                  <SelectItem value="OTHER">Otro</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField id={`type-${index}`} label="Tipo">
-                <Select value={entry.type} onValueChange={(value) => handleInputChange(index, "type", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="curso">Curso</SelectItem>
-                    <SelectItem value="diplomado">Diplomado</SelectItem>
-                    <SelectItem value="taller">Taller</SelectItem>
-                    <SelectItem value="hackaton">Hackaton</SelectItem>
-                    <SelectItem value="otro">Otro</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormField>
 
-              <FormField id={`name-${index}`} label="Nombre del Estudio">
-                <Input value={entry.name} onChange={(e) => handleInputChange(index, "name", e.target.value)} />
-              </FormField>
+            {/* Study Name */}
+            <div>
+              <Label htmlFor="studyName">Nombre del Estudio</Label>
+              <Input
+                id="studyName"
+                value={studyName}
+                onChange={(e) => setStudyName(e.target.value)}
+                placeholder="Ej: Maestría en Informática"
+                required
+              />
+            </div>
 
-              <FormField id={`institution-${index}`} label="Institución">
-                <Select
-                  value={entry.institution}
-                  onValueChange={(value) => handleInputChange(index, "institution", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar institución" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="udea">Universidad de Antioquia</SelectItem>
-                    <SelectItem value="unal">Universidad Nacional</SelectItem>
-                    <SelectItem value="javeriana">Pontificia Universidad Javeriana</SelectItem>
-                    <SelectItem value="andes">Universidad de los Andes</SelectItem>
-                    <SelectItem value="otra">Otra</SelectItem>
-                    {/* TODO: Get institutions from backend */}
-                  </SelectContent>
-                </Select>
-              </FormField>
+            {/* Institution */}
+            <div>
+              <Label htmlFor="institution">Institución</Label>
+              <Input
+                id="institution"
+                value={institution}
+                onChange={(e) => setInstitution(e.target.value)}
+                placeholder="Ej: Universidad de Antioquia"
+                required
+              />
+            </div>
 
-              <FormField id={`country-${index}`} label="País">
-                <Select value={entry.country} onValueChange={(value) => handleInputChange(index, "country", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar país" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="colombia">Colombia</SelectItem>
-                    <SelectItem value="usa">Estados Unidos</SelectItem>
-                    <SelectItem value="spain">España</SelectItem>
-                    <SelectItem value="france">Francia</SelectItem>
-                    <SelectItem value="germany">Alemania</SelectItem>
-                    {/* TODO: Get countries from backend */}
-                  </SelectContent>
-                </Select>
-              </FormField>
+            {/* Country */}
+            <div>
+              <Label htmlFor="country">País</Label>
+              <Input
+                id="country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                placeholder="Ej: Colombia"
+                required
+              />
             </div>
           </div>
-        ))}
 
-        <ModalActions onCancel={onClose} isSubmitting={isSubmitting} />
-      </form>
-    </ModalContainer>
+          <ModalActions
+            onCancel={onClose}
+            isSubmitting={isSaving}
+          />
+        </form>
+      </div>
+    </div>
   )
 }

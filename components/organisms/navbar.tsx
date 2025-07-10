@@ -7,12 +7,23 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-export default function Navbar() {
-  const [user] = useState({
-    name: "Juan Carlos Pérez",
-    email: "juan.perez@udea.edu.co",
-    initials: "JP",
-  })
+interface NavbarProps {
+  user?: {
+    firstName?: string
+    firstLastname?: string
+    name?: string
+    email?: string
+    initials?: string
+    role?: string
+  }
+}
+
+export default function Navbar({ user }: NavbarProps) {
+  const userName = user?.firstName && user?.firstLastname 
+    ? `${user.firstName} ${user.firstLastname}`
+    : user?.name || "Usuario"
+  const userEmail = user?.email || "usuario@udea.edu.co"
+  const userInitials = user?.initials || "U"
 
   return (
     <nav className="border-b bg-white shadow-sm sticky top-0 z-40">
@@ -49,8 +60,8 @@ export default function Navbar() {
           <div className="flex items-center space-x-3">
             {/* User Info - Desktop */}
             <div className="hidden lg:flex flex-col items-end">
-              <span className="text-sm font-medium text-gray-900">{user.name}</span>
-              <span className="text-xs text-gray-500">{user.email}</span>
+              <span className="text-sm font-medium text-gray-900">{userName}</span>
+              <span className="text-xs text-gray-500">{userEmail}</span>
             </div>
 
             {/* Profile Avatar - Always Visible */}
@@ -61,9 +72,9 @@ export default function Navbar() {
                   className="relative h-10 w-10 rounded-full border-2 border-transparent hover:border-primary/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
                   <Avatar className="h-9 w-9">
-                    <AvatarImage src="/placeholder.svg" alt={user.name} />
+                    <AvatarImage src="/placeholder.svg" alt={userName} />
                     <AvatarFallback className="udea-primary text-white font-semibold text-sm bg-gradient-to-br from-primary to-primary-dark">
-                      {user.initials}
+                      {userInitials}
                     </AvatarFallback>
                   </Avatar>
                   {/* Online indicator */}
@@ -74,12 +85,12 @@ export default function Navbar() {
                 {/* User info in dropdown - Mobile */}
                 <div className="flex items-center space-x-3 p-3 lg:hidden border-b">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src="/placeholder.svg" alt={user.name} />
-                    <AvatarFallback className="udea-primary text-white font-semibold">{user.initials}</AvatarFallback>
+                    <AvatarImage src="/placeholder.svg" alt={userName} />
+                    <AvatarFallback className="udea-primary text-white font-semibold">{userInitials}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-900">{user.name}</span>
-                    <span className="text-xs text-gray-500">{user.email}</span>
+                    <span className="text-sm font-medium text-gray-900">{userName}</span>
+                    <span className="text-xs text-gray-500">{userEmail}</span>
                   </div>
                 </div>
 

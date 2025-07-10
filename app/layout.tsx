@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { headers } from 'next/headers';
+import { Providers } from "@/components/providers"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -40,7 +41,11 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         {/* Pass the nonce as a data attribute to make it available to client components */}
-        <div id="root" data-nonce={nonce}>{children}</div>
+        <div id="root" data-nonce={nonce}>
+          <Providers>
+            {children}
+          </Providers>
+        </div>
       </body>
     </html>
   )

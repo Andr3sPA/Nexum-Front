@@ -61,9 +61,9 @@ export interface DetailedContactInformationResponse {
   country: string;
   state: string;
   city: string;
-  landlinePhone: string;
-  mobilePhone: string;
-  personalEmail: string;
+  landline: string;
+  mobile: string;
+  email: string;
   academicEmail: string;
   whatsappGroupAuthorized: boolean;
   isCurrent: boolean;

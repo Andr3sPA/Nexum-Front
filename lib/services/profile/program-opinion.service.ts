@@ -32,7 +32,7 @@ export const ProgramOpinionService = {
   // Get program opinion by ID
   async getById(id: number): Promise<ProgramOpinionResponse> {
     const { status, body } = await serviceWithAuth<undefined, ProgramOpinionResponse>(
-      `/v1/program-opinions/${id}`,
+      `/program-opinions/${id}`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo obtener la opinión del programa")
@@ -42,7 +42,7 @@ export const ProgramOpinionService = {
   // Create new program opinion
   async create(data: ProgramOpinionRequest): Promise<ProgramOpinionResponse> {
     const { status, body } = await serviceWithAuth<ProgramOpinionRequest, ProgramOpinionResponse>(
-      `/v1/program-opinions`,
+      `/program-opinions`,
       METHOD.post,
       data
     )
@@ -53,7 +53,7 @@ export const ProgramOpinionService = {
   // Update program opinion by ID
   async updateById(id: number, data: ProgramOpinionRequest): Promise<ProgramOpinionResponse> {
     const { status, body } = await serviceWithAuth<ProgramOpinionRequest, ProgramOpinionResponse>(
-      `/v1/program-opinions/${id}`,
+      `/program-opinions/${id}`,
       METHOD.put,
       data
     )

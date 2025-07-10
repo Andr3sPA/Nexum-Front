@@ -18,9 +18,13 @@ export default function EgresadoDashboardPage() {
     console.log("userProfile:", userProfile);
     console.log("user.role:", user?.role);
     console.log("ROLES.GRADUATE:", ROLES.GRADUATE);
-    if (!user || user.role !== ROLES.GRADUATE) {
+    if (!user) {
       router.replace("/login")
     }
+    // Temporarily allow all roles to access dashboard
+    // if (!user || user.role !== ROLES.GRADUATE) {
+    //   router.replace("/login")
+    // }
   }, [router, user])
   const firstName = userProfile?.name?.split(" ")[0] || ""
   const firstLastname = userProfile?.lastname?.split(" ")[0] || ""

@@ -64,7 +64,7 @@ export const JobService = {
   // Get all jobs
   async getAll(): Promise<JobResponse[]> {
     const { status, body } = await serviceWithAuth<undefined, JobResponse[]>(
-      `/v1/job`,
+      `/job`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudieron obtener los trabajos")
@@ -74,7 +74,7 @@ export const JobService = {
   // Get job by ID
   async getById(id: number): Promise<JobResponse> {
     const { status, body } = await serviceWithAuth<undefined, JobResponse>(
-      `/v1/job/${id}`,
+      `/job/${id}`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo obtener el trabajo")
@@ -84,7 +84,7 @@ export const JobService = {
   // Get jobs by user ID
   async getByUserId(userId: string): Promise<JobResponse[]> {
     const { status, body } = await serviceWithAuth<undefined, JobResponse[]>(
-      `/v1/job/user?userId=${userId}`,
+      `/job/user?userId=${userId}`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudieron obtener los trabajos del usuario")
@@ -94,7 +94,7 @@ export const JobService = {
   // Create new job
   async create(data: JobRequest): Promise<JobResponse> {
     const { status, body } = await serviceWithAuth<JobRequest, JobResponse>(
-      `/v1/job`,
+      `/job`,
       METHOD.post,
       data
     )
@@ -105,7 +105,7 @@ export const JobService = {
   // Update job by ID
   async updateById(id: number, data: JobRequest): Promise<JobResponse> {
     const { status, body } = await serviceWithAuth<JobRequest, JobResponse>(
-      `/v1/job/${id}`,
+      `/job/${id}`,
       METHOD.put,
       data
     )
@@ -116,7 +116,7 @@ export const JobService = {
   // Delete job by ID
   async deleteById(id: number): Promise<JobResponse> {
     const { status, body } = await serviceWithAuth<undefined, JobResponse>(
-      `/v1/job/${id}`,
+      `/job/${id}`,
       METHOD.delete
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo eliminar el trabajo")

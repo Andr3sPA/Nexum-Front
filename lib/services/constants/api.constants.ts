@@ -1,6 +1,6 @@
 // API Hosts
-export const API_HOST = 'http://localhost:8100/nexum';
-export const CATALOG_HOST = 'http://localhost:8110/nexum';
+export const API_HOST = 'http://localhost:8100/nexum/v1';
+export const CATALOG_HOST = 'http://localhost:8110/nexum/v1';
 
 // Endpoints
 export const AUTHENTICATION_ENDPOINT = '/auth';

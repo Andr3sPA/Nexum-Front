@@ -32,7 +32,7 @@ export const CoursedProgramService = {
   // Get all coursed programs
   async getAll(): Promise<CoursedProgramResponse[]> {
     const { status, body } = await serviceWithAuth<undefined, CoursedProgramResponse[]>(
-      `/v1/coursed-programs`,
+      `/coursed-programs`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudieron obtener los programas cursados")
@@ -42,7 +42,7 @@ export const CoursedProgramService = {
   // Get coursed program by ID
   async getById(id: number): Promise<CoursedProgramResponse> {
     const { status, body } = await serviceWithAuth<undefined, CoursedProgramResponse>(
-      `/v1/coursed-programs/${id}`,
+      `/coursed-programs/${id}`,
       METHOD.get
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo obtener el programa cursado")
@@ -52,7 +52,7 @@ export const CoursedProgramService = {
   // Create new coursed program
   async create(data: CoursedProgramRequest): Promise<CoursedProgramResponse> {
     const { status, body } = await serviceWithAuth<CoursedProgramRequest, CoursedProgramResponse>(
-      `/v1/coursed-programs`,
+      `/coursed-programs`,
       METHOD.post,
       data
     )
@@ -63,7 +63,7 @@ export const CoursedProgramService = {
   // Update coursed program by ID
   async updateById(id: number, data: CoursedProgramRequest): Promise<CoursedProgramResponse> {
     const { status, body } = await serviceWithAuth<CoursedProgramRequest, CoursedProgramResponse>(
-      `/v1/coursed-programs/${id}`,
+      `/coursed-programs/${id}`,
       METHOD.put,
       data
     )
@@ -74,7 +74,7 @@ export const CoursedProgramService = {
   // Delete coursed program by ID
   async deleteById(id: number): Promise<CoursedProgramResponse> {
     const { status, body } = await serviceWithAuth<undefined, CoursedProgramResponse>(
-      `/v1/coursed-programs/${id}`,
+      `/coursed-programs/${id}`,
       METHOD.delete
     )
     if (status !== 200) throw new Error((body as any)?.message || "No se pudo eliminar el programa cursado")
