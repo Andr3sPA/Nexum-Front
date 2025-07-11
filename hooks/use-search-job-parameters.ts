@@ -14,7 +14,7 @@ import {
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { logger } from "@/lib/logging"
 
-interface UseCatalogDataReturn {
+interface UseSearchJobParametersReturn {
   salaryRanges: SalaryRangeResponse[]
   jobDelays: JobDelayResponse[]
   jobAreas: JobAreaResponse[]
@@ -25,16 +25,13 @@ interface UseCatalogDataReturn {
   loadGeneralData: () => Promise<void>
 }
 
-export function useCatalogData(): UseCatalogDataReturn {
+export function useSearchJobParameters(): UseSearchJobParametersReturn {
   const [salaryRanges, setSalaryRanges] = useState<SalaryRangeResponse[]>([])
   const [jobDelays, setJobDelays] = useState<JobDelayResponse[]>([])
   const [jobAreas, setJobAreas] = useState<JobAreaResponse[]>([])
   const [institutionTypes, setInstitutionTypes] = useState<JobInstitutionTypeResponse[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  // Get user profile from localStorage
-  const userProfile = LocalStorageService.getItem<any>("userProfile")
 
   const loadGeneralData = useCallback(async () => {
     try {
@@ -63,11 +60,16 @@ export function useCatalogData(): UseCatalogDataReturn {
       setIsLoading(true)
       setError(null)
 
+      console.log("Loading program-specific data for programId:", programId)
+
       // Load program-specific job areas and institution types
       const [jobAreasData, institutionTypesData] = await Promise.all([
         JobAreaService.getAllByProgramId(programId),
         JobInstitutionTypeService.getAllByProgramId(programId)
       ])
+
+      console.log("Job areas loaded:", jobAreasData)
+      console.log("Institution types loaded:", institutionTypesData)
 
       setJobAreas(jobAreasData)
       setInstitutionTypes(institutionTypesData)
@@ -87,13 +89,37 @@ export function useCatalogData(): UseCatalogDataReturn {
 
   // Auto-load program-specific data if user has a program
   useEffect(() => {
+    // Get user profile from localStorage inside useEffect to avoid infinite loops
+    const userProfile = LocalStorageService.getItem<any>("userProfile")
+    
+    console.log("useEffect triggered - userProfile:", userProfile)
     if (userProfile?.coursedPrograms && userProfile.coursedPrograms.length > 0) {
       const firstProgram = userProfile.coursedPrograms[0]
-      if (firstProgram?.programVersion?.program?.id) {
-        loadProgramSpecificData(firstProgram.programVersion.program.id)
+      console.log("First program:", firstProgram)
+      console.log("First program programVersion:", firstProgram.programVersion)
+      
+      // Try different possible paths to find the program ID
+      const programId = firstProgram.programVersion?.program?.id || 
+                       firstProgram.programVersion?.id ||
+                       firstProgram.id
+      
+      console.log("Trying to find program ID:", {
+        'programVersion.program.id': firstProgram.programVersion?.program?.id,
+        'programVersion.id': firstProgram.programVersion?.id,
+        'firstProgram.id': firstProgram.id,
+        'final programId': programId
+      })
+      
+      if (programId) {
+        console.log("Loading data for program ID:", programId)
+        loadProgramSpecificData(programId)
+      } else {
+        console.log("No program ID found in first program")
       }
+    } else {
+      console.log("No coursed programs found in userProfile")
     }
-  }, [userProfile, loadProgramSpecificData])
+  }, [loadProgramSpecificData]) // Remove userProfile from dependencies
 
   return {
     salaryRanges,

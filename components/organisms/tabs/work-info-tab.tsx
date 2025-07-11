@@ -11,7 +11,7 @@ import { WorkFirstJobModal } from "@/components/organisms/modals/work-first-job-
 import { WorkQuestionsModal } from "@/components/organisms/modals/work-questions-modal"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { JobService, JobRequest, JobResponse } from "@/lib/services/profile/job.service"
-import { useCatalogData } from "@/hooks/use-catalog-data"
+import { useSearchJobParameters } from "@/hooks/use-search-job-parameters"
 import { logger } from "@/lib/logging"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
@@ -38,7 +38,7 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
     isLoading: isLoadingCatalog,
     error: catalogError,
     loadProgramSpecificData
-  } = useCatalogData()
+  } = useSearchJobParameters()
 
   // Get user from localStorage
   const user = useMemo(() => {
@@ -68,8 +68,25 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
   // Get program ID for catalog data
   const programId = useMemo(() => {
     if (userProfileData?.coursedPrograms && userProfileData.coursedPrograms.length > 0) {
-      return userProfileData.coursedPrograms[0]?.programVersion?.program?.id
+      const firstProgram = userProfileData.coursedPrograms[0]
+      console.log("WorkInfoTab - First program:", firstProgram)
+      console.log("WorkInfoTab - First program programVersion:", firstProgram.programVersion)
+      
+      // Try different possible paths to find the program ID
+      const programId = firstProgram.programVersion?.program?.id || 
+                       firstProgram.programVersion?.id ||
+                       firstProgram.id
+      
+      console.log("WorkInfoTab - Trying to find program ID:", {
+        'programVersion.program.id': firstProgram.programVersion?.program?.id,
+        'programVersion.id': firstProgram.programVersion?.id,
+        'firstProgram.id': firstProgram.id,
+        'final programId': programId
+      })
+      
+      return programId
     }
+    console.log("WorkInfoTab - No program ID found in userProfileData")
     return null
   }, [userProfileData])
 
@@ -99,7 +116,9 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
 
   // Load program-specific catalog data when program ID is available
   useEffect(() => {
+    console.log("WorkInfoTab useEffect - programId:", programId)
     if (programId) {
+      console.log("Calling loadProgramSpecificData with programId:", programId)
       loadProgramSpecificData(programId)
     }
   }, [programId, loadProgramSpecificData])
@@ -107,6 +126,9 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
   // Get current and first job
   const currentJob = useMemo(() => jobs.find(job => job.currentJob), [jobs])
   const firstJob = useMemo(() => jobs.find(job => job.firstJob), [jobs])
+
+  // Debug log for modal data
+  console.log("Modal data - jobAreas:", jobAreas, "institutionTypes:", institutionTypes, "hasAcademicInfo:", hasAcademicInfo)
 
   // Current job handlers
   const handleCurrentJobSave = useCallback(async (formData: any) => {
@@ -129,7 +151,7 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
         jobDelayId: parseInt(formData.jobDelayId),
         jobAreaId: parseInt(formData.jobAreaId),
         institutionTypeId: parseInt(formData.institutionTypeId),
-        firstJob: false,
+        firstJob: formData.alsoFirstJob,
         currentJob: true
       }
 
@@ -181,7 +203,7 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
         jobAreaId: parseInt(formData.jobAreaId),
         institutionTypeId: parseInt(formData.institutionTypeId),
         firstJob: true,
-        currentJob: false
+        currentJob: formData.alsoCurrentJob
       }
 
       let savedJob: JobResponse
@@ -333,7 +355,8 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
           salaryRangeId: currentJob.salaryRange?.id?.toString() || "",
           jobDelayId: currentJob.jobDelay?.id?.toString() || "",
           jobAreaId: currentJob.jobArea?.id?.toString() || "",
-          institutionTypeId: currentJob.institutionType?.id?.toString() || ""
+          institutionTypeId: currentJob.institutionType?.id?.toString() || "",
+          alsoFirstJob: currentJob.firstJob
         } : {
           companyName: "",
           country: "",
@@ -342,13 +365,15 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
           salaryRangeId: "",
           jobDelayId: "",
           jobAreaId: "",
-          institutionTypeId: ""
+          institutionTypeId: "",
+          alsoFirstJob: false
         }}
         salaryRanges={salaryRanges}
         jobDelays={jobDelays}
         jobAreas={jobAreas}
         institutionTypes={institutionTypes}
         hasAcademicInfo={hasAcademicInfo}
+        hasFirstJob={!!firstJob}
       />
 
       <WorkFirstJobModal
@@ -363,7 +388,8 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
           salaryRangeId: firstJob.salaryRange?.id?.toString() || "",
           jobDelayId: firstJob.jobDelay?.id?.toString() || "",
           jobAreaId: firstJob.jobArea?.id?.toString() || "",
-          institutionTypeId: firstJob.institutionType?.id?.toString() || ""
+          institutionTypeId: firstJob.institutionType?.id?.toString() || "",
+          alsoCurrentJob: firstJob.currentJob
         } : {
           companyName: "",
           country: "",
@@ -372,13 +398,15 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
           salaryRangeId: "",
           jobDelayId: "",
           jobAreaId: "",
-          institutionTypeId: ""
+          institutionTypeId: "",
+          alsoCurrentJob: false
         }}
         salaryRanges={salaryRanges}
         jobDelays={jobDelays}
         jobAreas={jobAreas}
         institutionTypes={institutionTypes}
         hasAcademicInfo={hasAcademicInfo}
+        hasCurrentJob={!!currentJob}
       />
 
       <WorkQuestionsModal

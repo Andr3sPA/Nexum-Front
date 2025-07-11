@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -25,6 +26,7 @@ interface WorkCurrentJobModalProps {
   jobAreas: JobAreaResponse[]
   institutionTypes: JobInstitutionTypeResponse[]
   hasAcademicInfo: boolean
+  hasFirstJob: boolean
 }
 
 interface CurrentJobFormData {
@@ -36,6 +38,7 @@ interface CurrentJobFormData {
   jobDelayId: string
   jobAreaId: string
   institutionTypeId: string
+  alsoFirstJob: boolean
 }
 
 export function WorkCurrentJobModal({
@@ -47,7 +50,8 @@ export function WorkCurrentJobModal({
   jobDelays,
   jobAreas,
   institutionTypes,
-  hasAcademicInfo
+  hasAcademicInfo,
+  hasFirstJob
 }: WorkCurrentJobModalProps) {
   const [formData, setFormData] = useState<CurrentJobFormData>(initialData)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -69,8 +73,13 @@ export function WorkCurrentJobModal({
     }
   }
 
-  const handleInputChange = (field: keyof CurrentJobFormData, value: string) => {
+  const handleInputChange = (field: keyof CurrentJobFormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  // Ensure all select values are strings
+  const safeValue = (value: any): string => {
+    return value ? String(value) : ""
   }
 
   return (
@@ -120,7 +129,7 @@ export function WorkCurrentJobModal({
 
             <FormField id="relatedToCareer" label="Cargo relacionado con la carrera">
               <Select
-                value={formData.relatedToCareer}
+                value={safeValue(formData.relatedToCareer)}
                 onValueChange={(value) => handleInputChange("relatedToCareer", value)}
               >
                 <SelectTrigger>
@@ -135,7 +144,7 @@ export function WorkCurrentJobModal({
 
             <FormField id="salaryRange" label="Rango salarial actual (SMLV)">
               <Select 
-                value={formData.salaryRangeId} 
+                value={safeValue(formData.salaryRangeId)} 
                 onValueChange={(value) => handleInputChange("salaryRangeId", value)}
               >
                 <SelectTrigger>
@@ -143,7 +152,7 @@ export function WorkCurrentJobModal({
                 </SelectTrigger>
                 <SelectContent>
                   {salaryRanges.map((range) => (
-                    <SelectItem key={range.id} value={range.id.toString()}>
+                    <SelectItem key={range.id} value={String(range.id)}>
                       {range.salary}
                     </SelectItem>
                   ))}
@@ -153,7 +162,7 @@ export function WorkCurrentJobModal({
 
             <FormField id="timeInCompany" label="Tiempo en la empresa">
               <Select 
-                value={formData.jobDelayId} 
+                value={safeValue(formData.jobDelayId)} 
                 onValueChange={(value) => handleInputChange("jobDelayId", value)}
               >
                 <SelectTrigger>
@@ -161,7 +170,7 @@ export function WorkCurrentJobModal({
                 </SelectTrigger>
                 <SelectContent>
                   {jobDelays.map((delay) => (
-                    <SelectItem key={delay.id} value={delay.id.toString()}>
+                    <SelectItem key={delay.id} value={String(delay.id)}>
                       {delay.label}
                     </SelectItem>
                   ))}
@@ -171,7 +180,7 @@ export function WorkCurrentJobModal({
 
             <FormField id="area" label="Área de empleo actual">
               <Select 
-                value={formData.jobAreaId} 
+                value={safeValue(formData.jobAreaId)} 
                 onValueChange={(value) => handleInputChange("jobAreaId", value)}
               >
                 <SelectTrigger>
@@ -180,12 +189,12 @@ export function WorkCurrentJobModal({
                 <SelectContent>
                   {jobAreas.length > 0 ? (
                     jobAreas.map((area) => (
-                      <SelectItem key={area.id} value={area.id.toString()}>
+                      <SelectItem key={area.id} value={String(area.id)}>
                         {area.name}
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem value="" disabled>
+                    <SelectItem value="no-areas" disabled>
                       {hasAcademicInfo ? "No hay áreas disponibles" : "Registra tu información académica"}
                     </SelectItem>
                   )}
@@ -195,7 +204,7 @@ export function WorkCurrentJobModal({
 
             <FormField id="companyType" label="Tipo de empresa">
               <Select 
-                value={formData.institutionTypeId} 
+                value={safeValue(formData.institutionTypeId)} 
                 onValueChange={(value) => handleInputChange("institutionTypeId", value)}
               >
                 <SelectTrigger>
@@ -204,17 +213,25 @@ export function WorkCurrentJobModal({
                 <SelectContent>
                   {institutionTypes.length > 0 ? (
                     institutionTypes.map((type) => (
-                      <SelectItem key={type.id} value={type.id.toString()}>
+                      <SelectItem key={type.id} value={String(type.id)}>
                         {type.name}
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem value="" disabled>
+                    <SelectItem value="no-types" disabled>
                       {hasAcademicInfo ? "No hay tipos disponibles" : "Registra tu información académica"}
                     </SelectItem>
                   )}
                 </SelectContent>
               </Select>
+            </FormField>
+
+            <FormField id="alsoFirstJob" label="También es mi primer trabajo">
+              <Checkbox
+                id="alsoFirstJob"
+                checked={formData.alsoFirstJob}
+                onCheckedChange={(checked) => handleInputChange("alsoFirstJob", checked)}
+              />
             </FormField>
           </div>
 
