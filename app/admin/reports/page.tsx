@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import Navbar from "@/components/navbar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import React, { useState } from "react"
 import { FileSpreadsheet } from "lucide-react"
+import { Button } from "@/components/atoms/button"
+import { Label } from "@/components/atoms/label"
+import { Select } from "@/components/atoms/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Navbar } from "@/components/navbar"
+import { useAuth } from "@/contexts/auth-context"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 
 // Report data row interface
@@ -174,19 +174,15 @@ export default function ReportsPage() {
                     <Label htmlFor="program">Programa</Label>
                     <Select
                       value={reportConfig.program}
-                      onValueChange={(value) => handleConfigChange("program", value)}
+                      onChange={(e) => handleConfigChange("program", e.target.value)}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar programa" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ingenieria-sistemas">Ingeniería de Sistemas</SelectItem>
-                        <SelectItem value="ingenieria-industrial">Ingeniería Industrial</SelectItem>
-                        <SelectItem value="medicina">Medicina</SelectItem>
-                        <SelectItem value="derecho">Derecho</SelectItem>
-                        <SelectItem value="administracion">Administración</SelectItem>
-                        <SelectItem value="todos">Todos los programas</SelectItem>
-                      </SelectContent>
+                      <option value="">Seleccionar programa</option>
+                      <option value="ingenieria-sistemas">Ingeniería de Sistemas</option>
+                      <option value="ingenieria-industrial">Ingeniería Industrial</option>
+                      <option value="medicina">Medicina</option>
+                      <option value="derecho">Derecho</option>
+                      <option value="administracion">Administración</option>
+                      <option value="todos">Todos los programas</option>
                     </Select>
                   </div>
 
@@ -194,17 +190,13 @@ export default function ReportsPage() {
                     <Label htmlFor="gender">Género</Label>
                     <Select
                       value={reportConfig.gender}
-                      onValueChange={(value) => handleConfigChange("gender", value)}
+                      onChange={(e) => handleConfigChange("gender", e.target.value)}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar género" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Hombre">Hombre</SelectItem>
-                        <SelectItem value="Mujer">Mujer</SelectItem>
-                        <SelectItem value="No binario">No binario</SelectItem>
-                        <SelectItem value="todos">Todos</SelectItem>
-                      </SelectContent>
+                      <option value="">Seleccionar género</option>
+                      <option value="Hombre">Hombre</option>
+                      <option value="Mujer">Mujer</option>
+                      <option value="No binario">No binario</option>
+                      <option value="todos">Todos</option>
                     </Select>
                   </div>
 
@@ -212,16 +204,12 @@ export default function ReportsPage() {
                     <Label htmlFor="employmentStatus">Empleabilidad</Label>
                     <Select
                       value={reportConfig.employmentStatus}
-                      onValueChange={(value) => handleConfigChange("employmentStatus", value)}
+                      onChange={(e) => handleConfigChange("employmentStatus", e.target.value)}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar estado" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Empleado">Empleado</SelectItem>
-                        <SelectItem value="Desempleado">Desempleado</SelectItem>
-                        <SelectItem value="todos">Todos</SelectItem>
-                      </SelectContent>
+                      <option value="">Seleccionar estado</option>
+                      <option value="Empleado">Empleado</option>
+                      <option value="Desempleado">Desempleado</option>
+                      <option value="todos">Todos</option>
                     </Select>
                   </div>
 
@@ -229,18 +217,14 @@ export default function ReportsPage() {
                     <Label htmlFor="startYear">Año Inicial</Label>
                     <Select
                       value={reportConfig.startYear}
-                      onValueChange={(value) => handleConfigChange("startYear", value)}
+                      onChange={(e) => handleConfigChange("startYear", e.target.value)}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar año" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
+                      <option value="">Seleccionar año</option>
+                      {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                        <option key={year} value={year.toString()}>
+                          {year}
+                        </option>
+                      ))}
                     </Select>
                   </div>
 
@@ -248,18 +232,14 @@ export default function ReportsPage() {
                     <Label htmlFor="endYear">Año Final</Label>
                     <Select
                       value={reportConfig.endYear}
-                      onValueChange={(value) => handleConfigChange("endYear", value)}
+                      onChange={(e) => handleConfigChange("endYear", e.target.value)}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar año" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
+                      <option value="">Seleccionar año</option>
+                      {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                        <option key={year} value={year.toString()}>
+                          {year}
+                        </option>
+                      ))}
                     </Select>
                   </div>
                 </div>

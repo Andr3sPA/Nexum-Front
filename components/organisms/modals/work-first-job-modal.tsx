@@ -1,13 +1,13 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/molecules/dialog"
+import { Input } from "@/components/atoms/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/atoms/select"
+import { Checkbox } from "@/components/atoms/checkbox"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Alert, AlertDescription } from "@/components/atoms/alert"
 import { AlertCircle } from "lucide-react"
 import { 
   SalaryRangeResponse,
@@ -130,99 +130,79 @@ export function WorkFirstJobModal({
             <FormField id="relatedToCareer" label="Cargo relacionado con la carrera">
               <Select
                 value={safeValue(formData.relatedToCareer)}
-                onValueChange={(value) => handleInputChange("relatedToCareer", value)}
+                onChange={e => handleInputChange("relatedToCareer", e.target.value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="si">Sí</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
-                </SelectContent>
+                <option value="" disabled>Seleccionar</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
               </Select>
             </FormField>
 
             <FormField id="salaryRange" label="Rango salarial inicial (SMLV)">
-              <Select 
-                value={safeValue(formData.salaryRangeId)} 
-                onValueChange={(value) => handleInputChange("salaryRangeId", value)}
+              <Select
+                value={safeValue(formData.salaryRangeId)}
+                onChange={e => handleInputChange("salaryRangeId", e.target.value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar" />
-                </SelectTrigger>
-                <SelectContent>
-                  {salaryRanges.map((range) => (
-                    <SelectItem key={range.id} value={String(range.id)}>
-                      {range.salary}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                <option value="" disabled>Seleccionar</option>
+                {salaryRanges.map((range) => (
+                  <option key={range.id} value={String(range.id)}>
+                    {range.salary}
+                  </option>
+                ))}
               </Select>
             </FormField>
 
             <FormField id="timeToFirstJob" label="Tiempo para conseguir el primer trabajo">
-              <Select 
-                value={safeValue(formData.jobDelayId)} 
-                onValueChange={(value) => handleInputChange("jobDelayId", value)}
+              <Select
+                value={safeValue(formData.jobDelayId)}
+                onChange={e => handleInputChange("jobDelayId", e.target.value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar" />
-                </SelectTrigger>
-                <SelectContent>
-                  {jobDelays.map((delay) => (
-                    <SelectItem key={delay.id} value={String(delay.id)}>
-                      {delay.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                <option value="" disabled>Seleccionar</option>
+                {jobDelays.map((delay) => (
+                  <option key={delay.id} value={String(delay.id)}>
+                    {delay.label}
+                  </option>
+                ))}
               </Select>
             </FormField>
 
             <FormField id="area" label="Área del primer trabajo">
-              <Select 
-                value={safeValue(formData.jobAreaId)} 
-                onValueChange={(value) => handleInputChange("jobAreaId", value)}
+              <Select
+                value={safeValue(formData.jobAreaId)}
+                onChange={e => handleInputChange("jobAreaId", e.target.value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar" />
-                </SelectTrigger>
-                <SelectContent>
-                  {jobAreas.length > 0 ? (
-                    jobAreas.map((area) => (
-                      <SelectItem key={area.id} value={String(area.id)}>
-                        {area.name}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="no-areas" disabled>
-                      {hasAcademicInfo ? "No hay áreas disponibles" : "Registra tu información académica"}
-                    </SelectItem>
-                  )}
-                </SelectContent>
+                <option value="" disabled>Seleccionar</option>
+                {jobAreas.length > 0 ? (
+                  jobAreas.map((area) => (
+                    <option key={area.id} value={String(area.id)}>
+                      {area.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="no-areas" disabled>
+                    {hasAcademicInfo ? "No hay áreas disponibles" : "Registra tu información académica"}
+                  </option>
+                )}
               </Select>
             </FormField>
 
             <FormField id="companyType" label="Tipo de empresa">
-              <Select 
-                value={safeValue(formData.institutionTypeId)} 
-                onValueChange={(value) => handleInputChange("institutionTypeId", value)}
+              <Select
+                value={safeValue(formData.institutionTypeId)}
+                onChange={e => handleInputChange("institutionTypeId", e.target.value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar" />
-                </SelectTrigger>
-                <SelectContent>
-                  {institutionTypes.length > 0 ? (
-                    institutionTypes.map((type) => (
-                      <SelectItem key={type.id} value={String(type.id)}>
-                        {type.name}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="no-types" disabled>
-                      {hasAcademicInfo ? "No hay tipos disponibles" : "Registra tu información académica"}
-                    </SelectItem>
-                  )}
-                </SelectContent>
+                <option value="" disabled>Seleccionar</option>
+                {institutionTypes.length > 0 ? (
+                  institutionTypes.map((type) => (
+                    <option key={type.id} value={String(type.id)}>
+                      {type.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="no-types" disabled>
+                    {hasAcademicInfo ? "No hay tipos disponibles" : "Registra tu información académica"}
+                  </option>
+                )}
               </Select>
             </FormField>
 

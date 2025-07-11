@@ -1,5 +1,5 @@
 import React from "react"
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/atoms/label"
 
 interface EvaluationDisplayProps {
   title: string

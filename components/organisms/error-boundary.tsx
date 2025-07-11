@@ -2,8 +2,8 @@
 
 import type React from "react"
 import { Component, type ErrorInfo, type ReactNode } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/atoms/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
 import { AlertTriangle, RefreshCw } from "lucide-react"
 
 import { logger } from "@/lib/logging"

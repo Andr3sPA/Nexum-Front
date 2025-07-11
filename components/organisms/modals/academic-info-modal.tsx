@@ -1,10 +1,10 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/atoms/button"
+import { Input } from "@/components/atoms/input"
+import { Label } from "@/components/atoms/label"
+import { Select } from "@/components/atoms/select"
 import { ModalActions } from "@/components/molecules/modal-actions"
 import { DynamicInputList } from "@/components/molecules/dynamic-input-list"
 import { useAcademic } from "@/contexts/academic-context"
@@ -144,25 +144,23 @@ export function AcademicInfoModal({
               <Label htmlFor="program">Programa</Label>
               <Select
                 value={selectedProgram}
-                onValueChange={setSelectedProgram}
+                onChange={(e) => setSelectedProgram(e.target.value)}
                 disabled={isLoadingPrograms}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder={isLoadingPrograms ? "Cargando programas..." : "Selecciona un programa"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.isArray(programs) && programs.length > 0 ? (
-                    programs.map((program) => (
-                      <SelectItem key={program.id} value={program.id.toString()}>
-                        {program.name}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="no-programs" disabled>
-                      {isLoadingPrograms ? "Cargando programas..." : "No hay programas disponibles"}
-                    </SelectItem>
-                  )}
-                </SelectContent>
+                <option value="">
+                  {isLoadingPrograms ? "Cargando programas..." : "Selecciona un programa"}
+                </option>
+                {Array.isArray(programs) && programs.length > 0 ? (
+                  programs.map((program) => (
+                    <option key={program.id} value={program.id.toString()}>
+                      {program.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>
+                    {isLoadingPrograms ? "Cargando programas..." : "No hay programas disponibles"}
+                  </option>
+                )}
               </Select>
             </div>
 
@@ -171,33 +169,28 @@ export function AcademicInfoModal({
               <Label htmlFor="version">Versión del Programa</Label>
               <Select
                 value={selectedVersion}
-                onValueChange={setSelectedVersion}
+                onChange={(e) => setSelectedVersion(e.target.value)}
                 disabled={isLoadingVersions || !selectedProgram}
               >
-                <SelectTrigger>
-                  <SelectValue 
-                    placeholder={
-                      !selectedProgram 
-                        ? "Primero selecciona un programa" 
-                        : isLoadingVersions 
-                          ? "Cargando versiones..." 
-                          : "Selecciona una versión"
-                    } 
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.isArray(programVersions) && programVersions.length > 0 ? (
-                    programVersions.map((version) => (
-                      <SelectItem key={version.id} value={version.id.toString()}>
-                        Plan {version.version}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="no-versions" disabled>
-                      No hay versiones disponibles
-                    </SelectItem>
-                  )}
-                </SelectContent>
+                <option value="">
+                  {!selectedProgram 
+                    ? "Primero selecciona un programa" 
+                    : isLoadingVersions 
+                      ? "Cargando versiones..." 
+                      : "Selecciona una versión"
+                  }
+                </option>
+                {Array.isArray(programVersions) && programVersions.length > 0 ? (
+                  programVersions.map((version) => (
+                    <option key={version.id} value={version.id.toString()}>
+                      Plan {version.version}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>
+                    No hay versiones disponibles
+                  </option>
+                )}
               </Select>
             </div>
 

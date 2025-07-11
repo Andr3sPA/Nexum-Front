@@ -1,24 +1,19 @@
 "use client"
 
-import { CardDescription } from "@/components/ui/card"
-
-import type React from "react"
-
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Download, Search } from "lucide-react"
-import { sanitizeInput } from "@/lib/security"
-import Navbar from "@/components/navbar"
+import React, { useState } from "react"
 import { useRouter } from "next/navigation"
+import { Search, Download } from "lucide-react"
+import { Button } from "@/components/atoms/button"
+import { Input } from "@/components/atoms/input"
+import { Select } from "@/components/atoms/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/atoms/table"
+import { Navbar } from "@/components/navbar"
 import { ROUTES } from "@/lib/routes"
-
-import { logger } from "@/lib/logging"
-import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { GraduateSearchService, GraduateSearchResult, GraduateSearchFilters } from "@/lib/services/profile/graduate-search.service"
+import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { logger } from "@/lib/logging"
+import { sanitizeInput } from "@/lib/security"
 
 export default function SearchGraduatesPage() {
   const router = useRouter()
@@ -108,15 +103,11 @@ export default function SearchGraduatesPage() {
                       <label htmlFor="program" className="text-sm font-medium">
                         Programa Académico
                       </label>
-                      <Select value={program} onValueChange={setProgram}>
-                        <SelectTrigger id="program">
-                          <SelectValue placeholder="Seleccionar programa" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="sistemas">Ingeniería de Sistemas</SelectItem>
-                          <SelectItem value="industrial">Ingeniería Industrial</SelectItem>
-                          <SelectItem value="electronica">Ingeniería Electrónica</SelectItem>
-                        </SelectContent>
+                      <Select value={program} onChange={(e) => setProgram(e.target.value)}>
+                        <option value="">Seleccionar programa</option>
+                        <option value="sistemas">Ingeniería de Sistemas</option>
+                        <option value="industrial">Ingeniería Industrial</option>
+                        <option value="electronica">Ingeniería Electrónica</option>
                       </Select>
                     </div>
 
@@ -124,17 +115,13 @@ export default function SearchGraduatesPage() {
                       <label htmlFor="graduationYear" className="text-sm font-medium">
                         Año de Graduación
                       </label>
-                      <Select value={graduationYear} onValueChange={setGraduationYear}>
-                        <SelectTrigger id="graduationYear">
-                          <SelectValue placeholder="Seleccionar año" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((year) => (
-                            <SelectItem key={year} value={year.toString()}>
-                              {year}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
+                      <Select value={graduationYear} onChange={(e) => setGraduationYear(e.target.value)}>
+                        <option value="">Seleccionar año</option>
+                        {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                          <option key={year} value={year.toString()}>
+                            {year}
+                          </option>
+                        ))}
                       </Select>
                     </div>
 
@@ -142,16 +129,12 @@ export default function SearchGraduatesPage() {
                       <label htmlFor="location" className="text-sm font-medium">
                         Ubicación
                       </label>
-                      <Select value={location} onValueChange={setLocation}>
-                        <SelectTrigger id="location">
-                          <SelectValue placeholder="Seleccionar ubicación" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="medellin">Medellín</SelectItem>
-                          <SelectItem value="bogota">Bogotá</SelectItem>
-                          <SelectItem value="cali">Cali</SelectItem>
-                          <SelectItem value="internacional">Internacional</SelectItem>
-                        </SelectContent>
+                      <Select value={location} onChange={(e) => setLocation(e.target.value)}>
+                        <option value="">Seleccionar ubicación</option>
+                        <option value="medellin">Medellín</option>
+                        <option value="bogota">Bogotá</option>
+                        <option value="cali">Cali</option>
+                        <option value="internacional">Internacional</option>
                       </Select>
                     </div>
                   </div>

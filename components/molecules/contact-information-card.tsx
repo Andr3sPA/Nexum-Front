@@ -1,9 +1,9 @@
 "use client"
 
 import React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Badge } from "@/components/atoms/badge"
+import { Button } from "@/components/atoms/button"
 import { Edit, MapPin, Phone, Mail, Calendar } from "lucide-react"
 import { ContactInformationResponse } from "@/lib/services/profile/contact-information.service"
 

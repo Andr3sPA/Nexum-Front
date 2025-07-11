@@ -1,10 +1,10 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/atoms/button"
+import { Input } from "@/components/atoms/input"
+import { Label } from "@/components/atoms/label"
+import { Select } from "@/components/atoms/select"
 import { ModalActions } from "@/components/molecules/modal-actions"
 import { logger } from "@/lib/logging"
 import { AcademicEducationService } from "@/lib/services/profile/academic-education.service"
@@ -111,17 +111,16 @@ export function PostGraduateModal({
             {/* Type */}
             <div>
               <Label htmlFor="type">Tipo de Estudio Post Graduación</Label>
-              <Select value={type} onValueChange={(value) => setType(value as "COURSE" | "DIPLOMA" | "WORKSHOP" | "HACKATHON" | "OTHER")}>
-                <SelectTrigger id="type" className="w-full">
-                  <SelectValue placeholder="Selecciona un tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="COURSE">Curso</SelectItem>
-                  <SelectItem value="DIPLOMA">Diploma</SelectItem>
-                  <SelectItem value="WORKSHOP">Taller</SelectItem>
-                  <SelectItem value="HACKATHON">Hackathon</SelectItem>
-                  <SelectItem value="OTHER">Otro</SelectItem>
-                </SelectContent>
+              <Select 
+                value={type} 
+                onChange={(e) => setType(e.target.value as "COURSE" | "DIPLOMA" | "WORKSHOP" | "HACKATHON" | "OTHER")}
+              >
+                <option value="">Selecciona un tipo</option>
+                <option value="COURSE">Curso</option>
+                <option value="DIPLOMA">Diploma</option>
+                <option value="WORKSHOP">Taller</option>
+                <option value="HACKATHON">Hackathon</option>
+                <option value="OTHER">Otro</option>
               </Select>
             </div>
 

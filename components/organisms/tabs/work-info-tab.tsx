@@ -13,7 +13,7 @@ import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { JobService, JobRequest, JobResponse } from "@/lib/services/profile/job.service"
 import { useSearchJobParameters } from "@/hooks/use-search-job-parameters"
 import { logger } from "@/lib/logging"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Alert, AlertDescription } from "@/components/atoms/alert"
 import { AlertCircle } from "lucide-react"
 
 interface WorkInfoTabProps {

@@ -1,11 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/molecules/dialog"
+import { Button } from "@/components/atoms/button"
+import { Input } from "@/components/atoms/input"
+import { Label } from "@/components/atoms/label"
+import { Select } from "@/components/atoms/select"
 import { ModalActions } from "@/components/molecules/modal-actions"
 import { FamilyInformationResponse } from "@/lib/services/profile/family-information.service"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
@@ -99,18 +99,14 @@ export function FamilyInformationModal({
               <Label htmlFor="maritalState">Estado Civil</Label>
               <Select
                 value={formData.maritalState}
-                onValueChange={(value) => handleInputChange("maritalState", value as any)}
+                onChange={(e) => handleInputChange("maritalState", e.target.value as any)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccione el estado civil" />
-                </SelectTrigger>
-                <SelectContent>
-                  {maritalStateOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                <option value="">Seleccione el estado civil</option>
+                {maritalStateOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </Select>
             </div>
 

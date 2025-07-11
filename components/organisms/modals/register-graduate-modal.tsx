@@ -1,15 +1,13 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Button } from "@/components/atoms/button"
+import { Input } from "@/components/atoms/input"
+import { Label } from "@/components/atoms/label"
+import { Select } from "@/components/atoms/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
+import { DialogDescription, DialogFooter } from "@/components/molecules/dialog"
 import { ROUTES } from "@/lib/routes"
 import { logger } from "@/lib/logging"
 
@@ -115,15 +113,11 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
           </div>
           <div className="space-y-2">
             <Label htmlFor="modal-idType">Tipo de Identificación *</Label>
-            <Select value={formData.idType} onValueChange={(value) => handleInputChange("idType", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cc">Cédula de Ciudadanía</SelectItem>
-                <SelectItem value="ce">Cédula de Extranjería</SelectItem>
-                <SelectItem value="passport">Pasaporte</SelectItem>
-              </SelectContent>
+            <Select value={formData.idType} onChange={(e) => handleInputChange("idType", e.target.value)}>
+              <option value="">Seleccionar</option>
+              <option value="cc">Cédula de Ciudadanía</option>
+              <option value="ce">Cédula de Extranjería</option>
+              <option value="passport">Pasaporte</option>
             </Select>
           </div>
           <div className="space-y-2">
@@ -181,15 +175,11 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
           </div>
           <div className="space-y-2">
             <Label htmlFor="modal-gender">Género *</Label>
-            <Select value={formData.gender} onValueChange={(value) => handleInputChange("gender", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar género" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="hombre">Hombre</SelectItem>
-                <SelectItem value="mujer">Mujer</SelectItem>
-                <SelectItem value="no-binario">No binario</SelectItem>
-              </SelectContent>
+            <Select value={formData.gender} onChange={(e) => handleInputChange("gender", e.target.value)}>
+              <option value="">Seleccionar género</option>
+              <option value="hombre">Hombre</option>
+              <option value="mujer">Mujer</option>
+              <option value="no-binario">No binario</option>
             </Select>
           </div>
           <div className="space-y-2">

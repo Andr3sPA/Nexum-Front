@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/molecules/dialog"
 
 interface ModalContainerProps {
   title: string
@@ -16,12 +16,12 @@ export function ModalContainer({ title, isOpen, onClose, children, maxWidth = "m
         className={`
           ${maxWidth} 
           max-h-[85vh] 
-          overflow-y-auto 
           bg-white 
           border 
           border-gray-200 
           shadow-2xl 
           rounded-lg
+          overflow-visible
         `}
       >
         <DialogHeader className="space-y-3">
@@ -29,7 +29,7 @@ export function ModalContainer({ title, isOpen, onClose, children, maxWidth = "m
             {title}
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">{children}</div>
+        <div className="space-y-4 overflow-y-auto max-h-[calc(85vh-120px)]">{children}</div>
       </DialogContent>
     </Dialog>
   )

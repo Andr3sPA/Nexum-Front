@@ -1,5 +1,5 @@
 import React from "react"
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/atoms/input"
 import { RemoveButton } from "@/components/atoms/remove-button"
 
 interface DynamicInputProps {

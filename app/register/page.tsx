@@ -1,15 +1,13 @@
 "use client"
 
-import React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/atoms/button"
+import { Input } from "@/components/atoms/input"
+import { Label } from "@/components/atoms/label"
+import { Select } from "@/components/atoms/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
 import { AuthenticationService } from "@/lib/services/profile/auth.service"
 import { IdentityDocumentTypeService, IdentityDocumentTypeResponse } from "@/lib/services/catalog/identity-document-type.service"
 
@@ -88,17 +86,13 @@ export default function RegisterPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="idType">Tipo de Identificación *</Label>
-                <Select value={formData.idType} onValueChange={(value) => handleInputChange("idType", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {documentTypes.map((type) => (
-                      <SelectItem key={type.id} value={String(type.id)}>
-                        {type.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                <Select value={formData.idType} onChange={(e) => handleInputChange("idType", e.target.value)}>
+                  <option value="">Seleccionar</option>
+                  {documentTypes.map((type) => (
+                    <option key={type.id} value={String(type.id)}>
+                      {type.name}
+                    </option>
+                  ))}
                 </Select>
               </div>
               <div className="space-y-2">
@@ -156,16 +150,12 @@ export default function RegisterPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="gender">Género *</Label>
-                <Select value={formData.gender} onValueChange={(value) => handleInputChange("gender", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar género" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Hombre">Hombre</SelectItem>
-                    <SelectItem value="Mujer">Mujer</SelectItem>
-                    <SelectItem value="No binario">No binario</SelectItem>
-                    <SelectItem value="Otro">Otro</SelectItem>
-                  </SelectContent>
+                <Select value={formData.gender} onChange={(e) => handleInputChange("gender", e.target.value)}>
+                  <option value="">Seleccionar género</option>
+                  <option value="Hombre">Hombre</option>
+                  <option value="Mujer">Mujer</option>
+                  <option value="No binario">No binario</option>
+                  <option value="Otro">Otro</option>
                 </Select>
               </div>
               <div className="space-y-2">

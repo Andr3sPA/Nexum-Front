@@ -1,6 +1,6 @@
 import React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Badge } from "@/components/atoms/badge"
 import { DataField } from "@/components/atoms/data-field"
 import { EvaluationDisplay } from "@/components/molecules/evaluation-display"
 import { DetailedCoursedProgramResponse } from "@/lib/services/profile/detailed-user.service"

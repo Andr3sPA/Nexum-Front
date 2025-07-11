@@ -3,9 +3,9 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/atoms/input"
+import { Textarea } from "@/components/atoms/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/atoms/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"

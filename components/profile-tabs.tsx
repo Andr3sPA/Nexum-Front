@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/molecules/tabs"
 import PersonalInfoTab from "@/components/organisms/tabs/personal-info-tab"
 import { AcademicInfoTab } from "@/components/organisms/tabs/academic-info-tab"
 import WorkInfoTab from "@/components/organisms/tabs/work-info-tab"

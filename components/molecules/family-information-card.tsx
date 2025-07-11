@@ -1,9 +1,9 @@
 "use client"
 
 import React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Badge } from "@/components/atoms/badge"
+import { Button } from "@/components/atoms/button"
 import { Edit, Users, Baby } from "lucide-react"
 import { FamilyInformationResponse } from "@/lib/services/profile/family-information.service"
 

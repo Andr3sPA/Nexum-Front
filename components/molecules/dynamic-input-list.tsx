@@ -1,5 +1,5 @@
 import React from "react"
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/atoms/label"
 import { DynamicInput } from "@/components/atoms/dynamic-input"
 import { AddButton } from "@/components/atoms/add-button"
 

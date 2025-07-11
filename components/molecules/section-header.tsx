@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { CardHeader, CardTitle } from "@/components/ui/card"
+import { CardHeader, CardTitle } from "@/components/molecules/card"
 
 interface SectionHeaderProps {
   title: string

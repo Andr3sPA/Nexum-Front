@@ -8,7 +8,7 @@ import { ROLES } from "@/lib/services/constants/api.constants"
 import { ROUTES } from "@/lib/routes"
 import Navbar from "@/components/navbar"
 import ProfileTabs from "@/components/profile-tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
 import { logger } from "@/lib/logging"
 
 export default function ProfilePage() {

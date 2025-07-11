@@ -1,10 +1,8 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect, useCallback, useMemo } from "react"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import React, { useState, useEffect, useCallback, useMemo } from "react"
+import { Input } from "@/components/atoms/input"
+import { Select } from "@/components/atoms/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
@@ -177,17 +175,13 @@ export default function PersonalInfoModal({ isOpen, onClose, onSave, initialData
     if (type === "select") {
       return (
         <FormField key={id} id={id} label={label}>
-          <Select value={value} onValueChange={(val) => handleInputChange(id as keyof PersonalInfoData, val)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              {options?.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
+          <Select value={value} onChange={(e) => handleInputChange(id as keyof PersonalInfoData, e.target.value)}>
+            <option value="">Seleccionar</option>
+            {options?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </Select>
         </FormField>
       )

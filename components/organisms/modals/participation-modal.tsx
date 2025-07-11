@@ -3,9 +3,9 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/atoms/input"
+import { Textarea } from "@/components/atoms/textarea"
+import { Select } from "@/components/atoms/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
@@ -68,20 +68,19 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
     <ModalContainer title="Editar Participación" isOpen={isOpen} onClose={onClose} maxWidth="max-w-4xl">
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField id="participation" label="Desde su egreso ha participado en">
-          <Select value={formData.participation} onValueChange={(value) => handleInputChange("participation", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="startups">Startups</SelectItem>
-              <SelectItem value="emprendimientos">Emprendimientos</SelectItem>
-              <SelectItem value="empresas">Empresas</SelectItem>
-              <SelectItem value="patentes">Patentes</SelectItem>
-              <SelectItem value="registros-software">Registros de software</SelectItem>
-              <SelectItem value="ventures">Ventures</SelectItem>
-              <SelectItem value="concursos-innovacion">Concursos de innovación</SelectItem>
-              <SelectItem value="otros">Otros procesos de innovación</SelectItem>
-            </SelectContent>
+          <Select 
+            value={formData.participation} 
+            onChange={(e) => handleInputChange("participation", e.target.value)}
+          >
+            <option value="">Seleccionar</option>
+            <option value="startups">Startups</option>
+            <option value="emprendimientos">Emprendimientos</option>
+            <option value="empresas">Empresas</option>
+            <option value="patentes">Patentes</option>
+            <option value="registros-software">Registros de software</option>
+            <option value="ventures">Ventures</option>
+            <option value="concursos-innovacion">Concursos de innovación</option>
+            <option value="otros">Otros procesos de innovación</option>
           </Select>
         </FormField>
 
@@ -89,30 +88,22 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
           <FormField id="conferenceInterest" label="Desea participar como conferencista en la UDEA">
             <Select
               value={formData.conferenceInterest}
-              onValueChange={(value) => handleInputChange("conferenceInterest", value)}
+              onChange={(e) => handleInputChange("conferenceInterest", e.target.value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
+              <option value="">Seleccionar</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
             </Select>
           </FormField>
 
           <FormField id="professorInterest" label="Desea participar como profesor en la UDEA">
             <Select
               value={formData.professorInterest}
-              onValueChange={(value) => handleInputChange("professorInterest", value)}
+              onChange={(e) => handleInputChange("professorInterest", e.target.value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
+              <option value="">Seleccionar</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
             </Select>
           </FormField>
 
@@ -122,90 +113,66 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
           >
             <Select
               value={formData.nonFormalProfessorInterest}
-              onValueChange={(value) => handleInputChange("nonFormalProfessorInterest", value)}
+              onChange={(e) => handleInputChange("nonFormalProfessorInterest", e.target.value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
+              <option value="">Seleccionar</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
             </Select>
           </FormField>
 
           <FormField id="postgraduateInterest" label="Desearía participar como estudiante de posgrado de la UDEA">
             <Select
               value={formData.postgraduateInterest}
-              onValueChange={(value) => handleInputChange("postgraduateInterest", value)}
+              onChange={(e) => handleInputChange("postgraduateInterest", e.target.value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
+              <option value="">Seleccionar</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
             </Select>
           </FormField>
 
           <FormField id="nonFormalStudentInterest" label="Desearía participar como estudiante de formación no formal">
             <Select
               value={formData.nonFormalStudentInterest}
-              onValueChange={(value) => handleInputChange("nonFormalStudentInterest", value)}
+              onChange={(e) => handleInputChange("nonFormalStudentInterest", e.target.value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
+              <option value="">Seleccionar</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
             </Select>
           </FormField>
 
           <FormField id="representativeInterest" label="Te gustaría ser representante de los egresados">
             <Select
               value={formData.representativeInterest}
-              onValueChange={(value) => handleInputChange("representativeInterest", value)}
+              onChange={(e) => handleInputChange("representativeInterest", e.target.value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
+              <option value="">Seleccionar</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
             </Select>
           </FormField>
 
           <FormField id="meetingsInterest" label="Te gustaría participar en encuentros de egresados">
             <Select
               value={formData.meetingsInterest}
-              onValueChange={(value) => handleInputChange("meetingsInterest", value)}
+              onChange={(e) => handleInputChange("meetingsInterest", e.target.value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
+              <option value="">Seleccionar</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
             </Select>
           </FormField>
 
           <FormField id="activitiesInterest" label="Te gustaría escribir o participar en actividades para egresados">
             <Select
               value={formData.activitiesInterest}
-              onValueChange={(value) => handleInputChange("activitiesInterest", value)}
+              onChange={(e) => handleInputChange("activitiesInterest", e.target.value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="si">Sí</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-              </SelectContent>
+              <option value="">Seleccionar</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
             </Select>
           </FormField>
         </div>

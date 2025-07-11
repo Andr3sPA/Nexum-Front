@@ -3,13 +3,13 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/atoms/label"
+import { Textarea } from "@/components/atoms/textarea"
+import { Select } from "@/components/atoms/select"
 import { ModalContainer } from "@/components/organisms/modal-container"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
-import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
+import { MultiSelect, type MultiSelectOption } from "@/components/molecules/multi-select"
 
 import { logger } from "@/lib/logging"
 
@@ -88,18 +88,14 @@ export function WorkQuestionsModal({ isOpen, onClose, onSave, initialData }: Wor
         <FormField id="formationRating" label="El perfil de formación ofrecido por el programa para su desarrollo profesional y laboral, ha sido adecuado? (califique de 1 a 5)">
           <Select
             value={formData.formationRating}
-            onValueChange={(value) => handleInputChange("formationRating", value)}
+            onChange={(e) => handleInputChange("formationRating", e.target.value)}
           >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1</SelectItem>
-              <SelectItem value="2">2</SelectItem>
-              <SelectItem value="3">3</SelectItem>
-              <SelectItem value="4">4</SelectItem>
-              <SelectItem value="5">5</SelectItem>
-            </SelectContent>
+            <option value="">Seleccionar</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </Select>
         </FormField>
 

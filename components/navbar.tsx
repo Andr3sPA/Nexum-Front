@@ -2,15 +2,14 @@
 
 import Link from "next/link"
 import { User, LogOut, Shield, GraduationCap } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/atoms/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from "@/components/molecules/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/atoms/avatar"
 import { ROUTES, getDashboardRoute } from "@/lib/routes"
 import { ROLES } from "@/lib/services/constants/api.constants"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
@@ -90,15 +89,15 @@ export default function Navbar({ user }: { user: NavbarUser }) {
 
             {/* Enhanced Profile Avatar */}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger>
                 <Button
                   variant="ghost"
-                  className="relative h-12 w-12 rounded-full border-2 border-transparent hover:border-primary/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/20 group"
+                  className="relative h-12 w-12 rounded-full border-2 border-transparent hover:border-primary/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/20 group p-0"
                 >
                   <div className="relative">
                     <Avatar className="h-10 w-10 ring-2 ring-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                      <AvatarImage src="/placeholder.svg" alt={user.name} />
-                      <AvatarFallback className="udea-primary text-white font-semibold text-sm bg-gradient-to-br from-primary via-primary-dark to-primary-light">
+                      <AvatarImage src="" alt={user.name} />
+                      <AvatarFallback className="bg-gradient-to-br from-[#026937] via-[#35944b] to-[#43b649] text-white font-semibold text-sm">
                         {String(user.initials || "U")}
                       </AvatarFallback>
                     </Avatar>
@@ -111,12 +110,14 @@ export default function Navbar({ user }: { user: NavbarUser }) {
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64" align="end" forceMount>
+              <DropdownMenuContent className="w-64" align="end">
                 {/* Enhanced User info in dropdown - No role display */}
                 <div className="flex items-center space-x-3 p-4 border-b bg-gradient-to-r from-gray-50 to-gray-100">
                   <Avatar className="h-12 w-12 ring-2 ring-primary/20">
-                    <AvatarImage src="/placeholder.svg" alt={user.name} />
-                    <AvatarFallback className="udea-primary text-white font-semibold">{String(user.initials || "U")}</AvatarFallback>
+                    <AvatarImage src="" alt={user.name} />
+                    <AvatarFallback className="bg-gradient-to-br from-[#026937] via-[#35944b] to-[#43b649] text-white font-semibold">
+                      {String(user.initials || "U")}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col flex-1">
                     <span className="text-sm font-semibold text-gray-900">
@@ -129,7 +130,7 @@ export default function Navbar({ user }: { user: NavbarUser }) {
                 </div>
 
                 {/* Show profile option for all users */}
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem>
                   <Link 
                     href={
                       user.role === ROLES.ADMINISTRATIVE 
@@ -138,18 +139,17 @@ export default function Navbar({ user }: { user: NavbarUser }) {
                         ? ROUTES.DEAN.VIEW_PROFILE 
                         : ROUTES.PROFILE
                     } 
-                    className="cursor-pointer w-full"
+                    className="cursor-pointer w-full flex items-center"
                   >
                     <User className="mr-3 h-4 w-4" />
                     <span>Mi Perfil</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
 
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem>
                   <Link
                     href={ROUTES.LOGIN}
-                    className="cursor-pointer w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="cursor-pointer w-full flex items-center text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
                     <LogOut className="mr-3 h-4 w-4" />
                     <span>Cerrar Sesión</span>

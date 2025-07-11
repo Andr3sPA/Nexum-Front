@@ -1,9 +1,9 @@
 "use client"
 
 import React, { useState, useEffect, useMemo } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/atoms/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Badge } from "@/components/atoms/badge"
 import { EditButton } from "@/components/atoms/edit-button"
 import { AddButton } from "@/components/atoms/add-button"
 import { SectionTitle } from "@/components/atoms/section-title"
@@ -15,7 +15,7 @@ import { PostGraduateCard } from "@/components/molecules/post-graduate-card"
 import { useAcademic } from "@/contexts/academic-context"
 import { logger } from "@/lib/logging"
 import { DetailedCoursedProgramResponse, DetailedAcademicEducationResponse } from "@/lib/services/profile/detailed-user.service"
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/atoms/label"
 
 interface AcademicInfoTabProps {
   academicData: DetailedCoursedProgramResponse[]

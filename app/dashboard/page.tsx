@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import Navbar from "@/components/navbar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
 import { User, ArrowRight, Users, BarChart3 } from "lucide-react"
 import { ROUTES } from "@/lib/routes"
 import { useEffect } from "react"

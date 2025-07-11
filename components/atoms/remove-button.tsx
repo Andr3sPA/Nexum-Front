@@ -1,5 +1,5 @@
 import React from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/atoms/button"
 import { X } from "lucide-react"
 
 interface RemoveButtonProps {
