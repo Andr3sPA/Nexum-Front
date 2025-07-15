@@ -1,18 +1,19 @@
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { DataSection } from "@/components/organisms/data-section"
-import { DataField } from "@/components/atoms/data-field"
-import { EditButton } from "@/components/atoms/edit-button"
-import { SectionTitle } from "@/components/atoms/section-title"
+import { TabContainer, TabSection, TabDataField } from "@/components/organisms/tab-container"
 import { ContactInformationModal } from "@/components/organisms/modals/contact-information-modal"
 import { FamilyInformationModal } from "@/components/organisms/modals/family-information-modal"
 import { ContactInformationCard } from "@/components/molecules/contact-information-card"
 import { FamilyInformationCard } from "@/components/molecules/family-information-card"
+import { RegistrationInfoCard } from "@/components/atoms/registration-info-card"
+import { EmptyStateCard } from "@/components/atoms/empty-state-card"
+import { AddButton } from "@/components/atoms/add-button"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { ContactInformationResponse, ContactInformationService, ContactInformationRequest } from "@/lib/services/profile/contact-information.service"
 import { FamilyInformationResponse, FamilyInformationService, FamilyInformationRequest } from "@/lib/services/profile/family-information.service"
 import { logger } from "@/lib/logging"
+import { MapPin, Users } from "lucide-react"
 
 interface PersonalInfoTabProps {
   userProfile?: any;
@@ -214,93 +215,55 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
     setIsFamilyModalOpen(false)
   }
 
-  if (isLoading && !hasInitialized) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Cargando información...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center py-8">
-          <div className="text-red-600 text-lg mb-2">Error</div>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button 
-            onClick={() => {
-              setError(null)
-              setHasInitialized(false)
-              fetchData()
-            }}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Reintentar
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Registration Information (Read-only) */}
-      <DataSection title="Información de Registro" subtitle="Esta información no puede ser modificada">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <DataField label="Correo Electrónico" value={registrationData.email} />
-          <DataField label="Tipo de Identificación" value={registrationData.idType} />
-          <DataField label="Número de Identificación" value={registrationData.idNumber} />
-          <DataField label="Primer Nombre" value={registrationData.firstName} />
-          <DataField label="Segundo Nombre" value={registrationData.secondName || "N/A"} />
-          <DataField label="Primer Apellido" value={registrationData.firstLastName} />
-          <DataField label="Segundo Apellido" value={registrationData.secondLastName || "N/A"} />
-          <DataField label="Fecha de Nacimiento" value={registrationData.birthDate} />
-        </div>
-      </DataSection>
+    <TabContainer 
+      title="Información Personal"
+      isLoading={isLoading}
+      error={error}
+    >
+      {/* Registration Information Section */}
+      <TabSection title="" showEditButton={false}>
+        <RegistrationInfoCard
+          fullName={`${registrationData.firstName}${registrationData.secondName ? ` ${registrationData.secondName}` : ''} ${registrationData.firstLastName}${registrationData.secondLastName ? ` ${registrationData.secondLastName}` : ''}`}
+          birthDate={registrationData.birthDate}
+          idType={registrationData.idType}
+          idNumber={registrationData.idNumber}
+          color="blue"
+        />
+      </TabSection>
 
       {/* Contact Information Section */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <SectionTitle>Información de Contacto</SectionTitle>
-          <EditButton onClick={handleEditContact} />
-        </div>
-        
+      <TabSection title="" showEditButton={false}>
         {contactInfo ? (
-          <ContactInformationCard
-            contactInfo={contactInfo}
-            onEdit={handleEditContact}
-          />
+          <ContactInformationCard contactInfo={contactInfo} onEdit={handleEditContact} />
         ) : (
-          <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-            <p className="text-gray-500">No hay información de contacto registrada</p>
-          </div>
+          <EmptyStateCard
+            icon={MapPin}
+            title="Información de Contacto"
+            description="No hay información de contacto registrada"
+            actionText="Añadir Información de Contacto"
+            onAction={handleEditContact}
+            color="blue"
+          />
         )}
-      </div>
+      </TabSection>
 
       {/* Family Information Section */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <SectionTitle>Información Familiar</SectionTitle>
-          <EditButton onClick={handleEditFamily} />
-        </div>
-        
+      <TabSection title="" showEditButton={false}>
         {familyInfo ? (
-          <FamilyInformationCard
-            familyInfo={familyInfo}
-            onEdit={handleEditFamily}
-          />
+          <FamilyInformationCard familyInfo={familyInfo} onEdit={handleEditFamily} />
         ) : (
-          <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-            <p className="text-gray-500">No hay información familiar registrada</p>
-          </div>
+          <EmptyStateCard
+            icon={Users}
+            title="Información Familiar"
+            description="No hay información familiar registrada"
+            actionText="Añadir Información Familiar"
+            onAction={handleEditFamily}
+            color="purple"
+          />
         )}
-      </div>
+      </TabSection>
 
-      {/* Modals */}
       <ContactInformationModal
         isOpen={isContactModalOpen}
         onClose={handleCloseContactModal}
@@ -314,6 +277,6 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
         onSave={handleFamilySave}
         familyData={familyInfo}
       />
-    </div>
+    </TabContainer>
   )
 }

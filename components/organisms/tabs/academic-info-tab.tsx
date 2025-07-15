@@ -1,37 +1,35 @@
 "use client"
 
 import React, { useState, useEffect, useMemo } from "react"
-import { Button } from "@/components/atoms/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
-import { Badge } from "@/components/atoms/badge"
-import { EditButton } from "@/components/atoms/edit-button"
-import { AddButton } from "@/components/atoms/add-button"
-import { SectionTitle } from "@/components/atoms/section-title"
-import { DataField } from "@/components/atoms/data-field"
+import { TabContainer, TabSection, TabEmptyState, TabListContainer } from "@/components/organisms/tab-container"
 import { AcademicInfoModal } from "@/components/organisms/modals/academic-info-modal"
 import { PostGraduateModal } from "@/components/organisms/modals/post-graduate-modal"
 import { AcademicProgramCard } from "@/components/molecules/academic-program-card"
 import { PostGraduateCard } from "@/components/molecules/post-graduate-card"
+import { EmptyStateCard } from "@/components/atoms/empty-state-card"
 import { useAcademic } from "@/contexts/academic-context"
 import { logger } from "@/lib/logging"
 import { DetailedCoursedProgramResponse, DetailedAcademicEducationResponse } from "@/lib/services/profile/detailed-user.service"
-import { Label } from "@/components/atoms/label"
+import { GraduationCap, BookOpen } from "lucide-react"
 
 interface AcademicInfoTabProps {
   academicData: DetailedCoursedProgramResponse[]
   postGraduateData: DetailedAcademicEducationResponse[]
-  onDataUpdate: () => void
+  isViewOnly?: boolean
+  onDataUpdate?: () => Promise<void>
 }
 
 export function AcademicInfoTab({ 
   academicData, 
   postGraduateData, 
-  onDataUpdate 
+  isViewOnly = false,
+  onDataUpdate
 }: AcademicInfoTabProps) {
   const { programs } = useAcademic()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPostGraduateModalOpen, setIsPostGraduateModalOpen] = useState(false)
   const [editingPostGraduate, setEditingPostGraduate] = useState<DetailedAcademicEducationResponse | null>(null)
+  const [editingAcademicProgram, setEditingAcademicProgram] = useState<DetailedCoursedProgramResponse | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   // Memoize the program lookup map
@@ -48,7 +46,9 @@ export function AcademicInfoTab({
   const handleSave = async () => {
     try {
       setIsLoading(true)
-      onDataUpdate()
+      if (onDataUpdate) {
+        await onDataUpdate()
+      }
     } catch (error) {
       logger.error("Error updating academic data:", error)
     } finally {
@@ -59,7 +59,9 @@ export function AcademicInfoTab({
   const handlePostGraduateSave = async () => {
     try {
       setIsLoading(true)
-      onDataUpdate()
+      if (onDataUpdate) {
+        await onDataUpdate()
+      }
     } catch (error) {
       logger.error("Error updating post-graduate data:", error)
     } finally {
@@ -67,12 +69,31 @@ export function AcademicInfoTab({
     }
   }
 
+  const handleAddAcademicProgram = () => {
+    if (isViewOnly) return
+    setEditingAcademicProgram(null)
+    setIsModalOpen(true)
+  }
+
+  const handleEditAcademicProgram = (program: DetailedCoursedProgramResponse) => {
+    if (isViewOnly) return
+    setEditingAcademicProgram(program)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseAcademicModal = () => {
+    setIsModalOpen(false)
+    setEditingAcademicProgram(null)
+  }
+
   const handleEditPostGraduate = (item: DetailedAcademicEducationResponse) => {
+    if (isViewOnly) return
     setEditingPostGraduate(item)
     setIsPostGraduateModalOpen(true)
   }
 
   const handleAddPostGraduate = () => {
+    if (isViewOnly) return
     setEditingPostGraduate(null)
     setIsPostGraduateModalOpen(true)
   }
@@ -91,50 +112,62 @@ export function AcademicInfoTab({
 
   if (!Array.isArray(academicData)) {
     return (
-      <div className="space-y-6">
-        <SectionTitle>Información Académica</SectionTitle>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-muted-foreground">No hay información académica disponible.</p>
-          </CardContent>
-        </Card>
-      </div>
+      <TabContainer title="Información Académica">
+        <EmptyStateCard
+          icon={GraduationCap}
+          title="Información Académica"
+          description="No hay información académica disponible."
+          actionText="Agregar Carrera Cursada"
+          onAction={handleAddAcademicProgram}
+          color="blue"
+        />
+      </TabContainer>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <SectionTitle>Información Académica</SectionTitle>
-        <EditButton onClick={() => setIsModalOpen(true)} />
-      </div>
-
-      {academicData.length === 0 ? (
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-muted-foreground">No hay información académica registrada.</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {academicData.map((academic, index) => (
-            <AcademicProgramCard
-              key={index}
-              program={academic}
-              index={index}
-              getProgramName={getProgramName}
-            />
-          ))}
-        </div>
-      )}
+    <TabContainer 
+      title="Información Académica"
+      onAdd={handleAddAcademicProgram}
+      showEditButton={false}
+      showAddButton={!isViewOnly}
+      addButtonText="Agregar Carrera Cursada"
+      isLoading={isLoading}
+    >
+      {/* Academic Programs Section */}
+      <TabSection title="" showEditButton={false}>
+        {academicData.length === 0 ? (
+          <EmptyStateCard
+            icon={GraduationCap}
+            title="Carreras Cursadas"
+            description="No hay información académica registrada."
+            actionText="Agregar Carrera Cursada"
+            onAction={handleAddAcademicProgram}
+            color="blue"
+          />
+        ) : (
+          <div className="space-y-6">
+            {academicData.map((academic, index) => (
+              <AcademicProgramCard
+                key={index}
+                program={academic}
+                index={index}
+                getProgramName={getProgramName}
+                onEdit={() => handleEditAcademicProgram(academic)}
+                isViewOnly={isViewOnly}
+              />
+            ))}
+          </div>
+        )}
+      </TabSection>
 
       {/* Post Graduate Section */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <SectionTitle>Estudios Post Graduación</SectionTitle>
-          <AddButton onClick={handleAddPostGraduate} />
-        </div>
-        
+      <TabSection 
+        title="Estudios Post Graduación"
+        onAdd={handleAddPostGraduate}
+        showEditButton={false}
+        showAddButton={!isViewOnly}
+      >
         {Array.isArray(postGraduateData) && postGraduateData.length > 0 ? (
           <div className="space-y-4">
             {postGraduateData.map((postGrad, index) => (
@@ -143,24 +176,29 @@ export function AcademicInfoTab({
                 postGraduate={postGrad}
                 index={index}
                 onEdit={handleEditPostGraduate}
+                isViewOnly={isViewOnly}
               />
             ))}
           </div>
         ) : (
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-muted-foreground">No hay estudios post graduación registrados.</p>
-            </CardContent>
-          </Card>
+          <EmptyStateCard
+            icon={BookOpen}
+            title="Estudios Post Graduación"
+            description="No hay estudios post graduación registrados."
+            actionText="Agregar Estudio Post Graduación"
+            onAction={handleAddPostGraduate}
+            color="purple"
+          />
         )}
-      </div>
+      </TabSection>
 
       <AcademicInfoModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCloseAcademicModal}
         onSave={handleSave}
         academicData={academicData}
         postGraduateData={postGraduateData}
+        editingProgram={editingAcademicProgram}
       />
 
       <PostGraduateModal
@@ -170,6 +208,6 @@ export function AcademicInfoTab({
         postGraduateData={postGraduateData}
         editingItem={editingPostGraduate}
       />
-    </div>
+    </TabContainer>
   )
 }

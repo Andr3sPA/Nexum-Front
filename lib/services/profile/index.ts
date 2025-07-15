@@ -3,6 +3,7 @@ export * from "./contact-information.service"
 export * from "./family-information.service"
 export * from "./job.service"
 export * from "./graduate-participation.service"
+export * from "./innovation-process.service"
 export * from "./coursed-program.service"
 export * from "./academic-education.service"
 export * from "./program-opinion.service"
@@ -37,9 +38,14 @@ export type {
 export type {
   GraduateParticipationRequest,
   GraduateParticipationResponse,
-  GraduateParticipationUserResponse,
-  InnovationProcessTypeResponse
+  GraduateParticipationUserResponse
 } from "./graduate-participation.service"
+
+export type {
+  InnovationProcessRequest,
+  InnovationProcessResponse,
+  InnovationProcessUserResponse
+} from "./innovation-process.service"
 
 export type {
   CoursedProgramRequest,

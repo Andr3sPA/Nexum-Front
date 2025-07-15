@@ -93,13 +93,20 @@ export const JobService = {
 
   // Create new job
   async create(data: JobRequest): Promise<JobResponse> {
-    const { status, body } = await serviceWithAuth<JobRequest, JobResponse>(
-      `/job`,
-      METHOD.post,
-      data
-    )
-    if (status !== 201) throw new Error((body as any)?.message || "No se pudo crear el trabajo")
-    return body
+    console.log("🏢 JobService.create called with data:", data)
+    try {
+      const { status, body } = await serviceWithAuth<JobRequest, JobResponse>(
+        `/job`,
+        METHOD.post,
+        data
+      )
+      console.log("✅ JobService.create result:", { status, body })
+      if (status !== 201) throw new Error((body as any)?.message || "No se pudo crear el trabajo")
+      return body
+    } catch (error) {
+      console.error("❌ JobService.create error:", error)
+      throw error
+    }
   },
 
   // Update job by ID

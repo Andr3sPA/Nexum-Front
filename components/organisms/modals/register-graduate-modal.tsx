@@ -10,6 +10,8 @@ import { ModalContainer } from "@/components/organisms/modal-container"
 import { DialogDescription, DialogFooter } from "@/components/molecules/dialog"
 import { ROUTES } from "@/lib/routes"
 import { logger } from "@/lib/logging"
+import { FormField } from "@/components/molecules/form-field"
+import { ModalActions } from "@/components/molecules/modal-actions"
 
 interface RegisterFormData {
   email: string
@@ -94,124 +96,166 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
   }
 
   return (
-    <ModalContainer title="Registrar Nuevo Egresado" isOpen={open} onClose={handleClose} maxWidth="max-w-4xl">
-      <DialogDescription>
-        Complete la información básica del egresado. Después será redirigido para completar el perfil completo.
-      </DialogDescription>
+    <ModalContainer 
+      title="Registro de Graduado" 
+      isOpen={open} 
+      onClose={handleClose} 
+      maxWidth="max-w-4xl"
+      actions={
+        <ModalActions onCancel={handleClose} isSubmitting={isSubmitting} />
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Información Personal</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="firstName" label="Primer Nombre">
+                <Input
+                  id="firstName"
+                  value={formData?.firstName || ""}
+                  onChange={(e) => handleInputChange("firstName", e.target.value)}
+                  placeholder="Ingrese el primer nombre"
+                  required
+                />
+              </FormField>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="modal-email">Correo Electrónico *</Label>
-            <Input
-              id="modal-email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              required
-            />
+              <FormField id="secondName" label="Segundo Nombre">
+                <Input
+                  id="secondName"
+                  value={formData?.secondName || ""}
+                  onChange={(e) => handleInputChange("secondName", e.target.value)}
+                  placeholder="Ingrese el segundo nombre (opcional)"
+                />
+              </FormField>
+
+              <FormField id="firstLastName" label="Primer Apellido">
+                <Input
+                  id="firstLastName"
+                  value={formData?.firstLastName || ""}
+                  onChange={(e) => handleInputChange("firstLastName", e.target.value)}
+                  placeholder="Ingrese el primer apellido"
+                  required
+                />
+              </FormField>
+
+              <FormField id="secondLastName" label="Segundo Apellido">
+                <Input
+                  id="secondLastName"
+                  value={formData?.secondLastName || ""}
+                  onChange={(e) => handleInputChange("secondLastName", e.target.value)}
+                  placeholder="Ingrese el segundo apellido (opcional)"
+                />
+              </FormField>
+
+              <FormField id="birthDate" label="Fecha de Nacimiento">
+                <Input
+                  id="birthDate"
+                  type="date"
+                  value={formData?.birthDate || ""}
+                  onChange={(e) => handleInputChange("birthDate", e.target.value)}
+                  required
+                />
+              </FormField>
+
+              <FormField id="email" label="Correo Electrónico">
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData?.email || ""}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  placeholder="Ingrese el correo electrónico"
+                  required
+                />
+              </FormField>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-idType">Tipo de Identificación *</Label>
-            <Select value={formData.idType} onChange={(e) => handleInputChange("idType", e.target.value)}>
-              <option value="">Seleccionar</option>
-              <option value="cc">Cédula de Ciudadanía</option>
-              <option value="ce">Cédula de Extranjería</option>
-              <option value="passport">Pasaporte</option>
-            </Select>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Información de Documento</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="documentType" label="Tipo de Documento">
+                <Select
+                  value={formData?.idType || ""}
+                  onChange={(e) => handleInputChange("idType", e.target.value)}
+                  required
+                >
+                  <option value="">Seleccionar tipo de documento</option>
+                  <option value="cc">Cédula de Ciudadanía</option>
+                  <option value="ce">Cédula de Extranjería</option>
+                  <option value="ti">Tarjeta de Identidad</option>
+                  <option value="pasaporte">Pasaporte</option>
+                  <option value="otros">Otros</option>
+                </Select>
+              </FormField>
+
+              <FormField id="documentNumber" label="Número de Documento">
+                <Input
+                  id="documentNumber"
+                  value={formData?.idNumber || ""}
+                  onChange={(e) => handleInputChange("idNumber", e.target.value)}
+                  placeholder="Ingrese el número de documento"
+                  required
+                />
+              </FormField>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-idNumber">Número de Identificación *</Label>
-            <Input
-              id="modal-idNumber"
-              value={formData.idNumber}
-              onChange={(e) => handleInputChange("idNumber", e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-firstName">Primer Nombre *</Label>
-            <Input
-              id="modal-firstName"
-              value={formData.firstName}
-              onChange={(e) => handleInputChange("firstName", e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-secondName">Segundo Nombre</Label>
-            <Input
-              id="modal-secondName"
-              value={formData.secondName}
-              onChange={(e) => handleInputChange("secondName", e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-firstLastName">Primer Apellido *</Label>
-            <Input
-              id="modal-firstLastName"
-              value={formData.firstLastName}
-              onChange={(e) => handleInputChange("firstLastName", e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-secondLastName">Segundo Apellido</Label>
-            <Input
-              id="modal-secondLastName"
-              value={formData.secondLastName}
-              onChange={(e) => handleInputChange("secondLastName", e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-birthDate">Fecha de Nacimiento *</Label>
-            <Input
-              id="modal-birthDate"
-              type="date"
-              value={formData.birthDate}
-              onChange={(e) => handleInputChange("birthDate", e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-gender">Género *</Label>
-            <Select value={formData.gender} onChange={(e) => handleInputChange("gender", e.target.value)}>
-              <option value="">Seleccionar género</option>
-              <option value="hombre">Hombre</option>
-              <option value="mujer">Mujer</option>
-              <option value="no-binario">No binario</option>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-password">Contraseña Temporal *</Label>
-            <Input
-              id="modal-password"
-              type="password"
-              value={formData.password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="modal-confirmPassword">Confirmar Contraseña *</Label>
-            <Input
-              id="modal-confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-              required
-            />
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Información Académica</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="program" label="Programa de Estudio">
+                <Select
+                  value={formData?.gender || ""}
+                  onChange={(e) => handleInputChange("gender", e.target.value)}
+                  required
+                >
+                  <option value="">Seleccionar programa</option>
+                  <option value="ingenieria-sistemas">Ingeniería de Sistemas</option>
+                  <option value="ingenieria-informatica">Ingeniería Informática</option>
+                  <option value="ciencias-computacion">Ciencias de la Computación</option>
+                  <option value="tecnologia-sistemas">Tecnología en Sistemas</option>
+                  <option value="otros">Otros</option>
+                </Select>
+              </FormField>
+
+              <FormField id="graduationYear" label="Año de Graduación">
+                <Input
+                  id="graduationYear"
+                  type="number"
+                  min="1990"
+                  max="2030"
+                  value={formData?.birthDate || ""}
+                  onChange={(e) => handleInputChange("birthDate", e.target.value)}
+                  placeholder="Ingrese el año de graduación"
+                  required
+                />
+              </FormField>
+
+              <FormField id="gpa" label="Promedio Académico">
+                <Input
+                  id="gpa"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="5"
+                  value={formData?.password || ""}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  placeholder="Ingrese el promedio académico"
+                />
+              </FormField>
+
+              <FormField id="thesisTitle" label="Título de la Tesis/Proyecto">
+                <Input
+                  id="thesisTitle"
+                  value={formData?.confirmPassword || ""}
+                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                  placeholder="Ingrese el título de la tesis o proyecto"
+                />
+              </FormField>
+            </div>
           </div>
         </div>
-
-        <DialogFooter className="gap-2">
-          <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
-            Cancelar
-          </Button>
-          <Button type="submit" className="udea-primary" disabled={isSubmitting}>
-            {isSubmitting ? "Registrando..." : "Registrar y Completar Perfil"}
-          </Button>
-        </DialogFooter>
       </form>
     </ModalContainer>
   )

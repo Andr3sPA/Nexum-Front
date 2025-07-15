@@ -18,6 +18,13 @@ interface EvaluationData {
   infrastructureQuality: string
   administrativeSupport: string
   overallExperience: string
+  overallSatisfaction: string
+  recommendProgram: string
+  curriculumQuality: string
+  facultyQuality: string
+  practicalTraining: string
+  jobPreparation: string
+  skillsRelevance: string
   comments: string
   strengths: string
   weaknesses: string
@@ -31,15 +38,39 @@ interface EvaluationModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (data: EvaluationData) => void
-  initialData: EvaluationData
+  initialData?: EvaluationData | null
+}
+
+// Default values for the form
+const defaultFormData: EvaluationData = {
+  programSatisfaction: "",
+  teacherQuality: "",
+  infrastructureQuality: "",
+  administrativeSupport: "",
+  overallExperience: "",
+  overallSatisfaction: "",
+  recommendProgram: "",
+  curriculumQuality: "",
+  facultyQuality: "",
+  practicalTraining: "",
+  jobPreparation: "",
+  skillsRelevance: "",
+  comments: "",
+  strengths: "",
+  weaknesses: "",
+  additionalCompetencies: "",
+  question1: "",
+  question2: "",
+  question3: ""
 }
 
 export default function EvaluationModal({ isOpen, onClose, onSave, initialData }: EvaluationModalProps) {
-  const [formData, setFormData] = useState<EvaluationData>(initialData)
+  const [formData, setFormData] = useState<EvaluationData>(defaultFormData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    setFormData(initialData)
+    // Use initialData if it exists, otherwise use default values
+    setFormData(initialData || defaultFormData)
   }, [initialData])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,72 +93,157 @@ export default function EvaluationModal({ isOpen, onClose, onSave, initialData }
   }
 
   return (
-    <ModalContainer title="Editar Evaluación del Programa" isOpen={isOpen} onClose={onClose} maxWidth="max-w-4xl">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField
-          id="strengths"
-          label="¿Cuáles crees que son las fortalezas de la formación en el programa de egreso?"
-        >
-          <Textarea
-            id="strengths"
-            value={formData.strengths}
-            onChange={(e) => handleInputChange("strengths", e.target.value)}
-            rows={4}
-          />
-        </FormField>
-
-        <FormField
-          id="weaknesses"
-          label="¿Cuáles crees que son las debilidades de la formación en el programa de egreso?"
-        >
-          <Textarea
-            id="weaknesses"
-            value={formData.weaknesses}
-            onChange={(e) => handleInputChange("weaknesses", e.target.value)}
-            rows={4}
-          />
-        </FormField>
-
-        <FormField
-          id="additionalCompetencies"
-          label="¿Cuáles competencias o cursos consideras deberían adicionarse a la formación?"
-        >
-          <Textarea
-            id="additionalCompetencies"
-            value={formData.additionalCompetencies}
-            onChange={(e) => handleInputChange("additionalCompetencies", e.target.value)}
-            rows={4}
-          />
-        </FormField>
-
-        <FormField id="question1" label="Pregunta 1">
-          <Textarea
-            id="question1"
-            value={formData.question1}
-            onChange={(e) => handleInputChange("question1", e.target.value)}
-            rows={3}
-          />
-        </FormField>
-
-        <FormField id="question2" label="Pregunta 2">
-          <Textarea
-            id="question2"
-            value={formData.question2}
-            onChange={(e) => handleInputChange("question2", e.target.value)}
-            rows={3}
-          />
-        </FormField>
-
-        <FormField id="question3" label="Pregunta 3">
-          <Textarea
-            id="question3"
-            value={formData.question3}
-            onChange={(e) => handleInputChange("question3", e.target.value)}
-            rows={3}
-          />
-        </FormField>
-
+    <ModalContainer 
+      title="Evaluación del Programa" 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      maxWidth="max-w-4xl"
+      actions={
         <ModalActions onCancel={onClose} isSubmitting={isSubmitting} />
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Satisfacción General</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="overallSatisfaction" label="¿Qué tan satisfecho está con el programa en general?">
+                <Select
+                  value={formData?.overallSatisfaction || ""}
+                  onChange={(e) => handleInputChange("overallSatisfaction", e.target.value)}
+                >
+                  <option value="">Seleccionar nivel de satisfacción</option>
+                  <option value="muy-satisfecho">Muy Satisfecho</option>
+                  <option value="satisfecho">Satisfecho</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="insatisfecho">Insatisfecho</option>
+                  <option value="muy-insatisfecho">Muy Insatisfecho</option>
+                </Select>
+              </FormField>
+
+              <FormField id="recommendProgram" label="¿Recomendaría el programa a otros?">
+                <Select
+                  value={formData?.recommendProgram || ""}
+                  onChange={(e) => handleInputChange("recommendProgram", e.target.value)}
+                >
+                  <option value="">Seleccionar</option>
+                  <option value="definitivamente-si">Definitivamente Sí</option>
+                  <option value="probablemente-si">Probablemente Sí</option>
+                  <option value="no-seguro">No Estoy Seguro</option>
+                  <option value="probablemente-no">Probablemente No</option>
+                  <option value="definitivamente-no">Definitivamente No</option>
+                </Select>
+              </FormField>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Aspectos Académicos</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="curriculumQuality" label="Calidad del currículo">
+                <Select
+                  value={formData?.curriculumQuality || ""}
+                  onChange={(e) => handleInputChange("curriculumQuality", e.target.value)}
+                >
+                  <option value="">Seleccionar calificación</option>
+                  <option value="excelente">Excelente</option>
+                  <option value="muy-bueno">Muy Bueno</option>
+                  <option value="bueno">Bueno</option>
+                  <option value="regular">Regular</option>
+                  <option value="pobre">Pobre</option>
+                </Select>
+              </FormField>
+
+              <FormField id="facultyQuality" label="Calidad del cuerpo docente">
+                <Select
+                  value={formData?.facultyQuality || ""}
+                  onChange={(e) => handleInputChange("facultyQuality", e.target.value)}
+                >
+                  <option value="">Seleccionar calificación</option>
+                  <option value="excelente">Excelente</option>
+                  <option value="muy-bueno">Muy Bueno</option>
+                  <option value="bueno">Bueno</option>
+                  <option value="regular">Regular</option>
+                  <option value="pobre">Pobre</option>
+                </Select>
+              </FormField>
+
+              <FormField id="infrastructureQuality" label="Calidad de la infraestructura">
+                <Select
+                  value={formData?.infrastructureQuality || ""}
+                  onChange={(e) => handleInputChange("infrastructureQuality", e.target.value)}
+                >
+                  <option value="">Seleccionar calificación</option>
+                  <option value="excelente">Excelente</option>
+                  <option value="muy-bueno">Muy Bueno</option>
+                  <option value="bueno">Bueno</option>
+                  <option value="regular">Regular</option>
+                  <option value="pobre">Pobre</option>
+                </Select>
+              </FormField>
+
+              <FormField id="practicalTraining" label="Calidad de la formación práctica">
+                <Select
+                  value={formData?.practicalTraining || ""}
+                  onChange={(e) => handleInputChange("practicalTraining", e.target.value)}
+                >
+                  <option value="">Seleccionar calificación</option>
+                  <option value="excelente">Excelente</option>
+                  <option value="muy-bueno">Muy Bueno</option>
+                  <option value="bueno">Bueno</option>
+                  <option value="regular">Regular</option>
+                  <option value="pobre">Pobre</option>
+                </Select>
+              </FormField>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Preparación para el Mercado Laboral</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="jobPreparation" label="¿Qué tan bien lo preparó el programa para el mercado laboral?">
+                <Select
+                  value={formData?.jobPreparation || ""}
+                  onChange={(e) => handleInputChange("jobPreparation", e.target.value)}
+                >
+                  <option value="">Seleccionar calificación</option>
+                  <option value="excelente">Excelente</option>
+                  <option value="muy-bueno">Muy Bueno</option>
+                  <option value="bueno">Bueno</option>
+                  <option value="regular">Regular</option>
+                  <option value="pobre">Pobre</option>
+                </Select>
+              </FormField>
+
+              <FormField id="skillsRelevance" label="Relevancia de las habilidades adquiridas">
+                <Select
+                  value={formData?.skillsRelevance || ""}
+                  onChange={(e) => handleInputChange("skillsRelevance", e.target.value)}
+                >
+                  <option value="">Seleccionar calificación</option>
+                  <option value="muy-relevante">Muy Relevante</option>
+                  <option value="relevante">Relevante</option>
+                  <option value="moderadamente-relevante">Moderadamente Relevante</option>
+                  <option value="poco-relevante">Poco Relevante</option>
+                  <option value="no-relevante">No Relevante</option>
+                </Select>
+              </FormField>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Comentarios y Sugerencias</h3>
+            <FormField id="comments" label="Comentarios adicionales">
+              <Textarea
+                id="comments"
+                value={formData?.comments || ""}
+                onChange={(e) => handleInputChange("comments", e.target.value)}
+                rows={4}
+                placeholder="Comparta sus comentarios, sugerencias o experiencias sobre el programa"
+              />
+            </FormField>
+          </div>
+        </div>
       </form>
     </ModalContainer>
   )

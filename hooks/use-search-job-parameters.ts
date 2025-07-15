@@ -26,6 +26,8 @@ interface UseSearchJobParametersReturn {
 }
 
 export function useSearchJobParameters(): UseSearchJobParametersReturn {
+  console.log("🔍 useSearchJobParameters hook initialized")
+  
   const [salaryRanges, setSalaryRanges] = useState<SalaryRangeResponse[]>([])
   const [jobDelays, setJobDelays] = useState<JobDelayResponse[]>([])
   const [jobAreas, setJobAreas] = useState<JobAreaResponse[]>([])

@@ -1,17 +1,18 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Button } from "@/components/atoms/button"
-import { Input } from "@/components/atoms/input"
-import { Label } from "@/components/atoms/label"
+import { GraduationCap, Star } from "lucide-react"
 import { Select } from "@/components/atoms/select"
 import { ModalActions } from "@/components/molecules/modal-actions"
 import { DynamicInputList } from "@/components/molecules/dynamic-input-list"
 import { useAcademic } from "@/contexts/academic-context"
+import { useProfile } from "@/contexts/profile-context"
 import { logger } from "@/lib/logging"
-import { CoursedProgramService } from "@/lib/services/profile/coursed-program.service"
 import { DetailedCoursedProgramResponse, DetailedAcademicEducationResponse } from "@/lib/services/profile/detailed-user.service"
-import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { ModalContainer } from "@/components/organisms/modal-container"
+import { FormField } from "@/components/molecules/form-field"
+import { Input } from "@/components/atoms/input"
+import { FormSection } from "@/components/atoms/form-section"
 
 interface AcademicInfoModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ interface AcademicInfoModalProps {
   onSave: () => void
   academicData: DetailedCoursedProgramResponse[]
   postGraduateData: DetailedAcademicEducationResponse[]
+  editingProgram?: DetailedCoursedProgramResponse | null
 }
 
 export function AcademicInfoModal({
@@ -27,8 +29,10 @@ export function AcademicInfoModal({
   onSave,
   academicData,
   postGraduateData,
+  editingProgram,
 }: AcademicInfoModalProps) {
   const { programs, programVersions, isLoadingPrograms, isLoadingVersions, loadProgramVersions, clearProgramVersions, loadPrograms } = useAcademic()
+  const { createCoursedProgram, updateCoursedProgram, getProgramVersionInfo, getUserId } = useProfile()
   
   const [selectedProgram, setSelectedProgram] = useState<string>("")
   const [selectedVersion, setSelectedVersion] = useState<string>("")
@@ -48,22 +52,72 @@ export function AcademicInfoModal({
 
   // Initialize form with existing data when modal opens
   useEffect(() => {
-    if (isOpen && academicData.length > 0) {
-      const firstProgram = academicData[0]
-      if (firstProgram.programVersion) {
-        // Set the program version directly
-        setSelectedVersion(firstProgram.programVersion.id.toString())
-        // Try to find the program by loading its versions
-        loadProgramVersions(firstProgram.programVersion.id)
-        setGraduationYear(firstProgram.graduationYear?.toString() || new Date().getFullYear().toString())
-        
-        // Load existing evaluation data
-        setStrengths(firstProgram.strengths || [])
-        setWeaknesses(firstProgram.weaknesses || [])
-        setImprovementSuggestions(firstProgram.improvementSuggestions || [])
+    if (isOpen) {
+      if (editingProgram) {
+        // Editing an existing program
+        console.log("Editing program:", editingProgram)
+        if (editingProgram.programVersion) {
+          // Get the complete program version information to find the parent program
+          const fetchProgramVersionInfo = async () => {
+            try {
+              const programVersionInfo = await getProgramVersionInfo(editingProgram.programVersion.id)
+              console.log("Program version info:", programVersionInfo)
+              
+              // Set the program that corresponds to this version
+              setSelectedProgram(programVersionInfo.program.id.toString())
+              
+              // Set the program version
+              setSelectedVersion(editingProgram.programVersion.id.toString())
+              
+              // Load program versions for this program
+              loadProgramVersions(programVersionInfo.program.id)
+              setGraduationYear(editingProgram.graduationYear?.toString() || new Date().getFullYear().toString())
+              
+              // Load existing evaluation data
+              setStrengths(editingProgram.strengths || [])
+              setWeaknesses(editingProgram.weaknesses || [])
+              setImprovementSuggestions(editingProgram.improvementSuggestions || [])
+            } catch (error) {
+              console.error("Error fetching program version info:", error)
+              // Fallback: just set the version without the program
+              setSelectedVersion(editingProgram.programVersion.id.toString())
+              loadProgramVersions(editingProgram.programVersion.id)
+              setGraduationYear(editingProgram.graduationYear?.toString() || new Date().getFullYear().toString())
+              setStrengths(editingProgram.strengths || [])
+              setWeaknesses(editingProgram.weaknesses || [])
+              setImprovementSuggestions(editingProgram.improvementSuggestions || [])
+            }
+          }
+          
+          fetchProgramVersionInfo()
+        }
+      } else if (academicData.length > 0) {
+        // Creating new program but there's existing data - use first program as reference
+        const firstProgram = academicData[0]
+        if (firstProgram.programVersion) {
+          // Set the program version directly
+          setSelectedVersion(firstProgram.programVersion.id.toString())
+          // Try to find the program by loading its versions
+          loadProgramVersions(firstProgram.programVersion.id)
+          setGraduationYear(firstProgram.graduationYear?.toString() || new Date().getFullYear().toString())
+          
+          // Load existing evaluation data
+          setStrengths(firstProgram.strengths || [])
+          setWeaknesses(firstProgram.weaknesses || [])
+          setImprovementSuggestions(firstProgram.improvementSuggestions || [])
+        }
+      } else {
+        // Creating new program with no existing data
+        console.log("Creating new program")
+        setSelectedProgram("")
+        setSelectedVersion("")
+        setGraduationYear(new Date().getFullYear().toString())
+        setStrengths([])
+        setWeaknesses([])
+        setImprovementSuggestions([])
       }
     }
-  }, [isOpen, academicData, loadProgramVersions])
+  }, [isOpen, editingProgram, academicData, loadProgramVersions, programs, getProgramVersionInfo])
 
   // Load program versions when program changes
   useEffect(() => {
@@ -75,50 +129,37 @@ export function AcademicInfoModal({
   }, [selectedProgram, loadProgramVersions, clearProgramVersions])
 
   const handleSave = async () => {
-    if (!selectedProgram || !selectedVersion || !graduationYear) {
-      logger.warn("Program, version and graduation year must be selected")
+    if (!selectedVersion || !graduationYear) {
+      logger.warn("Program version and graduation year must be selected")
       return
     }
 
     try {
       setIsSaving(true)
       
-      // Get user from localStorage
-      const user = LocalStorageService.getItem<{ id: string }>("user")
-      const userProfile = LocalStorageService.getItem<{ id: string }>("userProfile")
-      const userId = userProfile?.id || user?.id
-      
-      console.log("User ID from basic user:", user?.id)
-      console.log("User ID from userProfile:", userProfile?.id)
-      console.log("Final userId being used:", userId)
+      const userId = getUserId()
       
       if (!userId) {
         throw new Error("No se pudo obtener el ID del usuario")
       }
 
-      // Check if there's existing coursed program data to update
-      const existingCoursedProgram = academicData.find(program => program.programVersion?.id === parseInt(selectedVersion))
-      
-      if (existingCoursedProgram) {
+      const formData = {
+        userId: userId,
+        programVersionId: parseInt(selectedVersion),
+        graduationYear: parseInt(graduationYear),
+        strengths: strengths.filter(s => s.trim().length > 0),
+        weaknesses: weaknesses.filter(w => w.trim().length > 0),
+        improvementSuggestions: improvementSuggestions.filter(i => i.trim().length > 0)
+      }
+
+      if (editingProgram) {
         // Update existing coursed program
-        await CoursedProgramService.updateById(existingCoursedProgram.id, {
-          userId: userId,
-          programVersionId: parseInt(selectedVersion),
-          graduationYear: parseInt(graduationYear),
-          strengths: strengths.filter(s => s.trim().length > 0),
-          weaknesses: weaknesses.filter(w => w.trim().length > 0),
-          improvementSuggestions: improvementSuggestions.filter(i => i.trim().length > 0)
-        })
+        console.log("Updating existing program:", editingProgram.id)
+        await updateCoursedProgram(editingProgram.id, formData)
       } else {
         // Create new coursed program
-        await CoursedProgramService.create({
-          userId: userId,
-          programVersionId: parseInt(selectedVersion),
-          graduationYear: parseInt(graduationYear),
-          strengths: strengths.filter(s => s.trim().length > 0),
-          weaknesses: weaknesses.filter(w => w.trim().length > 0),
-          improvementSuggestions: improvementSuggestions.filter(i => i.trim().length > 0)
-        })
+        console.log("Creating new program")
+        await createCoursedProgram(formData)
       }
 
       onSave()
@@ -133,115 +174,110 @@ export function AcademicInfoModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4">Información Académica</h2>
-        
-        <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
-          <div className="space-y-4">
-            {/* Program Selection */}
-            <div>
-              <Label htmlFor="program">Programa</Label>
+    <ModalContainer 
+      title={editingProgram ? "Editar Carrera Cursada" : "Agregar Carrera Cursada"}
+      subtitle="Complete la información académica y evalúe su experiencia en el programa"
+      isOpen={isOpen} 
+      onClose={onClose} 
+      maxWidth="max-w-5xl"
+      onSubmit={handleSave}
+      isSubmitting={isSaving}
+      actions={
+        <ModalActions onCancel={onClose} isSubmitting={isSaving} />
+      }
+    >
+      <div className="space-y-8">
+        <FormSection 
+          title="Información del Programa"
+          description="Seleccione el programa académico y la versión que cursó"
+          icon={GraduationCap}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <FormField id="program" label="Programa">
               <Select
                 value={selectedProgram}
                 onChange={(e) => setSelectedProgram(e.target.value)}
                 disabled={isLoadingPrograms}
+                required
               >
-                <option value="">
-                  {isLoadingPrograms ? "Cargando programas..." : "Selecciona un programa"}
-                </option>
-                {Array.isArray(programs) && programs.length > 0 ? (
-                  programs.map((program) => (
-                    <option key={program.id} value={program.id.toString()}>
-                      {program.name}
-                    </option>
-                  ))
-                ) : (
-                  <option value="" disabled>
-                    {isLoadingPrograms ? "Cargando programas..." : "No hay programas disponibles"}
+                <option value="">Seleccionar programa</option>
+                {programs.map((program) => (
+                  <option key={program.id} value={program.id}>
+                    {program.name}
                   </option>
-                )}
+                ))}
               </Select>
-            </div>
+            </FormField>
 
-            {/* Program Version Selection */}
-            <div>
-              <Label htmlFor="version">Versión del Programa</Label>
+            <FormField id="version" label="Versión del Programa">
               <Select
                 value={selectedVersion}
                 onChange={(e) => setSelectedVersion(e.target.value)}
-                disabled={isLoadingVersions || !selectedProgram}
+                disabled={!selectedProgram || isLoadingVersions}
+                required
               >
-                <option value="">
-                  {!selectedProgram 
-                    ? "Primero selecciona un programa" 
-                    : isLoadingVersions 
-                      ? "Cargando versiones..." 
-                      : "Selecciona una versión"
-                  }
-                </option>
-                {Array.isArray(programVersions) && programVersions.length > 0 ? (
-                  programVersions.map((version) => (
-                    <option key={version.id} value={version.id.toString()}>
-                      Plan {version.version}
-                    </option>
-                  ))
-                ) : (
-                  <option value="" disabled>
-                    No hay versiones disponibles
+                <option value="">Seleccionar versión</option>
+                {programVersions.map((version) => (
+                  <option key={version.id} value={version.id}>
+                    {version.version}
                   </option>
-                )}
+                ))}
               </Select>
-            </div>
+            </FormField>
 
-            {/* Graduation Year */}
-            <div>
-              <Label htmlFor="graduationYear">Año de Graduación</Label>
+            <FormField id="graduationYear" label="Año de Graduación">
               <Input
                 id="graduationYear"
                 type="number"
+                min="1990"
+                max="2030"
                 value={graduationYear}
                 onChange={(e) => setGraduationYear(e.target.value)}
-                min="1950"
-                max={new Date().getFullYear() + 10}
+                placeholder="Ingrese el año de graduación"
                 required
+              />
+            </FormField>
+          </div>
+        </FormSection>
+
+        <FormSection 
+          title="Evaluación del Programa"
+          description="Comparta su experiencia y opinión sobre el programa cursado"
+          icon={Star}
+        >
+          <div className="space-y-8">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
+              <DynamicInputList
+                items={strengths}
+                onItemsChange={setStrengths}
+                label="Fortalezas del Programa"
+                placeholder="Agregar fortaleza del programa"
+                addButtonText="Agregar Fortaleza"
               />
             </div>
 
-            {/* Strengths */}
-            <DynamicInputList
-              items={strengths}
-              onItemsChange={setStrengths}
-              label="Fortalezas del Programa"
-              placeholder="Fortaleza"
-              addButtonText="+ Agregar Fortaleza"
-            />
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6">
+              <DynamicInputList
+                items={weaknesses}
+                onItemsChange={setWeaknesses}
+                label="Debilidades del Programa"
+                placeholder="Agregar debilidad del programa"
+                addButtonText="Agregar Debilidad"
+              />
+            </div>
 
-            {/* Weaknesses */}
-            <DynamicInputList
-              items={weaknesses}
-              onItemsChange={setWeaknesses}
-              label="Debilidades del Programa"
-              placeholder="Debilidad"
-              addButtonText="+ Agregar Debilidad"
-            />
-
-            {/* Improvement Suggestions */}
-            <DynamicInputList
-              items={improvementSuggestions}
-              onItemsChange={setImprovementSuggestions}
-              label="Sugerencias de Mejora"
-              placeholder="Sugerencia"
-              addButtonText="+ Agregar Sugerencia"
-            />
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
+              <DynamicInputList
+                items={improvementSuggestions}
+                onItemsChange={setImprovementSuggestions}
+                label="Sugerencias de Mejora"
+                placeholder="Agregar sugerencia de mejora"
+                addButtonText="Agregar Sugerencia"
+              />
+            </div>
           </div>
-
-          <ModalActions
-            onCancel={onClose}
-            isSubmitting={isSaving}
-          />
-        </form>
+        </FormSection>
       </div>
-    </div>
+    </ModalContainer>
   )
 }

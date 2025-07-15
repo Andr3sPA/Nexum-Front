@@ -27,15 +27,27 @@ interface WorkQuestionsModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (data: WorkQuestionsData) => void
-  initialData: WorkQuestionsData
+  initialData?: WorkQuestionsData | null
+}
+
+// Default values for the form
+const defaultFormData: WorkQuestionsData = {
+  profiles: "",
+  formationRating: "",
+  competencies: [],
+  question1: "",
+  question2: "",
+  question3: "",
+  updateDate: ""
 }
 
 export function WorkQuestionsModal({ isOpen, onClose, onSave, initialData }: WorkQuestionsModalProps) {
-  const [formData, setFormData] = useState<WorkQuestionsData>(initialData)
+  const [formData, setFormData] = useState<WorkQuestionsData>(defaultFormData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    setFormData(initialData)
+    // Use initialData if it exists, otherwise use default values
+    setFormData(initialData || defaultFormData)
   }, [initialData])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,74 +85,132 @@ export function WorkQuestionsModal({ isOpen, onClose, onSave, initialData }: Wor
   }
 
   return (
-    <ModalContainer title="Editar Preguntas Laborales" isOpen={isOpen} onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField id="profiles" label="Perfiles en los que se ha desempeñado">
-          <Textarea
-            id="profiles"
-            value={formData.profiles || ""}
-            onChange={(e) => handleInputChange("profiles", e.target.value)}
-            maxLength={200}
-            placeholder="Ej: Desarrollador Full Stack, Analista de Sistemas..."
-          />
-        </FormField>
-
-        <FormField id="formationRating" label="El perfil de formación ofrecido por el programa para su desarrollo profesional y laboral, ha sido adecuado? (califique de 1 a 5)">
-          <Select
-            value={formData.formationRating}
-            onChange={(e) => handleInputChange("formationRating", e.target.value)}
-          >
-            <option value="">Seleccionar</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </Select>
-        </FormField>
-
-        <div className="space-y-2">
-          <Label>
-            De acuerdo con el proyecto formativo que cursó en el Programa, las siguientes competencias han sido
-            adecuadas para su desarrollo profesional y laboral
-          </Label>
-          <MultiSelect
-            options={competencyOptions}
-            selected={formData.competencies || []}
-            onChange={handleCompetencyChange}
-            placeholder="Seleccionar competencias..."
-          />
-        </div>
-
-        <FormField id="question1" label="Pregunta 1">
-          <Textarea
-            id="question1"
-            value={formData.question1}
-            onChange={(e) => handleInputChange("question1", e.target.value)}
-            rows={3}
-          />
-        </FormField>
-
-        <FormField id="question2" label="Pregunta 2">
-          <Textarea
-            id="question2"
-            value={formData.question2}
-            onChange={(e) => handleInputChange("question2", e.target.value)}
-            rows={3}
-          />
-        </FormField>
-
-        <FormField id="question3" label="Pregunta 3">
-          <Textarea
-            id="question3"
-            value={formData.question3}
-            onChange={(e) => handleInputChange("question3", e.target.value)}
-            rows={3}
-          />
-        </FormField>
-
+    <ModalContainer 
+      title="Preguntas Adicionales" 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      maxWidth="max-w-4xl"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      actions={
         <ModalActions onCancel={onClose} isSubmitting={isSubmitting} />
-      </form>
+      }
+    >
+      <div className="space-y-6">
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Satisfacción Laboral</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="jobSatisfaction" label="¿Qué tan satisfecho está con su trabajo actual?">
+                <Select
+                  value={formData?.jobSatisfaction || ""}
+                  onChange={(e) => handleInputChange("jobSatisfaction", e.target.value)}
+                >
+                  <option value="">Seleccionar nivel de satisfacción</option>
+                  <option value="muy-satisfecho">Muy Satisfecho</option>
+                  <option value="satisfecho">Satisfecho</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="insatisfecho">Insatisfecho</option>
+                  <option value="muy-insatisfecho">Muy Insatisfecho</option>
+                </Select>
+              </FormField>
+
+              <FormField id="salarySatisfaction" label="¿Qué tan satisfecho está con su salario?">
+                <Select
+                  value={formData?.salarySatisfaction || ""}
+                  onChange={(e) => handleInputChange("salarySatisfaction", e.target.value)}
+                >
+                  <option value="">Seleccionar nivel de satisfacción</option>
+                  <option value="muy-satisfecho">Muy Satisfecho</option>
+                  <option value="satisfecho">Satisfecho</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="insatisfecho">Insatisfecho</option>
+                  <option value="muy-insatisfecho">Muy Insatisfecho</option>
+                </Select>
+              </FormField>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Desarrollo Profesional</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="careerGrowth" label="¿Qué tan satisfecho está con las oportunidades de crecimiento?">
+                <Select
+                  value={formData?.careerGrowth || ""}
+                  onChange={(e) => handleInputChange("careerGrowth", e.target.value)}
+                >
+                  <option value="">Seleccionar nivel de satisfacción</option>
+                  <option value="muy-satisfecho">Muy Satisfecho</option>
+                  <option value="satisfecho">Satisfecho</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="insatisfecho">Insatisfecho</option>
+                  <option value="muy-insatisfecho">Muy Insatisfecho</option>
+                </Select>
+              </FormField>
+
+              <FormField id="trainingOpportunities" label="¿Qué tan satisfecho está con las oportunidades de capacitación?">
+                <Select
+                  value={formData?.trainingOpportunities || ""}
+                  onChange={(e) => handleInputChange("trainingOpportunities", e.target.value)}
+                >
+                  <option value="">Seleccionar nivel de satisfacción</option>
+                  <option value="muy-satisfecho">Muy Satisfecho</option>
+                  <option value="satisfecho">Satisfecho</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="insatisfecho">Insatisfecho</option>
+                  <option value="muy-insatisfecho">Muy Insatisfecho</option>
+                </Select>
+              </FormField>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Ambiente Laboral</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField id="workEnvironment" label="¿Qué tan satisfecho está con el ambiente laboral?">
+                <Select
+                  value={formData?.workEnvironment || ""}
+                  onChange={(e) => handleInputChange("workEnvironment", e.target.value)}
+                >
+                  <option value="">Seleccionar nivel de satisfacción</option>
+                  <option value="muy-satisfecho">Muy Satisfecho</option>
+                  <option value="satisfecho">Satisfecho</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="insatisfecho">Insatisfecho</option>
+                  <option value="muy-insatisfecho">Muy Insatisfecho</option>
+                </Select>
+              </FormField>
+
+              <FormField id="workLifeBalance" label="¿Qué tan satisfecho está con el balance trabajo-vida?">
+                <Select
+                  value={formData?.workLifeBalance || ""}
+                  onChange={(e) => handleInputChange("workLifeBalance", e.target.value)}
+                >
+                  <option value="">Seleccionar nivel de satisfacción</option>
+                  <option value="muy-satisfecho">Muy Satisfecho</option>
+                  <option value="satisfecho">Satisfecho</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="insatisfecho">Insatisfecho</option>
+                  <option value="muy-insatisfecho">Muy Insatisfecho</option>
+                </Select>
+              </FormField>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Perspectivas Futuras</h3>
+            <FormField id="futurePlans" label="¿Cuáles son sus planes profesionales a futuro?">
+              <Textarea
+                id="futurePlans"
+                value={formData?.futurePlans || ""}
+                onChange={(e) => handleInputChange("futurePlans", e.target.value)}
+                rows={4}
+                placeholder="Describa sus planes profesionales y objetivos de carrera"
+              />
+            </FormField>
+          </div>
+        </div>
+      </div>
     </ModalContainer>
   )
 }

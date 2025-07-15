@@ -1,69 +1,39 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { LocalStorageService } from "@/lib/services/local-storage.service"
-import { DetailedUserService, DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
-import { ROLES } from "@/lib/services/constants/api.constants"
-import { ROUTES } from "@/lib/routes"
+import { useSearchParams } from "next/navigation"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import Navbar from "@/components/navbar"
 import ProfileTabs from "@/components/profile-tabs"
-import { logger } from "@/lib/logging"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Button } from "@/components/atoms/button"
+import { ArrowLeft } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function AdminProfilePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [detailedUser, setDetailedUser] = useState<DetailedUserResponse | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const userId = searchParams.get('userId')
+  
+  const {
+    detailedUser,
+    userProfile,
+    user,
+    isLoading,
+    error,
+    isCurrentUser,
+    canEdit,
+    refreshData
+  } = useUserProfile({
+    userId: userId || undefined,
+    isViewOnly: false, // Admins can edit
+    redirectOnUnauthorized: true
+  })
 
-  // Get user info from localStorage
-  const userProfile = LocalStorageService.getItem<any>("userProfile")
-  const user = LocalStorageService.getItem<any>("user")
-  const currentUserId = user?.id
-
-  // Get target user ID from URL params
-  const targetUserId = searchParams.get("userId")
-
-  // Determine if viewing own profile or another user's profile
-  const isOwnProfile = !targetUserId || targetUserId === currentUserId?.toString()
-  const userIdToFetch = isOwnProfile ? currentUserId : targetUserId
-
-  const firstName = userProfile?.name?.split(" ")[0] || ""
-  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
-  const email = user?.email || ""
+  // Use detailed user data for navbar
+  const firstName = detailedUser?.name?.split(" ")[0] || userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = detailedUser?.lastname?.split(" ")[0] || userProfile?.lastname?.split(" ")[0] || ""
+  const email = detailedUser?.institutionalEmail || user?.email || ""
   const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
-
-  useEffect(() => {
-    // Check if user is admin
-    if (!userProfile || userProfile.role !== ROLES.ADMINISTRATIVE) {
-      router.replace("/login")
-      return
-    }
-
-    const fetchUserProfile = async () => {
-      if (!userIdToFetch) {
-        setError("ID de usuario no válido")
-        setIsLoading(false)
-        return
-      }
-
-      try {
-        setIsLoading(true)
-        setError(null)
-
-        const userData = await DetailedUserService.getById(userIdToFetch)
-        setDetailedUser(userData)
-      } catch (error) {
-        logger.error("Error fetching user profile:", error)
-        setError("Error al cargar el perfil del usuario")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchUserProfile()
-  }, [userIdToFetch, userProfile, router])
 
   if (isLoading) {
     return (
@@ -101,12 +71,12 @@ export default function AdminProfilePage() {
           <div className="text-center">
             <div className="text-red-600 text-xl mb-4">Error</div>
             <p className="text-gray-600 mb-4">{error}</p>
-            <button 
+            <Button 
               onClick={() => router.back()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="mt-4"
             >
               Volver
-            </button>
+            </Button>
           </div>
         </div>
       </>
@@ -126,18 +96,23 @@ export default function AdminProfilePage() {
         }} />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-gray-600 text-xl mb-4">Usuario no encontrado</div>
-            <button 
+            <div className="text-gray-600 text-xl mb-4">No se pudo cargar el perfil</div>
+            <Button 
               onClick={() => router.back()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="mt-4"
             >
               Volver
-            </button>
+            </Button>
           </div>
         </div>
       </>
     )
   }
+
+  const profileTitle = isCurrentUser ? "Mi Perfil" : `Perfil de ${detailedUser.name} ${detailedUser.lastname}`
+  const profileDescription = isCurrentUser 
+    ? "Actualiza tu información personal, académica y laboral"
+    : "Información personal, académica y laboral del egresado"
 
   return (
     <>
@@ -147,32 +122,45 @@ export default function AdminProfilePage() {
         email,
         role: user?.role,
         initials,
-        ...userProfile
+        ...detailedUser
       }} />
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            {/* Header with back button if viewing another user's profile */}
-            {!isOwnProfile && (
-              <div className="mb-6">
-                <button 
+            {/* Back button for admin */}
+            {!isCurrentUser && (
+              <div className="mb-4">
+                <Button 
+                  variant="ghost" 
                   onClick={() => router.back()}
-                  className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
+                  className="flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
+                  <ArrowLeft className="h-4 w-4" />
                   Volver a la búsqueda
-                </button>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-blue-800">
-                    <strong>Viendo perfil de:</strong> {detailedUser.name} {detailedUser.lastname}
-                  </p>
-                </div>
+                </Button>
               </div>
             )}
-
-            <ProfileTabs userProfile={detailedUser} />
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold udea-primary-text">{profileTitle}</CardTitle>
+                <CardDescription>{profileDescription}</CardDescription>
+                {!isCurrentUser && (
+                  <div className="mt-2">
+                    <span className="text-sm text-gray-500">
+                      Modo de administración - Edición habilitada
+                    </span>
+                  </div>
+                )}
+              </CardHeader>
+              <CardContent>
+                <ProfileTabs 
+                  userProfile={{ ...detailedUser, email: user?.email }} 
+                  isViewOnly={false} // Admins can always edit
+                  onDataUpdate={refreshData}
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

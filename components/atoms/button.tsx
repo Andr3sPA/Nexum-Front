@@ -11,7 +11,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", asChild = false, ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", asChild = false, type = "button", onClick, ...props }, ref) => {
     const Comp = asChild ? React.Fragment : "button"
     
     const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
@@ -37,11 +37,20 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       sizes[size],
       className
     )
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      console.log("🔘 Button clicked:", { type, variant })
+      if (onClick) {
+        onClick(e)
+      }
+    }
     
     if (asChild) {
       return React.cloneElement(props.children as React.ReactElement, {
         className: buttonStyles,
         ref,
+        type,
+        onClick: handleClick,
         ...props,
       })
     }
@@ -50,6 +59,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         className={buttonStyles}
         ref={ref}
+        type={type}
+        onClick={handleClick}
         {...props}
       />
     )

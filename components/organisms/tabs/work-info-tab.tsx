@@ -1,11 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { DataSection } from "@/components/organisms/data-section"
-import { DataField } from "@/components/atoms/data-field"
-import { EditButton } from "@/components/atoms/edit-button"
-import { SectionTitle } from "@/components/atoms/section-title"
-import { AddButton } from "@/components/atoms/add-button"
+import { TabContainer, TabSection, TabDataField, TabEmptyState } from "@/components/organisms/tab-container"
 import { WorkCurrentJobModal } from "@/components/organisms/modals/work-current-job-modal"
 import { WorkFirstJobModal } from "@/components/organisms/modals/work-first-job-modal"
 import { WorkQuestionsModal } from "@/components/organisms/modals/work-questions-modal"
@@ -14,13 +10,22 @@ import { JobService, JobRequest, JobResponse } from "@/lib/services/profile/job.
 import { useSearchJobParameters } from "@/hooks/use-search-job-parameters"
 import { logger } from "@/lib/logging"
 import { Alert, AlertDescription } from "@/components/atoms/alert"
-import { AlertCircle } from "lucide-react"
+import { InfoCard } from "@/components/atoms/info-card"
+import { StatusBadge } from "@/components/atoms/status-badge"
+import { JobHeader } from "@/components/atoms/job-header"
+import { AlertCircle, Building2, Briefcase, MapPin, DollarSign, Clock, Users, Building } from "lucide-react"
+import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
+import { Card, CardHeader, CardContent } from "@/components/molecules/card"
 
 interface WorkInfoTabProps {
-  userProfile?: any;
+  userProfile?: DetailedUserResponse & { email?: string }
+  isViewOnly?: boolean
+  onDataUpdate?: () => Promise<void>
 }
 
-export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
+export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpdate }: WorkInfoTabProps) {
+  console.log("🏢 WorkInfoTab rendered with:", { userProfile: !!userProfile, isViewOnly, hasOnDataUpdate: !!onDataUpdate })
+  
   const [isCurrentJobModalOpen, setIsCurrentJobModalOpen] = useState(false)
   const [isFirstJobModalOpen, setIsFirstJobModalOpen] = useState(false)
   const [isQuestionsModalOpen, setIsQuestionsModalOpen] = useState(false)
@@ -50,55 +55,38 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
     }
   }, [])
 
-  // Get user profile from localStorage
-  const userProfileData = useMemo(() => {
-    try {
-      return LocalStorageService.getItem<any>("userProfile")
-    } catch (error) {
-      console.error("Error getting userProfile from localStorage:", error)
-      return null
-    }
-  }, [])
-
-  // Check if user has academic information
+  // Check if user has academic information using the userProfile prop
   const hasAcademicInfo = useMemo(() => {
-    return userProfileData?.coursedPrograms && userProfileData.coursedPrograms.length > 0
-  }, [userProfileData])
+    return userProfile?.coursedPrograms && userProfile.coursedPrograms.length > 0
+  }, [userProfile])
 
   // Get program ID for catalog data
   const programId = useMemo(() => {
-    if (userProfileData?.coursedPrograms && userProfileData.coursedPrograms.length > 0) {
-      const firstProgram = userProfileData.coursedPrograms[0]
+    if (userProfile?.coursedPrograms && userProfile.coursedPrograms.length > 0) {
+      const firstProgram = userProfile.coursedPrograms[0]
       console.log("WorkInfoTab - First program:", firstProgram)
       console.log("WorkInfoTab - First program programVersion:", firstProgram.programVersion)
       
-      // Try different possible paths to find the program ID
-      const programId = firstProgram.programVersion?.program?.id || 
-                       firstProgram.programVersion?.id ||
-                       firstProgram.id
+      // Use the programVersion.id as the program ID
+      const programId = firstProgram.programVersion?.id
       
-      console.log("WorkInfoTab - Trying to find program ID:", {
-        'programVersion.program.id': firstProgram.programVersion?.program?.id,
-        'programVersion.id': firstProgram.programVersion?.id,
-        'firstProgram.id': firstProgram.id,
-        'final programId': programId
-      })
+      console.log("WorkInfoTab - Program ID from programVersion:", programId)
       
       return programId
     }
-    console.log("WorkInfoTab - No program ID found in userProfileData")
+    console.log("WorkInfoTab - No program ID found in userProfile")
     return null
-  }, [userProfileData])
+  }, [userProfile])
 
   // Fetch jobs data
   const fetchJobs = useCallback(async () => {
-    if (!userProfileData?.id || hasInitialized) return
+    if (!userProfile?.id || hasInitialized) return
 
     try {
       setIsLoading(true)
       setError(null)
 
-      const jobsData = await JobService.getByUserId(userProfileData.id)
+      const jobsData = await JobService.getByUserId(userProfile.id)
       setJobs(jobsData)
       setHasInitialized(true)
     } catch (error) {
@@ -107,7 +95,7 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [userProfileData, hasInitialized])
+  }, [userProfile, hasInitialized])
 
   // Fetch data only once on mount
   useEffect(() => {
@@ -132,7 +120,9 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
 
   // Current job handlers
   const handleCurrentJobSave = useCallback(async (formData: any) => {
-    if (!userProfileData?.id) {
+    console.log("🟢 WorkInfoTab - handleCurrentJobSave called with formData:", formData)
+    if (!userProfile?.id) {
+      console.error("🟠 WorkInfoTab - No userProfile.id found")
       setError("No se pudo identificar al usuario")
       return
     }
@@ -142,28 +132,34 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
       setError(null)
 
       const jobRequest: JobRequest = {
-        userId: userProfileData.id,
+        userId: userProfile.id,
         companyName: formData.companyName,
         country: formData.country,
         position: formData.position,
-        relatedToProgram: formData.relatedToCareer === "si",
-        salaryRangeId: parseInt(formData.salaryRangeId),
-        jobDelayId: parseInt(formData.jobDelayId),
-        jobAreaId: parseInt(formData.jobAreaId),
-        institutionTypeId: parseInt(formData.institutionTypeId),
+        relatedToProgram: formData.relatedToProgram,
+        salaryRangeId: formData.salaryRangeId,
+        jobDelayId: formData.jobDelayId,
+        jobAreaId: formData.jobAreaId,
+        institutionTypeId: formData.institutionTypeId,
         firstJob: formData.alsoFirstJob,
         currentJob: true
       }
 
+      console.log("🟢 WorkInfoTab - jobRequest:", jobRequest)
+
       let savedJob: JobResponse
 
       if (currentJob) {
+        console.log("🟢 WorkInfoTab - Updating existing current job with ID:", currentJob.id)
         // Update existing current job
         savedJob = await JobService.updateById(currentJob.id, jobRequest)
       } else {
+        console.log("🟢 WorkInfoTab - Creating new current job")
         // Create new current job
         savedJob = await JobService.create(jobRequest)
       }
+
+      console.log("🟢 WorkInfoTab - savedJob:", savedJob)
 
       // Update jobs list
       setJobs(prev => {
@@ -171,19 +167,26 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
         return [...filtered, savedJob]
       })
 
+      // Refresh profile data
+      if (onDataUpdate) {
+        await onDataUpdate()
+      }
+
       setIsCurrentJobModalOpen(false)
       logger.info("Current job saved successfully")
     } catch (error) {
-      console.error("Error saving current job:", error)
+      console.error("🔴 WorkInfoTab - Error saving current job:", error)
       setError("Error al guardar el trabajo actual")
     } finally {
       setIsLoading(false)
     }
-  }, [userProfileData, currentJob])
+  }, [userProfile, currentJob, onDataUpdate])
 
   // First job handlers
   const handleFirstJobSave = useCallback(async (formData: any) => {
-    if (!userProfileData?.id) {
+    console.log("🟡 WorkInfoTab - handleFirstJobSave called with formData:", formData)
+    if (!userProfile?.id) {
+      console.error("🟠 WorkInfoTab - No userProfile.id found")
       setError("No se pudo identificar al usuario")
       return
     }
@@ -193,28 +196,34 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
       setError(null)
 
       const jobRequest: JobRequest = {
-        userId: userProfileData.id,
+        userId: userProfile.id,
         companyName: formData.companyName,
         country: formData.country,
         position: formData.position,
-        relatedToProgram: formData.relatedToCareer === "si",
-        salaryRangeId: parseInt(formData.salaryRangeId),
-        jobDelayId: parseInt(formData.jobDelayId),
-        jobAreaId: parseInt(formData.jobAreaId),
-        institutionTypeId: parseInt(formData.institutionTypeId),
+        relatedToProgram: formData.relatedToProgram,
+        salaryRangeId: formData.salaryRangeId,
+        jobDelayId: formData.jobDelayId,
+        jobAreaId: formData.jobAreaId,
+        institutionTypeId: formData.institutionTypeId,
         firstJob: true,
         currentJob: formData.alsoCurrentJob
       }
 
+      console.log("🟡 WorkInfoTab - jobRequest:", jobRequest)
+
       let savedJob: JobResponse
 
       if (firstJob) {
+        console.log("🟡 WorkInfoTab - Updating existing first job with ID:", firstJob.id)
         // Update existing first job
         savedJob = await JobService.updateById(firstJob.id, jobRequest)
       } else {
+        console.log("🟡 WorkInfoTab - Creating new first job")
         // Create new first job
         savedJob = await JobService.create(jobRequest)
       }
+
+      console.log("🟡 WorkInfoTab - savedJob:", savedJob)
 
       // Update jobs list
       setJobs(prev => {
@@ -222,206 +231,275 @@ export default function WorkInfoTab({ userProfile }: WorkInfoTabProps) {
         return [...filtered, savedJob]
       })
 
+      // Refresh profile data
+      if (onDataUpdate) {
+        await onDataUpdate()
+      }
+
       setIsFirstJobModalOpen(false)
       logger.info("First job saved successfully")
     } catch (error) {
-      console.error("Error saving first job:", error)
+      console.error("🔴 WorkInfoTab - Error saving first job:", error)
       setError("Error al guardar el primer trabajo")
     } finally {
       setIsLoading(false)
     }
-  }, [userProfileData, firstJob])
+  }, [userProfile, firstJob, onDataUpdate])
 
-  if (isLoading && !hasInitialized) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Cargando información laboral...</p>
-        </div>
-      </div>
-    )
+  // Questions handlers
+  const handleQuestionsSave = useCallback(async (formData: any) => {
+    if (!userProfile?.id) {
+      setError("No se pudo identificar al usuario")
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      // TODO: Implement questions save logic
+      console.log("Questions form data:", formData)
+      
+      // Refresh profile data
+      if (onDataUpdate) {
+        await onDataUpdate()
+      }
+      
+      setIsQuestionsModalOpen(false)
+      logger.info("Questions saved successfully")
+    } catch (error) {
+      console.error("Error saving questions:", error)
+      setError("Error al guardar las preguntas")
+    } finally {
+      setIsLoading(false)
+    }
+  }, [userProfile, onDataUpdate])
+
+  const handleEditCurrentJob = () => {
+    if (isViewOnly) return
+    setIsCurrentJobModalOpen(true)
   }
 
-  if (error) {
+  const handleEditFirstJob = () => {
+    if (isViewOnly) return
+    setIsFirstJobModalOpen(true)
+  }
+
+  const handleEditQuestions = () => {
+    if (isViewOnly) return
+    setIsQuestionsModalOpen(true)
+  }
+
+  const handleCloseCurrentJobModal = () => {
+    setIsCurrentJobModalOpen(false)
+  }
+
+  const handleCloseFirstJobModal = () => {
+    setIsFirstJobModalOpen(false)
+  }
+
+  const handleCloseQuestionsModal = () => {
+    setIsQuestionsModalOpen(false)
+  }
+
+  // Show warning if no academic info
+  if (!hasAcademicInfo) {
     return (
-      <div className="space-y-6">
-        <div className="text-center py-8">
-          <div className="text-red-600 text-lg mb-2">Error</div>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button 
-            onClick={() => {
-              setError(null)
-              setHasInitialized(false)
-              fetchJobs()
-            }}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Reintentar
-          </button>
-        </div>
-      </div>
+      <TabContainer title="Información Laboral">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Para acceder a la información laboral, primero debe completar su información académica.
+          </AlertDescription>
+        </Alert>
+      </TabContainer>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Academic Information Warning */}
-      {!hasAcademicInfo && (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Para mostrar información laboral específica de tu carrera, necesitas registrar tu información académica en la pestaña "Información Académica".
-          </AlertDescription>
-        </Alert>
-      )}
-
+    <TabContainer 
+      title="Información Laboral"
+      isLoading={isLoading || isLoadingCatalog}
+      error={error || catalogError}
+    >
       {/* Current Job Section */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <SectionTitle>Trabajo Actual</SectionTitle>
-          <EditButton onClick={() => setIsCurrentJobModalOpen(true)} />
-        </div>
-        
+      <TabSection 
+        title="Trabajo Actual"
+        onEdit={handleEditCurrentJob}
+        showEditButton={!isViewOnly}
+      >
         {currentJob ? (
-          <DataSection title="Información del Trabajo Actual">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <DataField label="Empresa" value={currentJob.companyName} />
-              <DataField label="Cargo" value={currentJob.position} />
-              <DataField label="País" value={currentJob.country} />
-              <DataField label="Relacionado con la carrera" value={currentJob.relatedToProgram ? "Sí" : "No"} />
-              <DataField label="Rango salarial" value={currentJob.salaryRange?.salary} />
-              <DataField label="Tiempo en la empresa" value={currentJob.jobDelay?.label} />
-              <DataField label="Área" value={currentJob.jobArea?.name} />
-              <DataField label="Tipo de empresa" value={currentJob.institutionType?.name} />
-            </div>
-          </DataSection>
+          <Card className="border-l-4 border-l-green-500">
+            <CardHeader className="pb-4">
+              <JobHeader
+                icon={Building2}
+                companyName={currentJob.companyName}
+                position={currentJob.position}
+                color="green"
+              />
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InfoCard
+                  icon={MapPin}
+                  label="País"
+                  value={currentJob.country}
+                />
+                
+                <InfoCard
+                  icon={DollarSign}
+                  label="Rango Salarial"
+                  value={currentJob.salaryRange?.salary || "No disponible"}
+                />
+                
+                <InfoCard
+                  icon={Clock}
+                  label="Tiempo Promedio"
+                  value={currentJob.jobDelay?.label || "No disponible"}
+                />
+                
+                <InfoCard
+                  icon={Users}
+                  label="Área de Trabajo"
+                  value={currentJob.jobArea?.name || "No disponible"}
+                />
+                
+                <InfoCard
+                  icon={Building}
+                  label="Tipo de Institución"
+                  value={currentJob.institutionType?.name || "No disponible"}
+                />
+                
+                <InfoCard
+                  icon={Briefcase}
+                  label="Relacionado con el Programa"
+                  value={<StatusBadge status={currentJob.relatedToProgram} />}
+                />
+              </div>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-            <p className="text-gray-500">No hay información del trabajo actual</p>
-          </div>
+          <TabEmptyState message="No hay información del trabajo actual registrada." />
         )}
-      </div>
+      </TabSection>
 
       {/* First Job Section */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <SectionTitle>Primer Trabajo</SectionTitle>
-          <EditButton onClick={() => setIsFirstJobModalOpen(true)} />
-        </div>
-        
+      <TabSection 
+        title="Primer Trabajo"
+        onEdit={handleEditFirstJob}
+        showEditButton={!isViewOnly}
+      >
         {firstJob ? (
-          <DataSection title="Información del Primer Trabajo">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <DataField label="Empresa" value={firstJob.companyName} />
-              <DataField label="Cargo" value={firstJob.position} />
-              <DataField label="País" value={firstJob.country} />
-              <DataField label="Relacionado con la carrera" value={firstJob.relatedToProgram ? "Sí" : "No"} />
-              <DataField label="Rango salarial" value={firstJob.salaryRange?.salary} />
-              <DataField label="Tiempo para conseguir trabajo" value={firstJob.jobDelay?.label} />
-              <DataField label="Área" value={firstJob.jobArea?.name} />
-              <DataField label="Tipo de empresa" value={firstJob.institutionType?.name} />
-            </div>
-          </DataSection>
+          <Card className="border-l-4 border-l-blue-500">
+            <CardHeader className="pb-4">
+              <JobHeader
+                icon={Building2}
+                companyName={firstJob.companyName}
+                position={firstJob.position}
+                color="blue"
+              />
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InfoCard
+                  icon={MapPin}
+                  label="País"
+                  value={firstJob.country}
+                />
+                
+                <InfoCard
+                  icon={DollarSign}
+                  label="Rango Salarial"
+                  value={firstJob.salaryRange?.salary || "No disponible"}
+                />
+                
+                <InfoCard
+                  icon={Clock}
+                  label="Tiempo Promedio"
+                  value={firstJob.jobDelay?.label || "No disponible"}
+                />
+                
+                <InfoCard
+                  icon={Users}
+                  label="Área de Trabajo"
+                  value={firstJob.jobArea?.name || "No disponible"}
+                />
+                
+                <InfoCard
+                  icon={Building}
+                  label="Tipo de Institución"
+                  value={firstJob.institutionType?.name || "No disponible"}
+                />
+                
+                <InfoCard
+                  icon={Briefcase}
+                  label="Relacionado con el Programa"
+                  value={<StatusBadge status={firstJob.relatedToProgram} />}
+                />
+              </div>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-            <p className="text-gray-500">No hay información del primer trabajo</p>
-          </div>
+          <TabEmptyState message="No hay información del primer trabajo registrada." />
         )}
-      </div>
+      </TabSection>
 
       {/* Questions Section */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <SectionTitle>Preguntas Laborales</SectionTitle>
-          <AddButton onClick={() => setIsQuestionsModalOpen(true)} />
-        </div>
-        
-        <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-          <p className="text-gray-500">No hay preguntas laborales registradas</p>
-        </div>
-      </div>
+      <TabSection 
+        title="Preguntas Adicionales"
+        onEdit={handleEditQuestions}
+        showEditButton={!isViewOnly}
+      >
+        <TabEmptyState message="No hay respuestas a preguntas adicionales registradas." />
+      </TabSection>
 
-      {/* Modals */}
       <WorkCurrentJobModal
         isOpen={isCurrentJobModalOpen}
-        onClose={() => setIsCurrentJobModalOpen(false)}
+        onClose={handleCloseCurrentJobModal}
         onSave={handleCurrentJobSave}
         initialData={currentJob ? {
           companyName: currentJob.companyName,
           country: currentJob.country,
           position: currentJob.position,
-          relatedToCareer: currentJob.relatedToProgram ? "si" : "no",
-          salaryRangeId: currentJob.salaryRange?.id?.toString() || "",
-          jobDelayId: currentJob.jobDelay?.id?.toString() || "",
-          jobAreaId: currentJob.jobArea?.id?.toString() || "",
-          institutionTypeId: currentJob.institutionType?.id?.toString() || "",
+          relatedToProgram: currentJob.relatedToProgram,
+          salaryRangeId: currentJob.salaryRange?.id || 0,
+          jobDelayId: currentJob.jobDelay?.id || 0,
+          jobAreaId: currentJob.jobArea?.id || 0,
+          institutionTypeId: currentJob.institutionType?.id || 0,
           alsoFirstJob: currentJob.firstJob
-        } : {
-          companyName: "",
-          country: "",
-          position: "",
-          relatedToCareer: "",
-          salaryRangeId: "",
-          jobDelayId: "",
-          jobAreaId: "",
-          institutionTypeId: "",
-          alsoFirstJob: false
-        }}
+        } : null}
         salaryRanges={salaryRanges}
         jobDelays={jobDelays}
         jobAreas={jobAreas}
         institutionTypes={institutionTypes}
-        hasAcademicInfo={hasAcademicInfo}
-        hasFirstJob={!!firstJob}
       />
 
       <WorkFirstJobModal
         isOpen={isFirstJobModalOpen}
-        onClose={() => setIsFirstJobModalOpen(false)}
+        onClose={handleCloseFirstJobModal}
         onSave={handleFirstJobSave}
         initialData={firstJob ? {
           companyName: firstJob.companyName,
           country: firstJob.country,
           position: firstJob.position,
-          relatedToCareer: firstJob.relatedToProgram ? "si" : "no",
-          salaryRangeId: firstJob.salaryRange?.id?.toString() || "",
-          jobDelayId: firstJob.jobDelay?.id?.toString() || "",
-          jobAreaId: firstJob.jobArea?.id?.toString() || "",
-          institutionTypeId: firstJob.institutionType?.id?.toString() || "",
+          relatedToProgram: firstJob.relatedToProgram,
+          salaryRangeId: firstJob.salaryRange?.id || 0,
+          jobDelayId: firstJob.jobDelay?.id || 0,
+          jobAreaId: firstJob.jobArea?.id || 0,
+          institutionTypeId: firstJob.institutionType?.id || 0,
           alsoCurrentJob: firstJob.currentJob
-        } : {
-          companyName: "",
-          country: "",
-          position: "",
-          relatedToCareer: "",
-          salaryRangeId: "",
-          jobDelayId: "",
-          jobAreaId: "",
-          institutionTypeId: "",
-          alsoCurrentJob: false
-        }}
+        } : null}
         salaryRanges={salaryRanges}
         jobDelays={jobDelays}
         jobAreas={jobAreas}
         institutionTypes={institutionTypes}
-        hasAcademicInfo={hasAcademicInfo}
-        hasCurrentJob={!!currentJob}
       />
 
       <WorkQuestionsModal
         isOpen={isQuestionsModalOpen}
-        onClose={() => setIsQuestionsModalOpen(false)}
-        onSave={() => {}}
-        initialData={{
-          profiles: "",
-          formationRating: "",
-          competencies: [],
-          question1: "",
-          question2: "",
-          question3: ""
-        }}
+        onClose={handleCloseQuestionsModal}
+        onSave={handleQuestionsSave}
       />
-    </div>
+    </TabContainer>
   )
 }

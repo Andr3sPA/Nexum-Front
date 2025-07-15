@@ -89,26 +89,21 @@ export default function Navbar({ user }: { user: NavbarUser }) {
 
             {/* Enhanced Profile Avatar */}
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Button
-                  variant="ghost"
-                  className="relative h-12 w-12 rounded-full border-2 border-transparent hover:border-primary/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/20 group p-0"
-                >
-                  <div className="relative">
-                    <Avatar className="h-10 w-10 ring-2 ring-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                      <AvatarImage src="" alt={user.name} />
-                      <AvatarFallback className="bg-gradient-to-br from-[#026937] via-[#35944b] to-[#43b649] text-white font-semibold text-sm">
-                        {String(user.initials || "U")}
-                      </AvatarFallback>
-                    </Avatar>
-                    {/* Enhanced online indicator */}
-                    <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-400 border-2 border-white rounded-full shadow-sm animate-pulse"></div>
-                    {/* Role indicator */}
-                    <div className="absolute -top-1 -right-1 h-4 w-4 bg-white rounded-full flex items-center justify-center shadow-md">
-                      <div className="text-gray-600 scale-75">{getRoleIcon()}</div>
-                    </div>
+              <DropdownMenuTrigger className="relative h-12 w-12 rounded-full border-2 border-transparent hover:border-primary/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/20 group p-0 bg-transparent">
+                <div className="relative">
+                  <Avatar className="h-10 w-10 ring-2 ring-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                    <AvatarImage src="" alt={user.name} />
+                    <AvatarFallback className="bg-gradient-to-br from-[#026937] via-[#35944b] to-[#43b649] text-white font-semibold text-sm">
+                      {String(user.initials || "U")}
+                    </AvatarFallback>
+                  </Avatar>
+                  {/* Enhanced online indicator */}
+                  <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-400 border-2 border-white rounded-full shadow-sm animate-pulse"></div>
+                  {/* Role indicator */}
+                  <div className="absolute -top-1 -right-1 h-4 w-4 bg-white rounded-full flex items-center justify-center shadow-md">
+                    <div className="text-gray-600 scale-75">{getRoleIcon()}</div>
                   </div>
-                </Button>
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-64" align="end">
                 {/* Enhanced User info in dropdown - No role display */}

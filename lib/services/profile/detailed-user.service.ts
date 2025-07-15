@@ -40,6 +40,16 @@ export interface JobInstitutionTypeResponse {
   name: string;
 }
 
+export interface DetailedInnovationProcessResponse {
+  id: number
+  type: InnovationProcessTypeResponse
+  name: string
+  description?: string
+  link?: string
+  creationDate: string
+  lastUpdate: string
+}
+
 // Detailed response models
 export interface DetailedJobResponse {
   id: number;
@@ -77,7 +87,6 @@ export interface DetailedFamilyInformationResponse {
 
 export interface DetailedGraduateParticipationResponse {
   id: number;
-  participatedInnovationProcesses: InnovationProcessTypeResponse[];
   continuousEducationInterests: string[];
   willingToBeSpeaker: boolean;
   willingToBeProfessor: boolean;
@@ -88,6 +97,8 @@ export interface DetailedGraduateParticipationResponse {
   willingToAttendAlumniMeetings: boolean;
   willingToParticipateInAlumniActivities: boolean;
 }
+
+
 
 export interface DetailedCoursedProgramResponse {
   id: number;
@@ -124,6 +135,7 @@ export interface DetailedUserResponse {
   jobs: DetailedJobResponse[];
   coursedPrograms: DetailedCoursedProgramResponse[];
   academicEducationList: DetailedAcademicEducationResponse[];
+  innovationProcessList: DetailedInnovationProcessResponse[];
 }
 
 export const DetailedUserService = {

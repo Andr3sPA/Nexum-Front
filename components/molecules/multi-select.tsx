@@ -114,7 +114,7 @@ export function MultiSelect({
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-hidden">
           {/* Search input */}
           <div className="p-2 border-b border-gray-200">
             <Input
@@ -127,7 +127,7 @@ export function MultiSelect({
           </div>
 
           {/* Options list */}
-          <div className="max-h-48 overflow-auto">
+          <div className="max-h-48 overflow-auto custom-scrollbar">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <button

@@ -11,13 +11,23 @@ import { logger } from "@/lib/logging"
 import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
 
 interface ProfileTabsProps {
-  userProfile?: DetailedUserResponse & { email?: string };
+  userProfile?: DetailedUserResponse & { email?: string }
+  isViewOnly?: boolean
+  onDataUpdate?: () => Promise<void>
 }
 
-export default function ProfileTabs({ userProfile }: ProfileTabsProps) {
+export default function ProfileTabs({ userProfile, isViewOnly = false, onDataUpdate }: ProfileTabsProps) {
+  console.log("📋 ProfileTabs rendered with:", { 
+    hasUserProfile: !!userProfile, 
+    isViewOnly, 
+    hasOnDataUpdate: !!onDataUpdate 
+  })
+  
   // Initialize data from detailed user profile
   useEffect(() => {
     if (userProfile) {
+      console.log("📋 ProfileTabs - userProfile data:", userProfile)
+      
       // Initialize participation data if available
       if (userProfile.graduateParticipation) {
         // This could be used to populate participation tab data
@@ -32,6 +42,17 @@ export default function ProfileTabs({ userProfile }: ProfileTabsProps) {
     }
   }, [userProfile])
 
+  const handleDataUpdate = async () => {
+    if (onDataUpdate) {
+      try {
+        await onDataUpdate()
+        logger.info("Profile data updated successfully")
+      } catch (error) {
+        logger.error("Error updating profile data:", error)
+      }
+    }
+  }
+
   return (
     <>
       <Tabs defaultValue="personal" className="w-full">
@@ -43,31 +64,29 @@ export default function ProfileTabs({ userProfile }: ProfileTabsProps) {
           <TabsTrigger value="evaluation">Evaluación Programa</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="personal" className="mt-6">
-          <PersonalInfoTab userProfile={userProfile} />
+        <TabsContent value="personal">
+          <PersonalInfoTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
         </TabsContent>
 
-        <TabsContent value="academic" className="mt-6">
+        <TabsContent value="academic">
           <AcademicInfoTab 
             academicData={userProfile?.coursedPrograms || []}
             postGraduateData={userProfile?.academicEducationList || []}
-            onDataUpdate={() => {
-              // TODO: Implement data update logic
-              logger.info("Academic data updated")
-            }}
+            isViewOnly={isViewOnly}
+            onDataUpdate={handleDataUpdate}
           />
         </TabsContent>
 
-        <TabsContent value="work" className="mt-6">
-          <WorkInfoTab userProfile={userProfile} />
+        <TabsContent value="work">
+          <WorkInfoTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
         </TabsContent>
 
-        <TabsContent value="participation" className="mt-6">
-          <ParticipationTab userProfile={userProfile} />
+        <TabsContent value="participation">
+          <ParticipationTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
         </TabsContent>
 
-        <TabsContent value="evaluation" className="mt-6">
-          <EvaluationTab userProfile={userProfile} />
+        <TabsContent value="evaluation">
+          <EvaluationTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
         </TabsContent>
       </Tabs>
     </>

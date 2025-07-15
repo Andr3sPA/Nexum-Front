@@ -4,8 +4,9 @@ import React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
 import { Badge } from "@/components/atoms/badge"
 import { Button } from "@/components/atoms/button"
-import { Edit, Users, Baby } from "lucide-react"
+import { Edit, Users, Baby, Heart } from "lucide-react"
 import { FamilyInformationResponse } from "@/lib/services/profile/family-information.service"
+import { InfoCard } from "@/components/atoms/info-card"
 
 interface FamilyInformationCardProps {
   familyInfo: FamilyInformationResponse
@@ -37,12 +38,17 @@ export function FamilyInformationCard({
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <Card className="border-l-4 border-l-purple-500">
+      <CardHeader className="pb-4">
         <div className="flex justify-between items-start">
-          <div className="flex items-center space-x-2">
-            <Users className="h-5 w-5 text-purple-600" />
-            <CardTitle className="text-lg">Información Familiar</CardTitle>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Users className="h-5 w-5 text-purple-600" />
+            </div>
+            <div>
+              <CardTitle className="text-lg text-purple-700">Información Familiar</CardTitle>
+              <p className="text-sm text-neutral-600">Estado civil y familia</p>
+            </div>
           </div>
           <Button
             variant="ghost"
@@ -54,26 +60,27 @@ export function FamilyInformationCard({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Estado Civil</p>
-            <Badge variant="outline" className="w-fit">
-              {maritalStateLabels[familyInfo.maritalState]}
-            </Badge>
-          </div>
+      <CardContent className="pt-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InfoCard
+            icon={Heart}
+            label="Estado Civil"
+            value={
+              <Badge variant="outline" className="w-fit">
+                {maritalStateLabels[familyInfo.maritalState]}
+              </Badge>
+            }
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Número de Hijos</p>
-            <div className="flex items-center space-x-1">
-              <Baby className="h-4 w-4 text-gray-400" />
-              <p className="text-sm font-medium">{familyInfo.childNumber}</p>
-            </div>
-          </div>
+          <InfoCard
+            icon={Baby}
+            label="Número de Hijos"
+            value={familyInfo.childNumber.toString()}
+          />
         </div>
         
-        <div className="pt-2 border-t">
-          <p className="text-xs text-gray-500">
+        <div className="pt-4 border-t mt-4">
+          <p className="text-xs text-neutral-500">
             Última actualización: {formatDate(familyInfo.lastUpdate)}
           </p>
         </div>

@@ -6,8 +6,7 @@ import { Button } from "@/components/atoms/button"
 import { Label } from "@/components/atoms/label"
 import { Select } from "@/components/atoms/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
-import { Navbar } from "@/components/navbar"
-import { useAuth } from "@/contexts/auth-context"
+import Navbar from "@/components/navbar"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 
 // Report data row interface

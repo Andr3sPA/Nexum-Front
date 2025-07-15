@@ -6,6 +6,8 @@ import { Badge } from "@/components/atoms/badge"
 import { Button } from "@/components/atoms/button"
 import { Edit, MapPin, Phone, Mail, Calendar } from "lucide-react"
 import { ContactInformationResponse } from "@/lib/services/profile/contact-information.service"
+import { InfoCard } from "@/components/atoms/info-card"
+import { StatusBadge } from "@/components/atoms/status-badge"
 
 interface ContactInformationCardProps {
   contactInfo: ContactInformationResponse
@@ -30,14 +32,19 @@ export function ContactInformationCard({
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <Card className="border-l-4 border-l-blue-500">
+      <CardHeader className="pb-4">
         <div className="flex justify-between items-start">
-          <div className="flex items-center space-x-2">
-            <MapPin className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-lg">Información de Contacto</CardTitle>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <MapPin className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <CardTitle className="text-lg text-blue-700">Información de Contacto</CardTitle>
+              <p className="text-sm text-neutral-600">Datos de contacto y ubicación</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             {contactInfo.current && (
               <Badge variant="default" className="bg-green-100 text-green-800">
                 Actual
@@ -54,70 +61,65 @@ export function ContactInformationCard({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Dirección</p>
-            <p className="text-sm">{contactInfo.address || "No disponible"}</p>
-          </div>
+      <CardContent className="pt-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InfoCard
+            icon={MapPin}
+            label="Dirección"
+            value={contactInfo.address || "No disponible"}
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">País</p>
-            <p className="text-sm">{contactInfo.country || "No disponible"}</p>
-          </div>
+          <InfoCard
+            icon={MapPin}
+            label="País"
+            value={contactInfo.country || "No disponible"}
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Departamento</p>
-            <p className="text-sm">{contactInfo.state || "No disponible"}</p>
-          </div>
+          <InfoCard
+            icon={MapPin}
+            label="Departamento"
+            value={contactInfo.state || "No disponible"}
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Ciudad</p>
-            <p className="text-sm">{contactInfo.city || "No disponible"}</p>
-          </div>
+          <InfoCard
+            icon={MapPin}
+            label="Ciudad"
+            value={contactInfo.city || "No disponible"}
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Teléfono Fijo</p>
-            <div className="flex items-center space-x-1">
-              <Phone className="h-3 w-3 text-gray-400" />
-              <p className="text-sm">{contactInfo.landline || "No disponible"}</p>
-            </div>
-          </div>
+          <InfoCard
+            icon={Phone}
+            label="Teléfono Fijo"
+            value={contactInfo.landline || "No disponible"}
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Celular</p>
-            <div className="flex items-center space-x-1">
-              <Phone className="h-3 w-3 text-gray-400" />
-              <p className="text-sm">{contactInfo.mobile || "No disponible"}</p>
-            </div>
-          </div>
+          <InfoCard
+            icon={Phone}
+            label="Celular"
+            value={contactInfo.mobile || "No disponible"}
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Correo Electrónico</p>
-            <div className="flex items-center space-x-1">
-              <Mail className="h-3 w-3 text-gray-400" />
-              <p className="text-sm">{contactInfo.email || "No disponible"}</p>
-            </div>
-          </div>
+          <InfoCard
+            icon={Mail}
+            label="Correo Electrónico"
+            value={contactInfo.email || "No disponible"}
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Correo Académico</p>
-            <div className="flex items-center space-x-1">
-              <Mail className="h-3 w-3 text-gray-400" />
-              <p className="text-sm">{contactInfo.academicEmail || "No disponible"}</p>
-            </div>
-          </div>
+          <InfoCard
+            icon={Mail}
+            label="Correo Académico"
+            value={contactInfo.academicEmail || "No disponible"}
+          />
           
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Autoriza WhatsApp</p>
-            <Badge variant={contactInfo.whatsappAuthorization ? "default" : "secondary"}>
-              {contactInfo.whatsappAuthorization ? "Sí" : "No"}
-            </Badge>
-          </div>
+          <InfoCard
+            icon={Phone}
+            label="Autoriza WhatsApp"
+            value={<StatusBadge status={contactInfo.whatsappAuthorization} />}
+          />
         </div>
         
-        <div className="pt-2 border-t">
-          <p className="text-xs text-gray-500">
+        <div className="pt-4 border-t mt-4">
+          <p className="text-xs text-neutral-500">
             Última actualización: {formatDate(contactInfo.lastUpdate)}
           </p>
         </div>

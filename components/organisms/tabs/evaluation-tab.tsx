@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { DataSection } from "@/components/organisms/data-section"
-import { EditButton } from "@/components/atoms/edit-button"
+import { TabContainer, TabSection, TabDataField } from "@/components/organisms/tab-container"
 import EvaluationModal from "@/components/organisms/modals/evaluation-modal"
 import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
 
@@ -71,53 +70,38 @@ export default function EvaluationTab({ userProfile }: EvaluationTabProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <DataSection title="Evaluación del Programa" action={<EditButton onClick={() => setIsModalOpen(true)} />}>
+    <TabContainer 
+      title="Evaluación del Programa"
+      onEdit={() => setIsModalOpen(true)}
+    >
+      <TabSection title="Evaluación del Programa">
         <div className="space-y-6">
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              ¿Cuáles crees que son las fortalezas de la formación en el programa de egreso?
-            </label>
-            <p className="text-gray-900 mt-2 p-3 bg-gray-50 rounded-md min-h-[60px]">
-              {evaluationData.strengths || "No hay datos"}
-            </p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              ¿Cuáles crees que son las debilidades de la formación en el programa de egreso?
-            </label>
-            <p className="text-gray-900 mt-2 p-3 bg-gray-50 rounded-md min-h-[60px]">
-              {evaluationData.weaknesses || "No hay datos"}
-            </p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              ¿Cuáles competencias o cursos consideras deberían adicionarse a la formación?
-            </label>
-            <p className="text-gray-900 mt-2 p-3 bg-gray-50 rounded-md min-h-[60px]">
-              {evaluationData.additionalCompetencies || "No hay datos"}
-            </p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Pregunta 1</label>
-            <p className="text-gray-900 mt-2 p-3 bg-gray-50 rounded-md min-h-[60px]">
-              {evaluationData.question1 || "No hay datos"}
-            </p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Pregunta 2</label>
-            <p className="text-gray-900 mt-2 p-3 bg-gray-50 rounded-md min-h-[60px]">
-              {evaluationData.question2 || "No hay datos"}
-            </p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Pregunta 3</label>
-            <p className="text-gray-900 mt-2 p-3 bg-gray-50 rounded-md min-h-[60px]">
-              {evaluationData.question3 || "No hay datos"}
-            </p>
-          </div>
+          <TabDataField
+            label="¿Cuáles crees que son las fortalezas de la formación en el programa de egreso?"
+            value={evaluationData.strengths}
+          />
+          <TabDataField
+            label="¿Cuáles crees que son las debilidades de la formación en el programa de egreso?"
+            value={evaluationData.weaknesses}
+          />
+          <TabDataField
+            label="¿Cuáles competencias o cursos consideras deberían adicionarse a la formación?"
+            value={evaluationData.additionalCompetencies}
+          />
+          <TabDataField
+            label="Pregunta 1"
+            value={evaluationData.question1}
+          />
+          <TabDataField
+            label="Pregunta 2"
+            value={evaluationData.question2}
+          />
+          <TabDataField
+            label="Pregunta 3"
+            value={evaluationData.question3}
+          />
         </div>
-      </DataSection>
+      </TabSection>
 
       <EvaluationModal
         isOpen={isModalOpen}
@@ -125,6 +109,6 @@ export default function EvaluationTab({ userProfile }: EvaluationTabProps) {
         onSave={handleSave}
         initialData={evaluationData}
       />
-    </div>
+    </TabContainer>
   )
 }
