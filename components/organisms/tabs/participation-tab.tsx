@@ -1,18 +1,19 @@
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { TabContainer, TabSection, TabDataField } from "@/components/organisms/tab-container"
+import { TabContainer, TabSection } from "@/components/organisms/tab-container"
 import ParticipationModal from "@/components/organisms/modals/participation-modal"
 import InnovationProcessModal from "@/components/organisms/modals/innovation-process-modal"
 import { EmptyStateCard } from "@/components/atoms/empty-state-card"
-import { Card, CardHeader, CardContent } from "@/components/molecules/card"
+import { ParticipationInfoCard } from "@/components/molecules/participation-info-card"
+import { InnovationProcessesCard } from "@/components/molecules/innovation-processes-card"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { GraduateParticipationService, GraduateParticipationRequest, GraduateParticipationResponse } from "@/lib/services/profile/graduate-participation.service"
 import { InnovationProcessService, InnovationProcessRequest, InnovationProcessResponse } from "@/lib/services/profile/innovation-process.service"
 import { DetailedUserResponse, DetailedGraduateParticipationResponse, DetailedInnovationProcessResponse } from "@/lib/services/profile/detailed-user.service"
 import { useInnovationTypes } from "@/contexts/innovation-types-context"
 import { logger } from "@/lib/logging"
-import { Users, BookOpen, Lightbulb, Plus, Edit, Trash2, ExternalLink, Calendar, Tag } from "lucide-react"
+import { Users, Lightbulb } from "lucide-react"
 
 interface ParticipationTabProps {
   userProfile?: DetailedUserResponse;
@@ -288,44 +289,12 @@ export default function ParticipationTab({ userProfile }: ParticipationTabProps)
       error={error}
     >
       {/* Participation Information Section */}
-      <TabSection title="Información de Participación" onEdit={handleEditParticipation}>
+      <TabSection title="" showEditButton={false}>
         {participationInfo ? (
-          <div className="space-y-6">
-          <TabDataField 
-              label="Intereses de Formación Continua"
-              value={participationInfo.continuousEducationInterests?.length > 0 
-                ? participationInfo.continuousEducationInterests.join(", ")
-                : "No especificado"
-              }
-            />
-            
-            <div className="space-y-4">
-              <h4 className="text-sm font-medium text-gray-700">Disposición para Participar</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {[
-                  { key: "willingToBeSpeaker", label: "Conferencista" },
-                  { key: "willingToBeProfessor", label: "Profesor" },
-                  { key: "willingToTeachNonFormalEducation", label: "Profesor no formal" },
-                  { key: "willingToBePostgraduateStudent", label: "Estudiante posgrado" },
-                  { key: "willingToBeNonFormalStudent", label: "Estudiante no formal" },
-                  { key: "willingToBeGraduateRepresentative", label: "Representante egresados" },
-                  { key: "willingToAttendAlumniMeetings", label: "Encuentros egresados" },
-                  { key: "willingToParticipateInAlumniActivities", label: "Actividades egresados" },
-                ].map(({ key, label }) => (
-                  <div key={key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">{label}</span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      participationInfo[key as keyof DetailedGraduateParticipationResponse] 
-                        ? "bg-green-100 text-green-800" 
-                        : "bg-red-100 text-red-800"
-                    }`}>
-                      {participationInfo[key as keyof DetailedGraduateParticipationResponse] ? "Sí" : "No"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ParticipationInfoCard 
+            participationInfo={participationInfo} 
+            onEdit={handleEditParticipation} 
+          />
         ) : (
           <EmptyStateCard
             icon={Users}
@@ -339,63 +308,14 @@ export default function ParticipationTab({ userProfile }: ParticipationTabProps)
       </TabSection>
 
       {/* Innovation Processes Section */}
-      <TabSection title="Procesos de Innovación" onAdd={handleAddInnovationProcess} showAddButton={true}>
+      <TabSection title="" showEditButton={false} useCard={false}>
         {userProfileData?.innovationProcesses && userProfileData.innovationProcesses.length > 0 ? (
-          <div className="space-y-4">
-            {userProfileData.innovationProcesses.map((process: any) => (
-              <Card key={process.id} className="border border-gray-200">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className="text-lg font-semibold text-gray-900">{process.name}</h4>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
-                        <div className="flex items-center space-x-1">
-                          <Tag className="w-4 h-4" />
-                          <span>{process.type.name}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="w-4 h-4" />
-                          <span>{new Date(process.creationDate).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleEditInnovationProcess(process)}
-                        className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                        title="Editar"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteInnovationProcess(process.id)}
-                        className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Eliminar"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  {process.description && (
-                    <p className="text-gray-700 mb-3">{process.description}</p>
-                  )}
-                  {process.link && (
-                    <a 
-                      href={process.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      <span>Ver enlace del proyecto</span>
-                    </a>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <InnovationProcessesCard
+            innovationProcesses={userProfileData.innovationProcesses}
+            onAdd={handleAddInnovationProcess}
+            onEdit={handleEditInnovationProcess}
+            onDelete={handleDeleteInnovationProcess}
+          />
         ) : (
           <EmptyStateCard
             icon={Lightbulb}

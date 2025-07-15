@@ -56,12 +56,11 @@ export default function ProfileTabs({ userProfile, isViewOnly = false, onDataUpd
   return (
     <>
       <Tabs defaultValue="personal" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="personal">Información Personal</TabsTrigger>
           <TabsTrigger value="academic">Información Académica</TabsTrigger>
           <TabsTrigger value="work">Información Laboral</TabsTrigger>
           <TabsTrigger value="participation">Participación</TabsTrigger>
-          <TabsTrigger value="evaluation">Evaluación Programa</TabsTrigger>
         </TabsList>
 
         <TabsContent value="personal">
@@ -83,10 +82,6 @@ export default function ProfileTabs({ userProfile, isViewOnly = false, onDataUpd
 
         <TabsContent value="participation">
           <ParticipationTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
-        </TabsContent>
-
-        <TabsContent value="evaluation">
-          <EvaluationTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
         </TabsContent>
       </Tabs>
     </>
