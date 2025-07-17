@@ -46,9 +46,10 @@ function CompleteProfileContent() {
   // Use detailed user data if available, otherwise fall back to basic profile
   const profileData = detailedUser || userProfile
   
-  const firstName = profileData?.name?.split(" ")[0] || ""
-  const firstLastname = profileData?.lastname?.split(" ")[0] || ""
-  const email = profileData?.institutionalEmail || user?.email || ""
+  // Always use logged-in user data for navbar (from localStorage)
+  const firstName = userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
+  const email = user?.email || ""
   const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
 
   return (
@@ -59,7 +60,7 @@ function CompleteProfileContent() {
         email,
         role: user?.role,
         initials,
-        ...profileData
+        ...userProfile
       }} />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

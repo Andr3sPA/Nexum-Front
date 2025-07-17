@@ -116,12 +116,12 @@ export default function ProfilePage() {
   return (
     <>
       <Navbar user={{
-        firstName: detailedUser.name,
-        firstLastname: detailedUser.lastname,
+        firstName,
+        firstLastname,
         email,
         role: user?.role,
         initials,
-        ...detailedUser
+        ...userProfile
       }} />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
