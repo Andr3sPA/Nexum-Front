@@ -14,7 +14,6 @@ export interface GraduateSearchProps {
     names: string
     lastnames: string
     gender: string
-    birthdate: string
     graduationYear: string
     programId: string
     country: string
@@ -49,6 +48,8 @@ export interface GraduateSearchProps {
   isSearching?: boolean
   programs: Array<{ id: number, name: string, code: string }>
   catalogError?: string | null
+  filtersWidthClass?: string
+  contentGapClass?: string
 }
 
 const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
@@ -68,6 +69,8 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
     isSearching = false,
     programs,
     catalogError,
+    filtersWidthClass = "w-80 flex-shrink-0",
+    contentGapClass = "gap-6",
     ...props 
   }, ref) => {
     const [showFilters, setShowFilters] = React.useState(true)
@@ -109,10 +112,10 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
           </CardHeader>
         </Card>
 
-        <div className="flex gap-6">
+        <div className={cn("flex", contentGapClass)}>
           {/* Barra de filtros lateral */}
           {showFilters && (
-            <div className="w-80 flex-shrink-0">
+            <div className={filtersWidthClass}>
               <SearchFilters
                 filters={filters}
                 onFilterChange={onFilterChange}

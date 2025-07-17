@@ -196,8 +196,8 @@ export default function SearchGraduatesPage() {
         ...userProfile
       }} />
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
+        <div className="mx-auto py-6 sm:px-8 lg:px-12">
+          <div className="px-0 py-6">
             <GraduateSearch
               filters={filters}
               onFilterChange={handleFilterChange}
@@ -213,6 +213,8 @@ export default function SearchGraduatesPage() {
               isSearching={isSearching}
               programs={programs}
               catalogError={catalogError}
+              filtersWidthClass="w-full md:w-[420px] lg:w-[480px]"
+              contentGapClass="gap-10"
             />
           </div>
         </div>
