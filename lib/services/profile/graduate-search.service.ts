@@ -33,8 +33,7 @@ export interface UserFilterRequest {
 
   // Contact Information
   address?: string
-  contactCountry?: string
-  state?: string
+  country?: string
   city?: string
   mobile?: string
   email?: string
@@ -107,14 +106,17 @@ export const GraduateSearchService = {
   ): Promise<PageResponse<BasicUserResponse>> {
     // Construir query params
     const params = new URLSearchParams()
+    
     // Filtros
     Object.entries(filterRequest).forEach(([key, value]) => {
       if (value !== undefined && value !== "") params.append(key, String(value))
     })
+    
     // Paginación
     Object.entries(pageQuery).forEach(([key, value]) => {
       if (value !== undefined && value !== "") params.append(key, String(value))
     })
+    
     const endpoint = `${USER_ENDPOINT}/filter?${params.toString()}`
     const { status, body } = await serviceWithAuth<undefined, PageResponse<BasicUserResponse>>(
       endpoint,

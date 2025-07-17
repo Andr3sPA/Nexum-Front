@@ -14,8 +14,6 @@ import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { logger } from "@/lib/logging"
 import { ROLES } from "@/lib/services/constants/api.constants"
 import { ProgramService } from "@/lib/services/catalog/program.service"
-import { JobAreaService } from "@/lib/services/catalog/job-area.service"
-import { IdentityDocumentTypeService } from "@/lib/services/catalog/identity-document-type.service"
 
 export default function SearchGraduatesPage() {
   const router = useRouter()
@@ -30,21 +28,23 @@ export default function SearchGraduatesPage() {
 
   // Catálogos
   const [programs, setPrograms] = useState<{ id: number, name: string, code: string }[]>([])
-  const [jobAreas, setJobAreas] = useState<{ id: number, name: string }[]>([])
-  const [docTypes, setDocTypes] = useState<{ id: number, name: string, abbreviation: string }[]>([])
   const [isLoadingCatalogs, setIsLoadingCatalogs] = useState(false)
   const [catalogError, setCatalogError] = useState<string | null>(null)
 
   // Filtros
-  const [identityDocument, setIdentityDocument] = useState("")
-  const [identityDocumentTypeId, setIdentityDocumentTypeId] = useState("")
   const [name, setName] = useState("")
+  const [middleName, setMiddleName] = useState("")
   const [lastname, setLastname] = useState("")
-  const [emailFilter, setEmailFilter] = useState("")
-  const [programId, setProgramId] = useState("")
+  const [secondLastname, setSecondLastname] = useState("")
+  const [gender, setGender] = useState("")
+  const [birthdate, setBirthdate] = useState("")
   const [graduationYear, setGraduationYear] = useState("")
+  const [programId, setProgramId] = useState("")
+  const [country, setCountry] = useState("")
   const [city, setCity] = useState("")
-  const [jobAreaId, setJobAreaId] = useState("")
+  const [mobile, setMobile] = useState("")
+  const [emailFilter, setEmailFilter] = useState("")
+  const [academicEmail, setAcademicEmail] = useState("")
 
   // Resultados y paginación
   const [searchResults, setSearchResults] = useState<BasicUserResponse[]>([])
@@ -87,22 +87,16 @@ export default function SearchGraduatesPage() {
     if (isClient) {
       setIsLoadingCatalogs(true)
       setCatalogError(null)
-      Promise.all([
-        ProgramService.getAll(),
-        JobAreaService.getAll(),
-        IdentityDocumentTypeService.getAll()
-      ]).then(([programs, jobAreas, docTypes]) => {
-        setPrograms(programs)
-        setJobAreas(jobAreas)
-        setDocTypes(docTypes)
-        setIsLoadingCatalogs(false)
-      }).catch((err) => {
-        setPrograms([])
-        setJobAreas([])
-        setDocTypes([])
-        setIsLoadingCatalogs(false)
-        setCatalogError('No se pudieron cargar los catálogos. Intenta de nuevo más tarde.')
-      })
+      ProgramService.getAll()
+        .then((programs) => {
+          setPrograms(programs)
+          setIsLoadingCatalogs(false)
+        })
+        .catch((err) => {
+          setPrograms([])
+          setIsLoadingCatalogs(false)
+          setCatalogError('No se pudieron cargar los catálogos. Intenta de nuevo más tarde.')
+        })
     }
   }, [isClient])
 
@@ -111,15 +105,20 @@ export default function SearchGraduatesPage() {
     setIsSearching(true)
     try {
       const filters: UserFilterRequest = {
-        identityDocument: identityDocument || undefined,
-        identityDocumentTypeId: identityDocumentTypeId ? Number(identityDocumentTypeId) : undefined,
         name: name || undefined,
+        middleName: middleName || undefined,
         lastname: lastname || undefined,
-        email: emailFilter || undefined,
-        programId: programId ? Number(programId) : undefined,
+        secondLastname: secondLastname || undefined,
+        gender: gender || undefined,
+        birthdate: birthdate || undefined,
         graduationYear: graduationYear ? Number(graduationYear) : undefined,
+        programId: programId ? Number(programId) : undefined,
+        country: country || undefined,
         city: city || undefined,
-        jobAreaId: jobAreaId ? Number(jobAreaId) : undefined,
+        mobile: mobile || undefined,
+        email: emailFilter || undefined,
+        academicEmail: academicEmail || undefined,
+        role: 'GRADUATE', // Por defecto buscar solo graduados
       }
       const pageQuery: PageQuery = { page, pageSize }
       const result = await GraduateSearchService.searchGraduates(filters, pageQuery)
@@ -180,29 +179,6 @@ export default function SearchGraduatesPage() {
                 <form onSubmit={handleSearch} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="space-y-2">
-                      <label htmlFor="identityDocument" className="text-sm font-medium">
-                        Documento
-                      </label>
-                      <Input
-                        id="identityDocument"
-                        placeholder="Número de documento"
-                        value={identityDocument}
-                        onChange={e => setIdentityDocument(e.target.value)}
-                        maxLength={30}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="identityDocumentTypeId" className="text-sm font-medium">
-                        Tipo de documento
-                      </label>
-                      <Select value={identityDocumentTypeId} onChange={e => setIdentityDocumentTypeId(e.target.value)}>
-                        <option value="">Seleccionar tipo</option>
-                        {docTypes.map(dt => (
-                          <option key={dt.id} value={dt.id}>{dt.name}</option>
-                        ))}
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
                       <label htmlFor="name" className="text-sm font-medium">
                         Nombre
                       </label>
@@ -215,28 +191,73 @@ export default function SearchGraduatesPage() {
                       />
                     </div>
                     <div className="space-y-2">
+                      <label htmlFor="middleName" className="text-sm font-medium">
+                        Segundo Nombre
+                      </label>
+                      <Input
+                        id="middleName"
+                        placeholder="Segundo nombre"
+                        value={middleName}
+                        onChange={e => setMiddleName(e.target.value)}
+                        maxLength={50}
+                      />
+                    </div>
+                    <div className="space-y-2">
                       <label htmlFor="lastname" className="text-sm font-medium">
-                        Apellido
+                        Primer Apellido
                       </label>
                       <Input
                         id="lastname"
-                        placeholder="Apellido(s)"
+                        placeholder="Primer apellido"
                         value={lastname}
                         onChange={e => setLastname(e.target.value)}
                         maxLength={50}
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="email" className="text-sm font-medium">
-                        Email
+                      <label htmlFor="secondLastname" className="text-sm font-medium">
+                        Segundo Apellido
                       </label>
                       <Input
-                        id="email"
-                        placeholder="Email"
-                        value={emailFilter}
-                        onChange={e => setEmailFilter(e.target.value)}
-                        maxLength={100}
+                        id="secondLastname"
+                        placeholder="Segundo apellido"
+                        value={secondLastname}
+                        onChange={e => setSecondLastname(e.target.value)}
+                        maxLength={50}
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="gender" className="text-sm font-medium">
+                        Género
+                      </label>
+                      <Select value={gender} onChange={e => setGender(e.target.value)}>
+                        <option value="">Seleccionar género</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="O">Otro</option>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="birthdate" className="text-sm font-medium">
+                        Fecha de Nacimiento
+                      </label>
+                      <Input
+                        id="birthdate"
+                        type="date"
+                        value={birthdate}
+                        onChange={e => setBirthdate(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="graduationYear" className="text-sm font-medium">
+                        Año de Graduación
+                      </label>
+                      <Select value={graduationYear} onChange={e => setGraduationYear(e.target.value)}>
+                        <option value="">Seleccionar año</option>
+                        {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                          <option key={year} value={year.toString()}>{year}</option>
+                        ))}
+                      </Select>
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="programId" className="text-sm font-medium">
@@ -250,15 +271,16 @@ export default function SearchGraduatesPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="graduationYear" className="text-sm font-medium">
-                        Año de Graduación
+                      <label htmlFor="country" className="text-sm font-medium">
+                        País
                       </label>
-                      <Select value={graduationYear} onChange={e => setGraduationYear(e.target.value)}>
-                        <option value="">Seleccionar año</option>
-                        {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                          <option key={year} value={year.toString()}>{year}</option>
-                        ))}
-                      </Select>
+                      <Input
+                        id="country"
+                        placeholder="País"
+                        value={country}
+                        onChange={e => setCountry(e.target.value)}
+                        maxLength={50}
+                      />
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="city" className="text-sm font-medium">
@@ -273,15 +295,40 @@ export default function SearchGraduatesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="jobAreaId" className="text-sm font-medium">
-                        Área de Trabajo
+                      <label htmlFor="mobile" className="text-sm font-medium">
+                        Teléfono
                       </label>
-                      <Select value={jobAreaId} onChange={e => setJobAreaId(e.target.value)}>
-                        <option value="">Seleccionar área</option>
-                        {jobAreas.map(a => (
-                          <option key={a.id} value={a.id}>{a.name}</option>
-                        ))}
-                      </Select>
+                      <Input
+                        id="mobile"
+                        placeholder="Teléfono móvil"
+                        value={mobile}
+                        onChange={e => setMobile(e.target.value)}
+                        maxLength={20}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="text-sm font-medium">
+                        Email Personal
+                      </label>
+                      <Input
+                        id="email"
+                        placeholder="Email personal"
+                        value={emailFilter}
+                        onChange={e => setEmailFilter(e.target.value)}
+                        maxLength={100}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="academicEmail" className="text-sm font-medium">
+                        Email Académico
+                      </label>
+                      <Input
+                        id="academicEmail"
+                        placeholder="Email académico"
+                        value={academicEmail}
+                        onChange={e => setAcademicEmail(e.target.value)}
+                        maxLength={100}
+                      />
                     </div>
                   </div>
                   <div className="flex justify-end space-x-2">
@@ -318,11 +365,14 @@ export default function SearchGraduatesPage() {
                             </CardDescription>
                           </CardHeader>
                           <CardContent className="space-y-1">
-                            <div><span className="font-medium">Programa:</span> {graduate.programs?.map(p => p.name).join(", ")}</div>
-                            <div><span className="font-medium">Ciudad:</span> {graduate.location}</div>
-                            <div><span className="font-medium">Rol:</span> {graduate.role}</div>
-                            <div><span className="font-medium">Género:</span> {graduate.gender}</div>
-                            <div><span className="font-medium">Teléfono:</span> {graduate.mobile}</div>
+                            <div><span className="font-medium">Programas:</span> {graduate.programs?.map(p => p.name).join(", ") || "No especificado"}</div>
+                            <div><span className="font-medium">País:</span> {graduate.country || "No especificado"}</div>
+                            <div><span className="font-medium">Ciudad:</span> {graduate.city || "No especificado"}</div>
+                            <div><span className="font-medium">Rol:</span> {graduate.role || "No especificado"}</div>
+                            <div><span className="font-medium">Género:</span> {graduate.gender || "No especificado"}</div>
+                            <div><span className="font-medium">Teléfono:</span> {graduate.mobile || "No especificado"}</div>
+                            <div><span className="font-medium">Email Personal:</span> {graduate.email || "No especificado"}</div>
+                            <div><span className="font-medium">Email Académico:</span> {graduate.academicEmail || "No especificado"}</div>
                             <div className="flex justify-end pt-2">
                               <Button 
                                 variant="ghost" 
