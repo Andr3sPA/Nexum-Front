@@ -21,6 +21,9 @@ export interface SearchResultsProps extends Omit<React.HTMLAttributes<HTMLDivEle
     country?: string
     city?: string
     gender?: string
+    role?: string
+    graduationYear?: string
+    mobile?: string
   }>
   totalCount: number
   currentPage: number
@@ -28,6 +31,7 @@ export interface SearchResultsProps extends Omit<React.HTMLAttributes<HTMLDivEle
   onPageChange: (page: number) => void
   onViewProfile: (id: string) => void
   onExport?: () => void
+  pageSize?: number
 }
 
 const SearchResults = React.forwardRef<HTMLDivElement, SearchResultsProps>(
@@ -40,18 +44,23 @@ const SearchResults = React.forwardRef<HTMLDivElement, SearchResultsProps>(
     onPageChange,
     onViewProfile,
     onExport,
+    pageSize = 10,
     ...props 
   }, ref) => {
     if (results.length === 0) {
       return null
     }
 
+    // Calcular el rango de resultados mostrados
+    const start = totalCount === 0 ? 0 : currentPage * pageSize + 1
+    const end = Math.min((currentPage + 1) * pageSize, totalCount)
+
     return (
       <Card className={cn("", className)} ref={ref} {...props}>
         <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <div className="text-sm text-gray-600">
-              Mostrando {results.length} de {totalCount} resultados
+              Mostrando {start}-{end} de {totalCount} resultados
             </div>
             {onExport && (
               <Button variant="outline" size="sm" onClick={onExport}>

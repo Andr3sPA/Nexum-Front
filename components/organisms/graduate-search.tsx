@@ -40,6 +40,9 @@ export interface GraduateSearchProps {
     country?: string
     city?: string
     gender?: string
+    role?: string
+    graduationYear?: string
+    mobile?: string
   }>
   totalCount: number
   currentPage: number
@@ -50,6 +53,7 @@ export interface GraduateSearchProps {
   catalogError?: string | null
   filtersWidthClass?: string
   contentGapClass?: string
+  pageSize?: number
 }
 
 const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
@@ -71,6 +75,7 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
     catalogError,
     filtersWidthClass = "w-80 flex-shrink-0",
     contentGapClass = "gap-6",
+    pageSize,
     ...props 
   }, ref) => {
     const [showFilters, setShowFilters] = React.useState(true)
@@ -145,6 +150,7 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
                 onPageChange={onPageChange}
                 onViewProfile={onViewProfile}
                 onExport={onExport}
+                pageSize={pageSize}
               />
             ) : (
               <SearchEmptyState

@@ -175,6 +175,11 @@ export default function SearchGraduatesPage() {
     setPage(newPage)
   }
 
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize)
+    setPage(0)
+  }
+
   // No renderizar nada hasta que estemos en el cliente
   if (!isClient) {
     return null
@@ -198,6 +203,21 @@ export default function SearchGraduatesPage() {
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto py-6 sm:px-8 lg:px-12">
           <div className="px-0 py-6">
+            {/* Selector de tamaño de página */}
+            <div className="flex items-center justify-end mb-4 gap-2">
+              <label htmlFor="pageSize" className="text-sm text-gray-700">Resultados por página:</label>
+              <select
+                id="pageSize"
+                value={pageSize}
+                onChange={e => handlePageSizeChange(Number(e.target.value))}
+                className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                style={{ minWidth: 60 }}
+              >
+                {[10, 20, 30, 50].map(size => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+            </div>
             <GraduateSearch
               filters={filters}
               onFilterChange={handleFilterChange}
@@ -215,6 +235,7 @@ export default function SearchGraduatesPage() {
               catalogError={catalogError}
               filtersWidthClass="w-full md:w-[420px] lg:w-[480px]"
               contentGapClass="gap-10"
+              pageSize={pageSize}
             />
           </div>
         </div>
