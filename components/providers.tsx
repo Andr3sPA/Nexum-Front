@@ -21,7 +21,7 @@ export function Providers({ children }: ProvidersProps) {
       <AcademicProvider>
         <ProfileProvider>
           <InnovationTypesProvider>
-            {children}
+          {children}
           </InnovationTypesProvider>
         </ProfileProvider>
       </AcademicProvider>

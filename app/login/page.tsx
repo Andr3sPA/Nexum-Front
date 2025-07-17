@@ -41,10 +41,8 @@ export default function LoginPage() {
         console.warn("No se pudo obtener el perfil detallado:", profileErr)
       }
 
-      let dashboardRoute = "/dashboard"
-      if (user.role === ROLES.ADMINISTRATIVE) dashboardRoute = "/admin/dashboard"
-      else if (user.role === ROLES.DEAN) dashboardRoute = "/dean/dashboard"
-      await router.replace(dashboardRoute)
+      // Siempre redirigir al dashboard principal
+      await router.replace("/dashboard")
     } catch (err: any) {
       console.error("Login error:", err)
       setError(err.message || "Error al iniciar sesión")

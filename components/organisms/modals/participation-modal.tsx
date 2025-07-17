@@ -122,8 +122,8 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
           description="Configure su disponibilidad para diferentes roles en la UDEA"
           icon={Users}
           color="green"
-        >
-          <div className="space-y-6">
+    >
+      <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <FormField id="willingToBeSpeaker" label="¿Desea participar como conferencista en la UDEA?">
                 <div className="flex items-center space-x-3">
@@ -158,7 +158,7 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
                   <span className="text-sm text-gray-600">
                     {formData.willingToTeachNonFormalEducation ? "Sí" : "No"}
                   </span>
-                </div>
+          </div>
               </FormField>
 
               <FormField id="willingToBePostgraduateStudent" label="¿Desearía participar como estudiante de posgrado de la UDEA?">
@@ -182,7 +182,7 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
                   <span className="text-sm text-gray-600">
                     {formData.willingToBeNonFormalStudent ? "Sí" : "No"}
                   </span>
-                </div>
+          </div>
               </FormField>
 
               <FormField id="willingToBeGraduateRepresentative" label="¿Te gustaría ser representante de los egresados?">
@@ -206,7 +206,7 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
                   <span className="text-sm text-gray-600">
                     {formData.willingToAttendAlumniMeetings ? "Sí" : "No"}
                   </span>
-                </div>
+          </div>
               </FormField>
 
               <FormField id="willingToParticipateInAlumniActivities" label="¿Te gustaría escribir o participar en actividades para egresados?">

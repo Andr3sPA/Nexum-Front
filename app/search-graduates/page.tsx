@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Search, Download } from "lucide-react"
 import { Button } from "@/components/atoms/button"
@@ -14,6 +14,7 @@ import { GraduateSearchService, GraduateSearchResult, GraduateSearchFilters } fr
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { logger } from "@/lib/logging"
 import { sanitizeInput } from "@/lib/security"
+import { ROLES } from "@/lib/services/constants/api.constants"
 
 export default function SearchGraduatesPage() {
   const router = useRouter()
@@ -29,6 +30,18 @@ export default function SearchGraduatesPage() {
   const [location, setLocation] = useState("")
   const [searchResults, setSearchResults] = useState<GraduateSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
+
+  const role = user?.role
+
+  useEffect(() => {
+    if (role !== ROLES.ADMINISTRATIVE && role !== ROLES.DEAN) {
+      router.replace("/dashboard")
+    }
+  }, [role, router])
+
+  if (role !== ROLES.ADMINISTRATIVE && role !== ROLES.DEAN) {
+    return null
+  }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
