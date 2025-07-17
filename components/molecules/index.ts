@@ -1,0 +1,21 @@
+// Molecules
+export { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "./card"
+export { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from "./dialog"
+export { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu"
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
+export { FormField } from "./form-field"
+export { DynamicInputList } from "./dynamic-input-list"
+export { MultiSelect } from "./multi-select"
+export { ModalActions } from "./modal-actions"
+export { SectionHeader } from "./section-header"
+export { EvaluationDisplay } from "./evaluation-display"
+export { AcademicProgramCard } from "./academic-program-card"
+export { PostGraduateCard } from "./post-graduate-card"
+export { ContactInformationCard } from "./contact-information-card"
+export { FamilyInformationCard } from "./family-information-card"
+export { ParticipationInfoCard } from "./participation-info-card"
+export { InnovationProcessesCard } from "./innovation-processes-card"
+
+// New molecules for search functionality
+export { SearchFilters } from "./search-filters"
+export { SearchResults } from "./search-results" 

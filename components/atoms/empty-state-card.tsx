@@ -85,11 +85,11 @@ const EmptyStateCard = React.forwardRef<HTMLDivElement, EmptyStateCardProps>(
         </CardHeader>
         <CardContent className="pt-0">
           {actionText && onAction && (
-            <div className="flex justify-start">
-              <AddButton onClick={onAction}>
-                {actionText}
-              </AddButton>
-            </div>
+          <div className="flex justify-start">
+            <AddButton onClick={onAction}>
+              {actionText}
+            </AddButton>
+          </div>
           )}
         </CardContent>
       </Card>
