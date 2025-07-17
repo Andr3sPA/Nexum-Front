@@ -308,7 +308,7 @@ export default function ParticipationTab({ userProfile }: ParticipationTabProps)
       </TabSection>
 
       {/* Innovation Processes Section */}
-      <TabSection title="" showEditButton={false} useCard={false}>
+      <TabSection title="" showEditButton={false}>
         {userProfileData?.innovationProcesses && userProfileData.innovationProcesses.length > 0 ? (
           <InnovationProcessesCard
             innovationProcesses={userProfileData.innovationProcesses}

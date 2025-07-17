@@ -4,7 +4,6 @@ import { METHOD } from "@/lib/services/constants/api.constants"
 // Request interfaces
 export interface GraduateParticipationRequest {
   userId: string
-  innovationProcessTypeIds: number[]
   continuousEducationInterests: string[]
   willingToBeSpeaker: boolean
   willingToBeProfessor: boolean
@@ -23,16 +22,10 @@ export interface GraduateParticipationUserResponse {
   email: string
 }
 
-export interface InnovationProcessTypeResponse {
-  id: number
-  name: string
-  description: string
-}
 
 export interface GraduateParticipationResponse {
   id: number
   user: GraduateParticipationUserResponse
-  participatedInnovationProcesses: InnovationProcessTypeResponse[]
   continuousEducationInterests: string[]
   willingToBeSpeaker: boolean
   willingToBeProfessor: boolean

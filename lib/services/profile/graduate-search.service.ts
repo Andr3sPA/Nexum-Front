@@ -1,138 +1,130 @@
 import { serviceWithAuth } from "@/lib/services/base.service"
-import { METHOD } from "@/lib/services/constants/api.constants"
+import { METHOD, USER_ENDPOINT, API_HOST } from "@/lib/services/constants/api.constants"
 
-// Search filters interface
-export interface GraduateSearchFilters {
-  searchTerm?: string
-  program?: string
-  graduationYear?: string
-  location?: string
-  [key: string]: unknown
+// UserFilterRequest interface based on the API specification
+export interface UserFilterRequest {
+  // Personal Information
+  identityDocument?: string
+  identityDocumentTypeId?: number
+  name?: string
+  middleName?: string
+  lastname?: string
+  secondLastname?: string
+  gender?: string
+  birthdate?: string
+
+  // Job Information
+  companyName?: string
+  jobCountry?: string
+  position?: string
+  relatedToProgram?: boolean
+  salaryRangeId?: number
+  jobDelayId?: number
+  jobAreaId?: number
+  institutionTypeId?: number
+
+  // Innovation Process
+  innovationTypeId?: number
+  innovationName?: string
+
+  // Coursed Program
+  graduationYear?: number
+  programId?: number
+
+  // Contact Information
+  address?: string
+  contactCountry?: string
+  state?: string
+  city?: string
+  mobile?: string
+  email?: string
+  academicEmail?: string
+  whatsappAuthorization?: boolean
+
+  // Auth
+  role?: string
+
+  // Academic Education
+  studyType?: string
+  studyName?: string
+  academicInstitution?: string
+  academicCountry?: string
 }
 
-// Graduate search result interface
-export interface GraduateSearchResult {
+// PageQuery interface for pagination
+export interface PageQuery {
+  sortBy?: string
+  page?: number
+  asc?: boolean
+  pageSize?: number
+}
+
+// BasicUserResponse interface based on the API specification
+export interface BasicUserResponse {
   id: string
   name: string
+  middleName?: string
   lastname: string
-  institutionalEmail: string
-  program?: string
-  graduationYear?: string
-  location?: string
+  secondLastname?: string
+  gender?: string
+  programs?: BasicProgramResponse[]
+  email?: string
+  academicEmail?: string
+  mobile?: string
+  country?: string
+  city?: string
+  role?: string
+}
+
+// BasicProgramResponse interface
+export interface BasicProgramResponse {
+  name: string
+  code?: string
+}
+
+// PageResponse interface for paginated results
+export interface PageResponse<T> {
+  page: number
+  pageSize: number
+  totalPages: number
+  count: number
+  totalCount: number
+  content: T[]
 }
 
 // Search response interface
 export interface GraduateSearchResponse {
-  graduates: GraduateSearchResult[]
+  graduates: BasicUserResponse[]
   totalCount: number
   page: number
   pageSize: number
 }
 
 export const GraduateSearchService = {
-  async searchGraduates(filters: GraduateSearchFilters): Promise<GraduateSearchResponse> {
-    const { status, body } = await serviceWithAuth<GraduateSearchFilters, GraduateSearchResponse>(
-      "/admin/graduates/search",
-      METHOD.post,
-      filters
+  async searchGraduates(
+    filterRequest: UserFilterRequest,
+    pageQuery: PageQuery
+  ): Promise<PageResponse<BasicUserResponse>> {
+    // Construir query params
+    const params = new URLSearchParams()
+    // Filtros
+    Object.entries(filterRequest).forEach(([key, value]) => {
+      if (value !== undefined && value !== "") params.append(key, String(value))
+    })
+    // Paginación
+    Object.entries(pageQuery).forEach(([key, value]) => {
+      if (value !== undefined && value !== "") params.append(key, String(value))
+    })
+    const endpoint = `${USER_ENDPOINT}/filter?${params.toString()}`
+    const { status, body } = await serviceWithAuth<undefined, PageResponse<BasicUserResponse>>(
+      endpoint,
+      METHOD.get,
+      undefined,
+      API_HOST
     )
-    
     if (status !== 200) {
       throw new Error((body as any)?.message || "Error al buscar graduados")
     }
-    
     return body
-  },
-
-  async searchGraduatesMock(filters: GraduateSearchFilters): Promise<GraduateSearchResponse> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    // Mock data
-    const mockGraduates: GraduateSearchResult[] = [
-      {
-        id: "1",
-        name: "Ana María",
-        lastname: "Rodríguez",
-        institutionalEmail: "ana.rodriguez@udea.edu.co",
-        program: "Ingeniería de Sistemas",
-        graduationYear: "2020",
-        location: "Medellín",
-      },
-      {
-        id: "2",
-        name: "Carlos",
-        lastname: "Gómez",
-        institutionalEmail: "carlos.gomez@udea.edu.co",
-        program: "Ingeniería de Sistemas",
-        graduationYear: "2019",
-        location: "Bogotá",
-      },
-      {
-        id: "3",
-        name: "Laura",
-        lastname: "Martínez",
-        institutionalEmail: "laura.martinez@udea.edu.co",
-        program: "Ingeniería de Sistemas",
-        graduationYear: "2021",
-        location: "Medellín",
-      },
-      {
-        id: "4",
-        name: "Juan",
-        lastname: "Pérez",
-        institutionalEmail: "juan.perez@udea.edu.co",
-        program: "Ingeniería Industrial",
-        graduationYear: "2020",
-        location: "Cali",
-      },
-      {
-        id: "5",
-        name: "María",
-        lastname: "López",
-        institutionalEmail: "maria.lopez@udea.edu.co",
-        program: "Ingeniería Electrónica",
-        graduationYear: "2021",
-        location: "Medellín",
-      },
-    ]
-
-    // Apply filters
-    let filteredGraduates = [...mockGraduates]
-
-    if (filters.searchTerm) {
-      const searchTerm = filters.searchTerm.toLowerCase()
-      filteredGraduates = filteredGraduates.filter(graduate => 
-        graduate.name.toLowerCase().includes(searchTerm) ||
-        graduate.lastname.toLowerCase().includes(searchTerm) ||
-        graduate.institutionalEmail.toLowerCase().includes(searchTerm) ||
-        graduate.id.includes(searchTerm)
-      )
-    }
-
-    if (filters.program) {
-      filteredGraduates = filteredGraduates.filter(graduate => 
-        graduate.program?.toLowerCase().includes(filters.program!.toLowerCase())
-      )
-    }
-
-    if (filters.graduationYear) {
-      filteredGraduates = filteredGraduates.filter(graduate => 
-        graduate.graduationYear === filters.graduationYear
-      )
-    }
-
-    if (filters.location) {
-      filteredGraduates = filteredGraduates.filter(graduate => 
-        graduate.location?.toLowerCase().includes(filters.location!.toLowerCase())
-      )
-    }
-
-    return {
-      graduates: filteredGraduates,
-      totalCount: filteredGraduates.length,
-      page: 1,
-      pageSize: 10
-    }
   }
 } 
