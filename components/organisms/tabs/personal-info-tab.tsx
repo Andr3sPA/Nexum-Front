@@ -17,9 +17,11 @@ import { MapPin, Users } from "lucide-react"
 
 interface PersonalInfoTabProps {
   userProfile?: any;
+  isViewOnly?: boolean;
+  onDataUpdate?: () => Promise<void>;
 }
 
-export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
+export default function PersonalInfoTab({ userProfile, isViewOnly = false, onDataUpdate }: PersonalInfoTabProps) {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [isFamilyModalOpen, setIsFamilyModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -38,17 +40,22 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
     }
   }, [])
 
-  // Get user profile from localStorage
+  // Use userProfile from props (backend data) or fallback to localStorage
   const userProfileData = useMemo(() => {
+    // If userProfile is provided (from backend), use it
+    if (userProfile) {
+      return userProfile
+    }
+    // Otherwise, fallback to localStorage (for current user)
     try {
       return LocalStorageService.getItem<any>("userProfile")
     } catch (error) {
       console.error("Error getting userProfile from localStorage:", error)
       return null
     }
-  }, [])
+  }, [userProfile])
 
-  // Registration data from localStorage - memoized
+  // Registration data from userProfile - memoized
   const registrationData = useMemo(() => ({
     email: userProfileData?.email || userProfileData?.institutionalEmail || "No disponible",
     idType: userProfileData?.identityDocumentType?.name || "No disponible",
@@ -68,14 +75,14 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
       setIsLoading(true)
       setError(null)
 
-      // Get contact information from userProfile
+      // Get contact information from userProfile (backend data)
       if (userProfileData.contactInformation) {
         setContactInfo(userProfileData.contactInformation)
       } else {
         setContactInfo(null)
       }
 
-      // Get family information from userProfile
+      // Get family information from userProfile (backend data)
       if (userProfileData.familyInformation) {
         setFamilyInfo(userProfileData.familyInformation)
       } else {
@@ -134,12 +141,14 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
 
       setContactInfo(savedContactInfo)
       
-      // Update localStorage userProfile with new contact information
-      const updatedUserProfile = {
-        ...userProfileData,
-        contactInformation: savedContactInfo
+      // Update localStorage userProfile with new contact information (only for current user)
+      // We don't need to update localStorage anymore since we always get data from backend
+      // The onDataUpdate callback will refresh the data from the backend
+      
+      // Call onDataUpdate to refresh the parent component
+      if (onDataUpdate) {
+        await onDataUpdate()
       }
-      LocalStorageService.setItem("userProfile", updatedUserProfile)
       
       setIsContactModalOpen(false)
       
@@ -189,12 +198,14 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
 
       setFamilyInfo(savedFamilyInfo)
       
-      // Update localStorage userProfile with new family information
-      const updatedUserProfile = {
-        ...userProfileData,
-        familyInformation: savedFamilyInfo
+      // Update localStorage userProfile with new family information (only for current user)
+      // We don't need to update localStorage anymore since we always get data from backend
+      // The onDataUpdate callback will refresh the data from the backend
+      
+      // Call onDataUpdate to refresh the parent component
+      if (onDataUpdate) {
+        await onDataUpdate()
       }
-      LocalStorageService.setItem("userProfile", updatedUserProfile)
       
       setIsFamilyModalOpen(false)
       
@@ -235,14 +246,17 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
       {/* Contact Information Section */}
       <TabSection title="" showEditButton={false}>
         {contactInfo ? (
-          <ContactInformationCard contactInfo={contactInfo} onEdit={handleEditContact} />
+          <ContactInformationCard 
+            contactInfo={contactInfo} 
+            onEdit={isViewOnly ? undefined : handleEditContact} 
+          />
         ) : (
           <EmptyStateCard
             icon={MapPin}
             title="Información de Contacto"
             description="No hay información de contacto registrada"
-            actionText="Añadir Información de Contacto"
-            onAction={handleEditContact}
+            actionText={isViewOnly ? undefined : "Añadir Información de Contacto"}
+            onAction={isViewOnly ? undefined : handleEditContact}
             color="blue"
           />
         )}
@@ -251,14 +265,17 @@ export default function PersonalInfoTab({ userProfile }: PersonalInfoTabProps) {
       {/* Family Information Section */}
       <TabSection title="" showEditButton={false}>
         {familyInfo ? (
-          <FamilyInformationCard familyInfo={familyInfo} onEdit={handleEditFamily} />
+          <FamilyInformationCard 
+            familyInfo={familyInfo} 
+            onEdit={isViewOnly ? undefined : handleEditFamily} 
+          />
         ) : (
           <EmptyStateCard
             icon={Users}
             title="Información Familiar"
             description="No hay información familiar registrada"
-            actionText="Añadir Información Familiar"
-            onAction={handleEditFamily}
+            actionText={isViewOnly ? undefined : "Añadir Información Familiar"}
+            onAction={isViewOnly ? undefined : handleEditFamily}
             color="purple"
           />
         )}

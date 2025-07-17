@@ -1,18 +1,17 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { useUserProfile } from "@/hooks/use-user-profile"
 import Navbar from "@/components/navbar"
 import ProfileTabs from "@/components/profile-tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Button } from "@/components/atoms/button"
+import { ArrowLeft } from "lucide-react"
 
 export default function ProfilePage() {
-  console.log("📄 ProfilePage rendered")
-  
+  const router = useRouter()
   const searchParams = useSearchParams()
   const userId = searchParams.get('userId')
-  
-  console.log("📄 ProfilePage - userId from searchParams:", userId)
   
   const {
     detailedUser,
@@ -24,23 +23,15 @@ export default function ProfilePage() {
     canEdit,
     refreshData
   } = useUserProfile({
-    userId: userId || undefined
+    userId: userId || undefined,
+    isViewOnly: false, // Allow editing for admins and deans
+    redirectOnUnauthorized: true
   })
 
-  console.log("📄 ProfilePage - hook data:", { 
-    hasDetailedUser: !!detailedUser, 
-    hasUserProfile: !!userProfile, 
-    hasUser: !!user, 
-    isLoading, 
-    error, 
-    isCurrentUser, 
-    canEdit 
-  })
-
-  // Use detailed user data for navbar
-  const firstName = detailedUser?.name?.split(" ")[0] || userProfile?.name?.split(" ")[0] || ""
-  const firstLastname = detailedUser?.lastname?.split(" ")[0] || userProfile?.lastname?.split(" ")[0] || ""
-  const email = detailedUser?.institutionalEmail || user?.email || ""
+  // Use current user data for navbar (always from localStorage)
+  const firstName = userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
+  const email = user?.email || ""
   const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
 
   if (isLoading) {
@@ -79,12 +70,12 @@ export default function ProfilePage() {
           <div className="text-center">
             <div className="text-red-600 text-xl mb-4">Error</div>
             <p className="text-gray-600 mb-4">{error}</p>
-            <button 
-              onClick={() => window.history.back()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            <Button 
+              onClick={() => router.back()}
+              className="mt-4"
             >
               Volver
-            </button>
+            </Button>
           </div>
         </div>
       </>
@@ -105,12 +96,12 @@ export default function ProfilePage() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="text-gray-600 text-xl mb-4">No se pudo cargar el perfil</div>
-            <button 
-              onClick={() => window.history.back()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            <Button 
+              onClick={() => router.back()}
+              className="mt-4"
             >
               Volver
-            </button>
+            </Button>
           </div>
         </div>
       </>
@@ -120,13 +111,13 @@ export default function ProfilePage() {
   const profileTitle = isCurrentUser ? "Mi Perfil" : `Perfil de ${detailedUser.name} ${detailedUser.lastname}`
   const profileDescription = isCurrentUser 
     ? "Actualiza tu información personal, académica y laboral"
-    : "Información personal, académica y laboral"
+    : "Información personal, académica y laboral del egresado"
 
   return (
     <>
       <Navbar user={{
-        firstName,
-        firstLastname,
+        firstName: detailedUser.name,
+        firstLastname: detailedUser.lastname,
         email,
         role: user?.role,
         initials,
@@ -135,6 +126,20 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
+            {/* Back button for admin/dean when viewing another user's profile */}
+            {!isCurrentUser && (
+              <div className="mb-4">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => router.back()}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Volver a la búsqueda
+                </Button>
+              </div>
+            )}
+            
             <Card>
               <CardHeader>
                 <CardTitle className="text-2xl font-bold udea-primary-text">{profileTitle}</CardTitle>
@@ -142,7 +147,7 @@ export default function ProfilePage() {
                 {!isCurrentUser && (
                   <div className="mt-2">
                     <span className="text-sm text-gray-500">
-                      {canEdit ? "Modo de edición habilitado" : "Modo de solo lectura"}
+                      {canEdit ? "Modo de administración - Edición habilitada" : "Modo de solo lectura"}
                     </span>
                   </div>
                 )}

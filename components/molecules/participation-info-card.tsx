@@ -7,7 +7,7 @@ import { Users } from "lucide-react"
 
 interface ParticipationInfoCardProps {
   participationInfo: DetailedGraduateParticipationResponse
-  onEdit: () => void
+  onEdit?: () => void
 }
 
 export function ParticipationInfoCard({ participationInfo, onEdit }: ParticipationInfoCardProps) {
@@ -24,7 +24,7 @@ export function ParticipationInfoCard({ participationInfo, onEdit }: Participati
               <p className="text-sm text-neutral-600">Disposición y intereses de participación</p>
             </div>
           </div>
-          <EditButton onClick={onEdit} text="Editar" />
+          {onEdit && <EditButton onClick={onEdit} text="Editar" />}
         </div>
       </CardHeader>
       <CardContent className="pt-0">

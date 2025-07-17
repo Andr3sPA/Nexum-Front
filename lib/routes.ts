@@ -14,39 +14,40 @@ export const ROUTES = {
   // Egresado routes
   DASHBOARD: "/dashboard",
   PROFILE: "/profile",
+  SEARCH_GRADUATES: "/search-graduates",
 
   // Admin routes (Administrativo role)
   ADMIN: {
-    DASHBOARD: "/admin/dashboard",
-    SEARCH_GRADUATES: "/admin/search-graduates",
+    DASHBOARD: "/dashboard",
+    SEARCH_GRADUATES: "/search-graduates",
     REPORTS: "/admin/reports",
     COMPLETE_PROFILE: "/admin/complete-profile", // For completing graduate profile after registration
-    VIEW_PROFILE: "/admin/profile", // For viewing specific user profiles
+    VIEW_PROFILE: "/profile", // For viewing specific user profiles
   },
 
   // Dean routes (Decano role)
   DEAN: {
-    DASHBOARD: "/dean/dashboard",
-    SEARCH_GRADUATES: "/dean/search-graduates",
+    DASHBOARD: "/dashboard",
+    SEARCH_GRADUATES: "/search-graduates",
     REPORTS: "/dean/reports",
-    VIEW_PROFILE: "/dean/profile", // For viewing specific user profiles
+    VIEW_PROFILE: "/profile", // For viewing specific user profiles
   },
 } as const
 
 export const ROLE_ROUTES = {
   [ROLES.GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE],
   [ROLES.ADMINISTRATIVE]: [
-    ROUTES.ADMIN.DASHBOARD,
-    ROUTES.ADMIN.SEARCH_GRADUATES,
+    ROUTES.DASHBOARD,
+    ROUTES.SEARCH_GRADUATES,
     ROUTES.ADMIN.REPORTS,
     ROUTES.ADMIN.COMPLETE_PROFILE,
-    ROUTES.ADMIN.VIEW_PROFILE,
+    ROUTES.PROFILE,
   ],
   [ROLES.DEAN]: [
-    ROUTES.DEAN.DASHBOARD, 
-    ROUTES.DEAN.SEARCH_GRADUATES, 
+    ROUTES.DASHBOARD, 
+    ROUTES.SEARCH_GRADUATES, 
     ROUTES.DEAN.REPORTS,
-    ROUTES.DEAN.VIEW_PROFILE,
+    ROUTES.PROFILE,
   ],
 } as const
 

@@ -155,14 +155,14 @@ export default function UnifiedDashboardPage() {
                           <div className="flex items-center justify-center mb-3">{card.icon}</div>
                           <h3 className={`font-semibold udea-primary-text mb-2 group-hover:text-${card.color}-700`}>
                             {card.title}
-                          </h3>
+                      </h3>
                           <p className="text-sm text-gray-600 mb-3">{card.description}</p>
                           <div className={`flex items-center justify-center text-${card.color}-600 group-hover:text-${card.color}-700`}>
                             <span className="text-sm font-medium">Ir</span>
-                            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </div>
-                      </Link>
+                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
+                  </Link>
                     )
                   )}
                 </div>

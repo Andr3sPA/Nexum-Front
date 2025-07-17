@@ -127,13 +127,7 @@ export default function Navbar({ user }: { user: NavbarUser }) {
                 {/* Show profile option for all users */}
                 <DropdownMenuItem>
                   <Link 
-                    href={
-                      user.role === ROLES.ADMINISTRATIVE 
-                        ? ROUTES.ADMIN.VIEW_PROFILE 
-                        : user.role === ROLES.DEAN 
-                        ? ROUTES.DEAN.VIEW_PROFILE 
-                        : ROUTES.PROFILE
-                    } 
+                    href={ROUTES.PROFILE}
                     className="cursor-pointer w-full flex items-center"
                   >
                     <User className="mr-3 h-4 w-4" />

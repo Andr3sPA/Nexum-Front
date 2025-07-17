@@ -10,8 +10,8 @@ export interface EmptyStateCardProps extends React.HTMLAttributes<HTMLDivElement
   icon: LucideIcon
   title: string
   description: string
-  actionText: string
-  onAction: () => void
+  actionText?: string
+  onAction?: () => void
   color?: "blue" | "green" | "purple" | "orange"
 }
 
@@ -84,11 +84,13 @@ const EmptyStateCard = React.forwardRef<HTMLDivElement, EmptyStateCardProps>(
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="flex justify-start">
-            <AddButton onClick={onAction}>
-              {actionText}
-            </AddButton>
-          </div>
+          {actionText && onAction && (
+            <div className="flex justify-start">
+              <AddButton onClick={onAction}>
+                {actionText}
+              </AddButton>
+            </div>
+          )}
         </CardContent>
       </Card>
     )

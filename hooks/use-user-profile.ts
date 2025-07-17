@@ -70,20 +70,8 @@ export function useUserProfile({
       return
     }
 
-    // Handle role-based redirects for current user's own profile
-    if (isCurrentUser) {
-      const userRole = userProfile?.role
-      
-      if (userRole === ROLES.ADMINISTRATIVE) {
-        router.replace(ROUTES.ADMIN.VIEW_PROFILE)
-        return
-      }
-      
-      if (userRole === ROLES.DEAN) {
-        router.replace(ROUTES.DEAN.VIEW_PROFILE)
-        return
-      }
-    }
+    // No need for role-based redirects since we have a unified profile page
+    // All users can access their profile through /profile
 
     // Fetch detailed user data if not already fetched
     if (!hasFetched.current && targetUserId) {

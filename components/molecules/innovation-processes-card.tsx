@@ -7,9 +7,9 @@ import { Edit, Trash2, ExternalLink, Calendar, Tag, Lightbulb } from "lucide-rea
 
 interface InnovationProcessesCardProps {
   innovationProcesses: DetailedInnovationProcessResponse[]
-  onAdd: () => void
-  onEdit: (process: DetailedInnovationProcessResponse) => void
-  onDelete: (processId: number) => void
+  onAdd?: () => void
+  onEdit?: (process: DetailedInnovationProcessResponse) => void
+  onDelete?: (processId: number) => void
 }
 
 export function InnovationProcessesCard({ 
@@ -31,7 +31,7 @@ export function InnovationProcessesCard({
               <p className="text-sm text-neutral-600">Proyectos y procesos de innovación</p>
             </div>
           </div>
-          <AddButton onClick={onAdd}>Agregar</AddButton>
+          {onAdd && <AddButton onClick={onAdd}>Agregar</AddButton>}
         </div>
       </CardHeader>
       <CardContent className="pt-0">
@@ -53,22 +53,24 @@ export function InnovationProcessesCard({
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => onEdit(process)}
-                      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                      title="Editar"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onDelete(process.id)}
-                      className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Eliminar"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                  {onEdit && onDelete && (
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => onEdit(process)}
+                        className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                        title="Editar"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => onDelete(process.id)}
+                        className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Eliminar"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 {process.description && (
                   <p className="text-gray-700 mt-3">{process.description}</p>

@@ -10,7 +10,7 @@ import { InfoCard } from "@/components/atoms/info-card"
 
 interface FamilyInformationCardProps {
   familyInfo: FamilyInformationResponse
-  onEdit: () => void
+  onEdit?: () => void
 }
 
 const maritalStateLabels = {
@@ -50,14 +50,16 @@ export function FamilyInformationCard({
               <p className="text-sm text-neutral-600">Estado civil y familia</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onEdit}
-            className="h-8 w-8 p-0"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          {onEdit && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onEdit}
+              className="h-8 w-8 p-0"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent className="pt-0">

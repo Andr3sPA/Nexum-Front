@@ -17,9 +17,11 @@ import { Users, Lightbulb } from "lucide-react"
 
 interface ParticipationTabProps {
   userProfile?: DetailedUserResponse;
+  isViewOnly?: boolean;
+  onDataUpdate?: () => Promise<void>;
 }
 
-export default function ParticipationTab({ userProfile }: ParticipationTabProps) {
+export default function ParticipationTab({ userProfile, isViewOnly = false, onDataUpdate }: ParticipationTabProps) {
   const [isParticipationModalOpen, setIsParticipationModalOpen] = useState(false)
   const [isInnovationModalOpen, setIsInnovationModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -31,15 +33,20 @@ export default function ParticipationTab({ userProfile }: ParticipationTabProps)
   // Get innovation types from context
   const { innovationTypes } = useInnovationTypes()
 
-  // Get user profile from localStorage
+  // Use userProfile from props (backend data) or fallback to localStorage
   const userProfileData = useMemo(() => {
+    // If userProfile is provided (from backend), use it
+    if (userProfile) {
+      return userProfile
+    }
+    // Otherwise, fallback to localStorage (for current user)
     try {
       return LocalStorageService.getItem<any>("userProfile")
     } catch (error) {
       console.error("Error getting userProfile from localStorage:", error)
       return null
     }
-  }, [])
+  }, [userProfile])
 
   // Fetch participation data - memoized callback
   const fetchData = useCallback(async () => {
@@ -120,12 +127,19 @@ export default function ParticipationTab({ userProfile }: ParticipationTabProps)
 
       setParticipationInfo(detailedParticipationInfo)
       
-      // Update localStorage userProfile with new participation information
-      const updatedUserProfile = {
-        ...userProfileData,
-        graduateParticipation: detailedParticipationInfo
+      // Update localStorage userProfile with new participation information (only for current user)
+      if (!userProfile) { // Only update localStorage if we're viewing our own profile
+        const updatedUserProfile = {
+          ...userProfileData,
+          graduateParticipation: detailedParticipationInfo
+        }
+        LocalStorageService.setItem("userProfile", updatedUserProfile)
       }
-      LocalStorageService.setItem("userProfile", updatedUserProfile)
+      
+      // Call onDataUpdate to refresh the parent component
+      if (onDataUpdate) {
+        await onDataUpdate()
+      }
       
       setIsParticipationModalOpen(false)
       
@@ -200,7 +214,16 @@ export default function ParticipationTab({ userProfile }: ParticipationTabProps)
         ...userProfileData,
         innovationProcesses: updatedInnovationProcesses
       }
-      LocalStorageService.setItem("userProfile", updatedUserProfile)
+      
+      // Update localStorage userProfile with new innovation process (only for current user)
+      if (!userProfile) { // Only update localStorage if we're viewing our own profile
+        LocalStorageService.setItem("userProfile", updatedUserProfile)
+      }
+      
+      // Call onDataUpdate to refresh the parent component
+      if (onDataUpdate) {
+        await onDataUpdate()
+      }
 
       setIsInnovationModalOpen(false)
       setSelectedInnovationProcess(null)
@@ -293,15 +316,15 @@ export default function ParticipationTab({ userProfile }: ParticipationTabProps)
         {participationInfo ? (
           <ParticipationInfoCard 
             participationInfo={participationInfo} 
-            onEdit={handleEditParticipation} 
+            onEdit={isViewOnly ? undefined : handleEditParticipation} 
           />
         ) : (
           <EmptyStateCard
             icon={Users}
             title="Información de Participación"
             description="No hay información de participación registrada"
-            actionText="Añadir Información de Participación"
-            onAction={handleEditParticipation}
+            actionText={isViewOnly ? undefined : "Añadir Información de Participación"}
+            onAction={isViewOnly ? undefined : handleEditParticipation}
             color="blue"
           />
         )}
@@ -312,17 +335,17 @@ export default function ParticipationTab({ userProfile }: ParticipationTabProps)
         {userProfileData?.innovationProcesses && userProfileData.innovationProcesses.length > 0 ? (
           <InnovationProcessesCard
             innovationProcesses={userProfileData.innovationProcesses}
-            onAdd={handleAddInnovationProcess}
-            onEdit={handleEditInnovationProcess}
-            onDelete={handleDeleteInnovationProcess}
+            onAdd={isViewOnly ? undefined : handleAddInnovationProcess}
+            onEdit={isViewOnly ? undefined : handleEditInnovationProcess}
+            onDelete={isViewOnly ? undefined : handleDeleteInnovationProcess}
           />
         ) : (
           <EmptyStateCard
             icon={Lightbulb}
             title="Procesos de Innovación"
             description="No hay procesos de innovación registrados"
-            actionText="Agregar Proceso de Innovación"
-            onAction={handleAddInnovationProcess}
+            actionText={isViewOnly ? undefined : "Agregar Proceso de Innovación"}
+            onAction={isViewOnly ? undefined : handleAddInnovationProcess}
             color="purple"
           />
         )}
