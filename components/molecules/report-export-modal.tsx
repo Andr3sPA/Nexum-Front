@@ -71,7 +71,7 @@ export const ReportExportModal: React.FC<ReportExportModalProps> = ({
                 <Icon className="h-5 w-5 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="font-medium">{option.label}</div>
-                  <div className="text-sm text-gray-500">{option.description}</div>
+                  <div className="text-sm text-gray-800">{option.description}</div>
                 </div>
               </Button>
             )

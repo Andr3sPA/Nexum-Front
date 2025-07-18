@@ -55,6 +55,7 @@ export interface GraduateSearchProps {
   filtersWidthClass?: string
   contentGapClass?: string
   pageSize?: number
+  onPageSizeChange?: (size: number) => void
 }
 
 const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
@@ -77,6 +78,7 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
     filtersWidthClass = "w-80 flex-shrink-0",
     contentGapClass = "gap-6",
     pageSize,
+    onPageSizeChange,
     ...props 
   }, ref) => {
     const [showFilters, setShowFilters] = React.useState(true)
@@ -117,6 +119,24 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
             </div>
           </CardHeader>
         </Card>
+
+        {/* Selector de cantidad de resultados por página alineado a la derecha */}
+        <div className="flex justify-end mb-4">
+          <div className="flex items-center gap-2">
+            <label htmlFor="pageSize" className="text-sm text-gray-700">Resultados por página:</label>
+            <select
+              id="pageSize"
+              value={pageSize}
+              onChange={e => onPageSizeChange && onPageSizeChange(Number(e.target.value))}
+              className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white min-w-[60px] shadow-sm"
+              style={{ minWidth: 60 }}
+            >
+              {[5, 10, 20, 30, 50].map(size => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         <div className={cn("flex", contentGapClass)}>
           {/* Barra de filtros lateral */}
