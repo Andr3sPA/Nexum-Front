@@ -35,7 +35,8 @@ export default async function RootLayout({
   return (
     <html lang="es">
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
         <meta name="theme-color" content="#014926" />
         <meta name="csrf-token" content="" />
       </head>

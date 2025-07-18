@@ -46,7 +46,7 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
           <CardTitle className="text-lg font-semibold udea-primary-text">Filtros de Búsqueda</CardTitle>
         </CardHeader>
         <CardContent className="py-4 px-4">
-          <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <form onSubmit={onSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4">
             {/* Año de graduación (desde) */}
             <div className="flex flex-col gap-1">
               <label htmlFor="startYear" className="text-sm font-medium text-gray-700">Año de Graduación (Desde)</label>

@@ -22,7 +22,28 @@ const nextConfig = {
   
   // Configure webpack for better compatibility
   webpack: (config, { dev, isServer }) => {
-    // Add any necessary webpack configurations here
+    // Soporte para importar SVGs como componentes React
+    config.module.rules.push({
+      test: /\.svg$/,
+      issuer: { and: [/\.[jt]sx?$/] },
+      use: [
+        {
+          loader: require.resolve('@svgr/webpack'),
+          options: {
+            icon: true,
+            svgo: true,
+            svgoConfig: {
+              plugins: [
+                {
+                  name: 'removeViewBox',
+                  active: false,
+                },
+              ],
+            },
+          },
+        },
+      ],
+    });
     return config;
   },
   // Add security headers via next.config.js as backup
