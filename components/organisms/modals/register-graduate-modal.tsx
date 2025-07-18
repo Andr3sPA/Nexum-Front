@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/atoms/button"
 import { Input } from "@/components/atoms/input"
@@ -12,57 +12,70 @@ import { ROUTES } from "@/lib/routes"
 import { logger } from "@/lib/logging"
 import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
+import { UserService, UserRequest } from "@/lib/services/profile/user.service"
+import { IdentityDocumentTypeService, IdentityDocumentTypeResponse } from "@/lib/services/catalog/identity-document-type.service"
+import { useToast } from "@/hooks/use-toast"
 
 interface RegisterFormData {
-  email: string
-  idType: string
-  idNumber: string
-  firstName: string
-  secondName: string
-  firstLastName: string
-  secondLastName: string
-  birthDate: string
+  identityDocument: string
+  idIdentityDocumentType: string
+  name: string
+  middleName: string
+  lastname: string
+  secondLastname: string
   gender: string
-  password: string
-  confirmPassword: string
+  birthdate: string
 }
 
 interface RegisterGraduateModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onSave: (formData: RegisterFormData) => void
 }
 
-export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGraduateModalProps) {
+export default function RegisterGraduateModal({ open, onOpenChange, onSave }: RegisterGraduateModalProps) {
   const [formData, setFormData] = useState<RegisterFormData>({
-    email: "",
-    idType: "",
-    idNumber: "",
-    firstName: "",
-    secondName: "",
-    firstLastName: "",
-    secondLastName: "",
-    birthDate: "",
+    identityDocument: "",
+    idIdentityDocumentType: "",
+    name: "",
+    middleName: "",
+    lastname: "",
+    secondLastname: "",
     gender: "",
-    password: "",
-    confirmPassword: "",
+    birthdate: "",
   })
+  const [documentTypes, setDocumentTypes] = useState<IdentityDocumentTypeResponse[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    const loadDocumentTypes = async () => {
+      try {
+        const types = await IdentityDocumentTypeService.getAll()
+        setDocumentTypes(types)
+      } catch (error) {
+        logger.error("Error loading document types:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (open) {
+      loadDocumentTypes()
+    }
+  }, [open])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-
     try {
-      // TODO: Implement registration logic with backend
-      await new Promise((resolve) => setTimeout(resolve, 2000)) // Simulate API call
-
-      // Generate a temporary ID for the new graduate
-      const graduateId = `grad_${Date.now()}`
-
-      // Close modal and redirect to complete profile page
+      await onSave({
+        ...formData,
+        birthdate: formData.birthdate ? new Date(formData.birthdate).toISOString() : "",
+      })
       onOpenChange(false)
-      router.push(`${ROUTES.ADMIN.COMPLETE_PROFILE}?graduateId=${graduateId}&newUser=true`)
     } catch (error) {
       logger.error("Registration failed:", error)
     } finally {
@@ -76,17 +89,14 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
 
   const resetForm = () => {
     setFormData({
-      email: "",
-      idType: "",
-      idNumber: "",
-      firstName: "",
-      secondName: "",
-      firstLastName: "",
-      secondLastName: "",
-      birthDate: "",
+      identityDocument: "",
+      idIdentityDocumentType: "",
+      name: "",
+      middleName: "",
+      lastname: "",
+      secondLastname: "",
       gender: "",
-      password: "",
-      confirmPassword: "",
+      birthdate: "",
     })
   }
 
@@ -104,69 +114,74 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
       actions={
         <ModalActions onCancel={handleClose} isSubmitting={isSubmitting} />
       }
+      onSubmit={handleSubmit}
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form className="space-y-6">
         <div className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Información Personal</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField id="firstName" label="Primer Nombre">
+              <FormField id="name" label="Primer Nombre">
                 <Input
-                  id="firstName"
-                  value={formData?.firstName || ""}
-                  onChange={(e) => handleInputChange("firstName", e.target.value)}
+                  id="name"
+                  value={formData?.name || ""}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
                   placeholder="Ingrese el primer nombre"
                   required
                 />
               </FormField>
 
-              <FormField id="secondName" label="Segundo Nombre">
+              <FormField id="middleName" label="Segundo Nombre">
                 <Input
-                  id="secondName"
-                  value={formData?.secondName || ""}
-                  onChange={(e) => handleInputChange("secondName", e.target.value)}
+                  id="middleName"
+                  value={formData?.middleName || ""}
+                  onChange={(e) => handleInputChange("middleName", e.target.value)}
                   placeholder="Ingrese el segundo nombre (opcional)"
                 />
               </FormField>
 
-              <FormField id="firstLastName" label="Primer Apellido">
+              <FormField id="lastname" label="Primer Apellido">
                 <Input
-                  id="firstLastName"
-                  value={formData?.firstLastName || ""}
-                  onChange={(e) => handleInputChange("firstLastName", e.target.value)}
+                  id="lastname"
+                  value={formData?.lastname || ""}
+                  onChange={(e) => handleInputChange("lastname", e.target.value)}
                   placeholder="Ingrese el primer apellido"
                   required
                 />
               </FormField>
 
-              <FormField id="secondLastName" label="Segundo Apellido">
+              <FormField id="secondLastname" label="Segundo Apellido">
                 <Input
-                  id="secondLastName"
-                  value={formData?.secondLastName || ""}
-                  onChange={(e) => handleInputChange("secondLastName", e.target.value)}
-                  placeholder="Ingrese el segundo apellido (opcional)"
+                  id="secondLastname"
+                  value={formData?.secondLastname || ""}
+                  onChange={(e) => handleInputChange("secondLastname", e.target.value)}
+                  placeholder="Ingrese el segundo apellido"
+                  required
                 />
               </FormField>
 
-              <FormField id="birthDate" label="Fecha de Nacimiento">
+              <FormField id="birthdate" label="Fecha de Nacimiento">
                 <Input
-                  id="birthDate"
+                  id="birthdate"
                   type="date"
-                  value={formData?.birthDate || ""}
-                  onChange={(e) => handleInputChange("birthDate", e.target.value)}
+                  value={formData?.birthdate || ""}
+                  onChange={(e) => handleInputChange("birthdate", e.target.value)}
                   required
                 />
               </FormField>
 
-              <FormField id="email" label="Correo Electrónico">
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData?.email || ""}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="Ingrese el correo electrónico"
+              <FormField id="gender" label="Género">
+                <Select
+                  value={formData?.gender || ""}
+                  onChange={(e) => handleInputChange("gender", e.target.value)}
                   required
-                />
+                >
+                  <option value="">Seleccionar género</option>
+                  <option value="Hombre">Masculino</option>
+                  <option value="Mujer">Femenino</option>
+                  <option value="No binario">No binario</option>
+                  <option value="Otro">Otro</option>
+                </Select>
               </FormField>
             </div>
           </div>
@@ -176,24 +191,25 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField id="documentType" label="Tipo de Documento">
                 <Select
-                  value={formData?.idType || ""}
-                  onChange={(e) => handleInputChange("idType", e.target.value)}
+                  value={formData?.idIdentityDocumentType || ""}
+                  onChange={(e) => handleInputChange("idIdentityDocumentType", e.target.value)}
                   required
+                  disabled={isLoading}
                 >
                   <option value="">Seleccionar tipo de documento</option>
-                  <option value="cc">Cédula de Ciudadanía</option>
-                  <option value="ce">Cédula de Extranjería</option>
-                  <option value="ti">Tarjeta de Identidad</option>
-                  <option value="pasaporte">Pasaporte</option>
-                  <option value="otros">Otros</option>
+                  {documentTypes.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
                 </Select>
               </FormField>
 
               <FormField id="documentNumber" label="Número de Documento">
                 <Input
                   id="documentNumber"
-                  value={formData?.idNumber || ""}
-                  onChange={(e) => handleInputChange("idNumber", e.target.value)}
+                  value={formData?.identityDocument || ""}
+                  onChange={(e) => handleInputChange("identityDocument", e.target.value)}
                   placeholder="Ingrese el número de documento"
                   required
                 />
@@ -202,57 +218,9 @@ export default function RegisterGraduateModal({ open, onOpenChange }: RegisterGr
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Información Académica</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Información de Contacto</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField id="program" label="Programa de Estudio">
-                <Select
-                  value={formData?.gender || ""}
-                  onChange={(e) => handleInputChange("gender", e.target.value)}
-                  required
-                >
-                  <option value="">Seleccionar programa</option>
-                  <option value="ingenieria-sistemas">Ingeniería de Sistemas</option>
-                  <option value="ingenieria-informatica">Ingeniería Informática</option>
-                  <option value="ciencias-computacion">Ciencias de la Computación</option>
-                  <option value="tecnologia-sistemas">Tecnología en Sistemas</option>
-                  <option value="otros">Otros</option>
-                </Select>
-              </FormField>
-
-              <FormField id="graduationYear" label="Año de Graduación">
-                <Input
-                  id="graduationYear"
-                  type="number"
-                  min="1990"
-                  max="2030"
-                  value={formData?.birthDate || ""}
-                  onChange={(e) => handleInputChange("birthDate", e.target.value)}
-                  placeholder="Ingrese el año de graduación"
-                  required
-                />
-              </FormField>
-
-              <FormField id="gpa" label="Promedio Académico">
-                <Input
-                  id="gpa"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="5"
-                  value={formData?.password || ""}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  placeholder="Ingrese el promedio académico"
-                />
-              </FormField>
-
-              <FormField id="thesisTitle" label="Título de la Tesis/Proyecto">
-                <Input
-                  id="thesisTitle"
-                  value={formData?.confirmPassword || ""}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                  placeholder="Ingrese el título de la tesis o proyecto"
-                />
-              </FormField>
+              {/* Eliminado el campo de correo institucional */}
             </div>
           </div>
         </div>

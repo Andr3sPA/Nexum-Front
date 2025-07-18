@@ -9,9 +9,12 @@ import RegisterGraduateModal from "@/components/organisms/modals/register-gradua
 import { DashboardTemplate } from "@/components/templates/dashboard-template"
 import { DashboardContainer } from "@/components/organisms/dashboard-container"
 import { DashboardCardData } from "@/components/molecules/dashboard-grid"
+import { UserService } from "@/lib/services/profile/user.service"
+import { useToast } from "@/hooks/use-toast"
 
 export default function UnifiedDashboardPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const user = LocalStorageService.getItem<{ name?: string; email?: string; initials?: string; role?: string }>("user")
   const userProfile = LocalStorageService.getItem<any>("userProfile")
   const [showRegisterModal, setShowRegisterModal] = useState(false)
@@ -102,6 +105,30 @@ export default function UnifiedDashboardPage() {
     ]
   }
 
+  const handleRegisterGraduate = async (formData: any) => {
+    try {
+      const newUser = await UserService.create({
+        ...formData,
+        idIdentityDocumentType: parseInt(formData.idIdentityDocumentType),
+      })
+      toast({
+        title: "Usuario registrado exitosamente",
+        description: `El usuario ha sido registrado correctamente.`,
+      })
+      setShowRegisterModal(false)
+      if (newUser?.id) {
+        setTimeout(() => {
+          router.replace(`/profile/${newUser.id}`)
+        }, 200)
+      }
+    } catch (error) {
+      toast({
+        title: "Error al registrar usuario",
+        description: error instanceof Error ? error.message : "Ocurrió un error inesperado.",
+      })
+    }
+  }
+
   return (
     <DashboardTemplate
       user={{
@@ -117,7 +144,7 @@ export default function UnifiedDashboardPage() {
       
       {/* Modal para registrar egresado solo para admin */}
       {role === ROLES.ADMINISTRATIVE && (
-        <RegisterGraduateModal open={showRegisterModal} onOpenChange={setShowRegisterModal} />
+        <RegisterGraduateModal open={showRegisterModal} onOpenChange={setShowRegisterModal} onSave={handleRegisterGraduate} />
       )}
     </DashboardTemplate>
   )

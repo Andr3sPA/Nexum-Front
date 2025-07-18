@@ -24,7 +24,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ cards, className }
     if (cards.length === 1) return "grid-cols-1"
     if (cards.length === 2) return "grid-cols-1 md:grid-cols-2"
     if (cards.length === 3) return "grid-cols-1 md:grid-cols-3"
-    if (cards.length === 4) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+    if (cards.length >= 4) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
     return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
   }
 

@@ -34,6 +34,17 @@ export interface UserResponse {
 }
 
 export const UserService = {
+  // Create new user
+  async create(data: UserRequest): Promise<UserResponse> {
+    const { status, body } = await serviceWithAuth<UserRequest, UserResponse>(
+      `${USER_ENDPOINT}`,
+      METHOD.post,
+      data
+    );
+    if (status !== 201) throw new Error((body as any)?.message || "No se pudo crear el usuario");
+    return body;
+  },
+
   // Get all users
   async getAll(): Promise<UserResponse[]> {
     const { status, body } = await serviceWithAuth<undefined, UserResponse[]>(
