@@ -20,6 +20,7 @@ interface PostGraduateModalProps {
   onSave: () => void
   postGraduateData: DetailedAcademicEducationResponse[]
   editingItem?: DetailedAcademicEducationResponse | null
+  userId: string
 }
 
 export function PostGraduateModal({
@@ -27,9 +28,10 @@ export function PostGraduateModal({
   onClose,
   onSave,
   postGraduateData,
-  editingItem
+  editingItem,
+  userId
 }: PostGraduateModalProps) {
-  const { createAcademicEducation, updateAcademicEducation, getUserId } = useProfile()
+  const { createAcademicEducation, updateAcademicEducation } = useProfile()
   
   const [type, setType] = useState<"COURSE" | "DIPLOMA" | "WORKSHOP" | "HACKATHON" | "OTHER">("COURSE")
   const [studyName, setStudyName] = useState("")
@@ -64,7 +66,6 @@ export function PostGraduateModal({
     try {
       setIsSaving(true)
       
-      const userId = getUserId()
       if (!userId) {
         throw new Error("No se pudo obtener el ID del usuario")
       }

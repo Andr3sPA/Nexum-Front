@@ -33,8 +33,8 @@ export default function SearchGraduatesPage() {
     names: "",
     lastnames: "",
     gender: "",
-    birthdate: "",
-    graduationYear: "",
+    startYear: "",
+    endYear: "",
     programId: "",
     country: "",
     city: "",
@@ -114,8 +114,8 @@ export default function SearchGraduatesPage() {
         lastname: detailedFilters.lastname || undefined,
         secondLastname: detailedFilters.secondLastname || undefined,
         gender: detailedFilters.gender || undefined,
-        birthdate: detailedFilters.birthdate || undefined,
-        graduationYear: detailedFilters.graduationYear ? Number(detailedFilters.graduationYear) : undefined,
+        startYear: detailedFilters.startYear ? Number(detailedFilters.startYear) : undefined,
+        endYear: detailedFilters.endYear ? Number(detailedFilters.endYear) : undefined,
         programId: detailedFilters.programId ? Number(detailedFilters.programId) : undefined,
         country: detailedFilters.country || undefined,
         city: detailedFilters.city || undefined,
@@ -151,8 +151,8 @@ export default function SearchGraduatesPage() {
       names: "",
       lastnames: "",
       gender: "",
-      birthdate: "",
-      graduationYear: "",
+      startYear: "",
+      endYear: "",
       programId: "",
       country: "",
       city: "",
@@ -217,7 +217,7 @@ export default function SearchGraduatesPage() {
                   <option key={size} value={size}>{size}</option>
                 ))}
               </select>
-            </div>
+                      </div>
             <GraduateSearch
               filters={filters}
               onFilterChange={handleFilterChange}

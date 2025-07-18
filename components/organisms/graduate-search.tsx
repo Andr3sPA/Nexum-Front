@@ -14,7 +14,8 @@ export interface GraduateSearchProps {
     names: string
     lastnames: string
     gender: string
-    graduationYear: string
+    startYear: string
+    endYear: string
     programId: string
     country: string
     city: string

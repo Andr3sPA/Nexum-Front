@@ -16,6 +16,7 @@ import { JobHeader } from "@/components/atoms/job-header"
 import { AlertCircle, Building2, Briefcase, MapPin, DollarSign, Clock, Users, Building } from "lucide-react"
 import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
 import { Card, CardHeader, CardContent } from "@/components/molecules/card"
+import { ProgramVersionService } from "@/lib/services/catalog/program-version.service";
 
 interface WorkInfoTabProps {
   userProfile?: DetailedUserResponse & { email?: string }
@@ -61,22 +62,30 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
   }, [userProfile])
 
   // Get program ID for catalog data
-  const programId = useMemo(() => {
+  const [programId, setProgramId] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function fetchProgramId() {
     if (userProfile?.coursedPrograms && userProfile.coursedPrograms.length > 0) {
-      const firstProgram = userProfile.coursedPrograms[0]
-      console.log("WorkInfoTab - First program:", firstProgram)
-      console.log("WorkInfoTab - First program programVersion:", firstProgram.programVersion)
-      
-      // Use the programVersion.id as the program ID
-      const programId = firstProgram.programVersion?.id
-      
-      console.log("WorkInfoTab - Program ID from programVersion:", programId)
-      
-      return programId
+        const firstProgram = userProfile.coursedPrograms[0];
+        const programVersionId = firstProgram.programVersion?.id;
+        if (programVersionId) {
+          try {
+            const version = await ProgramVersionService.getById(programVersionId);
+            setProgramId(version.program.id);
+          } catch (e) {
+            console.error("No se pudo obtener la versión del programa para catálogo laboral", e);
+            setProgramId(null);
+          }
+        } else {
+          setProgramId(null);
+        }
+      } else {
+        setProgramId(null);
+      }
     }
-    console.log("WorkInfoTab - No program ID found in userProfile")
-    return null
-  }, [userProfile])
+    fetchProgramId();
+  }, [userProfile]);
 
   // Fetch jobs data
   const fetchJobs = useCallback(async () => {
@@ -104,12 +113,10 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
 
   // Load program-specific catalog data when program ID is available
   useEffect(() => {
-    console.log("WorkInfoTab useEffect - programId:", programId)
     if (programId) {
-      console.log("Calling loadProgramSpecificData with programId:", programId)
-      loadProgramSpecificData(programId)
+      loadProgramSpecificData(programId);
     }
-  }, [programId, loadProgramSpecificData])
+  }, [programId, loadProgramSpecificData]);
 
   // Get current and first job
   const currentJob = useMemo(() => jobs.find(job => job.currentJob), [jobs])

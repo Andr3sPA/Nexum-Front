@@ -73,6 +73,7 @@ export default function ProfileTabs({ userProfile, isViewOnly = false, onDataUpd
             postGraduateData={userProfile?.academicEducationList || []}
             isViewOnly={isViewOnly}
             onDataUpdate={handleDataUpdate}
+            userId={userProfile?.id || ""}
           />
         </TabsContent>
 

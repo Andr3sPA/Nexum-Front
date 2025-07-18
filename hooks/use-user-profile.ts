@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { DetailedUserService, DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
 import { ROLES } from "@/lib/services/constants/api.constants"
 import { ROUTES } from "@/lib/routes"
 import { logger } from "@/lib/logging"
+import { UserService, UserResponse } from "@/lib/services/profile/user.service"
 
 interface UseUserProfileOptions {
   userId?: string
@@ -35,81 +35,76 @@ export function useUserProfile({
   const router = useRouter()
   const [detailedUser, setDetailedUser] = useState<DetailedUserResponse | null>(null)
   const [userProfile, setUserProfile] = useState<any>(null)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<UserResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false)
   const hasFetched = useRef(false)
 
-  // Load current user data from localStorage on client only
+  // Fetch authenticated user on mount
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUserProfile = LocalStorageService.getItem<any>("userProfile")
-      const storedUser = LocalStorageService.getItem<any>("user")
-      setUserProfile(storedUserProfile)
-      setUser(storedUser)
-      setHasLoadedFromStorage(true)
+    const fetchUser = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const authenticatedUser = await UserService.getCurrentUser()
+        setUser(authenticatedUser)
+        setUserProfile(authenticatedUser) // Opcional: si quieres que userProfile sea igual al usuario base
+      } catch (err) {
+        setUser(null)
+        setUserProfile(null)
+        setError("No autenticado")
+        if (redirectOnUnauthorized) {
+          router.replace("/login")
+        }
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }, [])
+    fetchUser()
+  }, [redirectOnUnauthorized, router])
 
   // Determine if we're viewing the current user's profile
-  const currentUserId = userProfile?.id || user?.id
+  const currentUserId = user?.id
   const isCurrentUser = !userId || userId === currentUserId
   const targetUserId = userId || currentUserId
 
   // Determine if the current user can edit this profile
-  const canEdit = isCurrentUser || 
-    (user?.role === ROLES.ADMINISTRATIVE || user?.role === ROLES.DEAN) && !isViewOnly
+  console.log('DEBUG user object:', user)
+  console.log('DEBUG user.role:', user?.role, 'ROLES.ADMINISTRATIVE:', ROLES.ADMINISTRATIVE, 'ROLES.DEAN:', ROLES.DEAN, 'isViewOnly:', isViewOnly)
+  const canEdit = isCurrentUser || ((user?.role === ROLES.ADMINISTRATIVE || user?.role === ROLES.DEAN) && !isViewOnly)
 
   useEffect(() => {
-    if (!hasLoadedFromStorage) return // Wait for localStorage to load
-
-    // Check if current user is authenticated
-    if (!userProfile && redirectOnUnauthorized) {
-      router.replace("/login")
-      return
-    }
-
     // No need for role-based redirects since we have a unified profile page
     // All users can access their profile through /profile
 
-    // Fetch detailed user data if not already fetched
-    if (!hasFetched.current && targetUserId) {
+    // Fetch detailed user data if not already fetched and user is authenticated
+    if (!hasFetched.current && targetUserId && user) {
       hasFetched.current = true
       
       const fetchDetailedUser = async () => {
         try {
-          console.log("🔄 Starting to fetch detailed user...", { targetUserId, isCurrentUser })
           setIsLoading(true)
           setError(null)
 
           let userData: DetailedUserResponse
 
           if (isCurrentUser) {
-            // Fetch current user's detailed profile
-            console.log("📡 Calling DetailedUserService.getCurrentUserDetailed()...")
             userData = await DetailedUserService.getCurrentUserDetailed()
           } else {
-            // Fetch another user's profile (for admins/deans)
-            console.log("📡 Calling DetailedUserService.getById()...")
             userData = await DetailedUserService.getById(targetUserId)
           }
 
-          console.log("✅ Detailed user data received:", userData)
           setDetailedUser(userData)
         } catch (error) {
-          console.error("❌ Error fetching detailed user profile:", error)
-          logger.error("Error fetching detailed user profile:", error)
           setError("Error al cargar el perfil detallado")
         } finally {
-          console.log("🏁 Finished fetching detailed user")
           setIsLoading(false)
         }
       }
 
       fetchDetailedUser()
     }
-  }, [userProfile, hasLoadedFromStorage, router, targetUserId, isCurrentUser, redirectOnUnauthorized])
+  }, [user, targetUserId, isCurrentUser])
 
   const refreshData = async () => {
     if (!targetUserId) return
@@ -128,8 +123,6 @@ export function useUserProfile({
 
       setDetailedUser(userData)
     } catch (error) {
-      console.error("Error refreshing user data:", error)
-      logger.error("Error refreshing user data:", error)
       setError("Error al actualizar los datos")
     } finally {
       setIsLoading(false)

@@ -17,13 +17,15 @@ interface AcademicInfoTabProps {
   postGraduateData: DetailedAcademicEducationResponse[]
   isViewOnly?: boolean
   onDataUpdate?: () => Promise<void>
+  userId: string
 }
 
 export function AcademicInfoTab({ 
   academicData, 
   postGraduateData, 
   isViewOnly = false,
-  onDataUpdate
+  onDataUpdate,
+  userId
 }: AcademicInfoTabProps) {
   const { programs } = useAcademic()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -199,6 +201,7 @@ export function AcademicInfoTab({
         academicData={academicData}
         postGraduateData={postGraduateData}
         editingProgram={editingAcademicProgram}
+        userId={userId}
       />
 
       <PostGraduateModal
@@ -207,6 +210,7 @@ export function AcademicInfoTab({
         onSave={handlePostGraduateSave}
         postGraduateData={postGraduateData}
         editingItem={editingPostGraduate}
+        userId={userId}
       />
     </TabContainer>
   )

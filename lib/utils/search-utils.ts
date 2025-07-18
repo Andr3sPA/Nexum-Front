@@ -63,8 +63,8 @@ export function convertFiltersToDetailed(filters: {
   names: string
   lastnames: string
   gender: string
-  birthdate: string
-  graduationYear: string
+  startYear: string
+  endYear: string
   programId: string
   country: string
   city: string
@@ -77,8 +77,8 @@ export function convertFiltersToDetailed(filters: {
   lastname: string
   secondLastname: string
   gender: string
-  birthdate: string
-  graduationYear: string
+  startYear: string
+  endYear: string
   programId: string
   country: string
   city: string
@@ -95,8 +95,8 @@ export function convertFiltersToDetailed(filters: {
     lastname,
     secondLastname,
     gender: filters.gender,
-    birthdate: filters.birthdate,
-    graduationYear: filters.graduationYear,
+    startYear: filters.startYear,
+    endYear: filters.endYear,
     programId: filters.programId,
     country: filters.country,
     city: filters.city,

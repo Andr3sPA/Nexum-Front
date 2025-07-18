@@ -16,8 +16,9 @@ import { Users, Heart, Baby } from "lucide-react"
 interface FamilyInformationModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (formData: FamilyFormData) => void
+  onSave: (formData: FamilyFormData, userId: string) => void
   familyData?: FamilyInformationResponse | null
+  userId: string
 }
 
 interface FamilyFormData {
@@ -35,9 +36,9 @@ export function FamilyInformationModal({
   isOpen,
   onClose,
   onSave,
-  familyData
+  familyData,
+  userId
 }: FamilyInformationModalProps) {
-  const { getUserId } = useProfile()
   const [formData, setFormData] = useState<FamilyFormData>(defaultFormData)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -60,7 +61,6 @@ export function FamilyInformationModal({
   }
 
   const handleSave = async () => {
-    const userId = getUserId()
     if (!userId) {
       logger.error("No user ID found")
       return
@@ -68,9 +68,8 @@ export function FamilyInformationModal({
 
     try {
       setIsLoading(true)
-
-      // Pass form data to parent component
-      onSave(formData)
+      // Pass form data and userId to parent component
+      onSave(formData, userId)
     } catch (error) {
       logger.error("Error saving family information:", error)
     } finally {

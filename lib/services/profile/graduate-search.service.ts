@@ -28,7 +28,8 @@ export interface UserFilterRequest {
   innovationName?: string
 
   // Coursed Program
-  graduationYear?: number
+  startYear?: number
+  endYear?: number
   programId?: number
 
   // Contact Information

@@ -41,7 +41,7 @@ export default function UnifiedDashboardPage() {
         color: "blue",
       },
       {
-        href: ROUTES.ADMIN.REPORTS,
+        href: '/reports',
         icon: <FileText className="w-8 h-8 text-green-600" />,
         title: "Generar Reportes",
         description: "Genera reportes estadísticos de egresados por programa, género, años y exporta en Excel.",
@@ -67,7 +67,7 @@ export default function UnifiedDashboardPage() {
         color: "blue",
       },
       {
-        href: ROUTES.DEAN.REPORTS,
+        href: '/reports',
         icon: <BarChart3 className="w-8 h-8 text-green-600" />,
         title: "Generar Reportes",
         description: "Genera reportes estadísticos detallados de egresados para análisis institucional.",

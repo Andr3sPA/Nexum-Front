@@ -16,8 +16,9 @@ import { MapPin, Phone, Mail, Shield } from "lucide-react"
 interface ContactInformationModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (formData: ContactFormData) => void
+  onSave: (formData: ContactFormData, userId: string) => void
   contactData?: ContactInformationResponse | null
+  userId: string
 }
 
 interface ContactFormData {
@@ -49,9 +50,9 @@ export function ContactInformationModal({
   isOpen,
   onClose,
   onSave,
-  contactData
+  contactData,
+  userId
 }: ContactInformationModalProps) {
-  const { getUserId } = useProfile()
   const [formData, setFormData] = useState<ContactFormData>(defaultFormData)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -81,7 +82,6 @@ export function ContactInformationModal({
   }
 
   const handleSave = async () => {
-    const userId = getUserId()
     if (!userId) {
       logger.error("No user ID found")
       return
@@ -89,9 +89,8 @@ export function ContactInformationModal({
 
     try {
       setIsLoading(true)
-
-      // Pass form data to parent component
-      onSave(formData)
+      // Pass form data and userId to parent component
+      onSave(formData, userId)
     } catch (error) {
       logger.error("Error saving contact information:", error)
     } finally {

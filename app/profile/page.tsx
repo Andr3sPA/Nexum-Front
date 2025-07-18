@@ -7,26 +7,38 @@ import ProfileTabs from "@/components/profile-tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
 import { Button } from "@/components/atoms/button"
 import { ArrowLeft } from "lucide-react"
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
 
 export default function ProfilePage() {
+  return (
+    <AuthProvider>
+      <ProfilePageContent />
+    </AuthProvider>
+  );
+}
+
+function ProfilePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const userId = searchParams.get('userId')
-  
+  const { user } = useAuth()
+
   const {
     detailedUser,
     userProfile,
-    user,
     isLoading,
     error,
     isCurrentUser,
-    canEdit,
     refreshData
   } = useUserProfile({
     userId: userId || undefined,
-    isViewOnly: false, // Allow editing for admins and deans
+    isViewOnly: false,
     redirectOnUnauthorized: true
   })
+
+  // Permisos de edición
+  const normalizedRole = (user?.role || "").toUpperCase()
+  const canEdit = isCurrentUser || (normalizedRole === "ADMINISTRATIVE" || normalizedRole === "DEAN")
 
   // Use current user data for navbar (always from localStorage)
   const firstName = userProfile?.name?.split(" ")[0] || ""
@@ -116,11 +128,11 @@ export default function ProfilePage() {
   return (
     <>
       <Navbar user={{
-        firstName,
-        firstLastname,
-        email,
+        firstName: userProfile?.name?.split(" ")[0] || "",
+        firstLastname: userProfile?.lastname?.split(" ")[0] || "",
+        email: user?.email || "",
         role: user?.role,
-        initials,
+        initials: user?.initials || (userProfile?.name?.[0] || "") + (userProfile?.lastname?.[0] || ""),
         ...userProfile
       }} />
       <div className="min-h-screen bg-gray-50">
@@ -142,8 +154,11 @@ export default function ProfilePage() {
             
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl font-bold udea-primary-text">{profileTitle}</CardTitle>
-                <CardDescription>{profileDescription}</CardDescription>
+                <CardTitle className="text-2xl font-bold udea-primary-text">{isCurrentUser ? "Mi Perfil" : `Perfil de ${detailedUser?.name} ${detailedUser?.lastname}`}</CardTitle>
+                <CardDescription>{isCurrentUser 
+                  ? "Actualiza tu información personal, académica y laboral"
+                  : "Información personal, académica y laboral del egresado"}
+                </CardDescription>
                 {!isCurrentUser && (
                   <div className="mt-2">
                     <span className="text-sm text-gray-500">

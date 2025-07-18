@@ -21,6 +21,7 @@ interface AcademicInfoModalProps {
   academicData: DetailedCoursedProgramResponse[]
   postGraduateData: DetailedAcademicEducationResponse[]
   editingProgram?: DetailedCoursedProgramResponse | null
+  userId: string
 }
 
 export function AcademicInfoModal({
@@ -30,9 +31,10 @@ export function AcademicInfoModal({
   academicData,
   postGraduateData,
   editingProgram,
+  userId,
 }: AcademicInfoModalProps) {
   const { programs, programVersions, isLoadingPrograms, isLoadingVersions, loadProgramVersions, clearProgramVersions, loadPrograms } = useAcademic()
-  const { createCoursedProgram, updateCoursedProgram, getProgramVersionInfo, getUserId } = useProfile()
+  const { createCoursedProgram, updateCoursedProgram, getProgramVersionInfo } = useProfile()
   
   const [selectedProgram, setSelectedProgram] = useState<string>("")
   const [selectedVersion, setSelectedVersion] = useState<string>("")
@@ -136,8 +138,6 @@ export function AcademicInfoModal({
 
     try {
       setIsSaving(true)
-      
-      const userId = getUserId()
       
       if (!userId) {
         throw new Error("No se pudo obtener el ID del usuario")

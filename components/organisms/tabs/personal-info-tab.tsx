@@ -284,15 +284,17 @@ export default function PersonalInfoTab({ userProfile, isViewOnly = false, onDat
       <ContactInformationModal
         isOpen={isContactModalOpen}
         onClose={handleCloseContactModal}
-        onSave={handleContactSave}
+        onSave={(formData, userId) => handleContactSave({ ...formData, userId })}
         contactData={contactInfo}
+        userId={userProfileData?.id || ""}
       />
 
       <FamilyInformationModal
         isOpen={isFamilyModalOpen}
         onClose={handleCloseFamilyModal}
-        onSave={handleFamilySave}
+        onSave={(formData, userId) => handleFamilySave({ ...formData, userId })}
         familyData={familyInfo}
+        userId={userProfileData?.id || ""}
       />
     </TabContainer>
   )

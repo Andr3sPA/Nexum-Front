@@ -20,7 +20,7 @@ export const ROUTES = {
   ADMIN: {
     DASHBOARD: "/dashboard",
     SEARCH_GRADUATES: "/search-graduates",
-    REPORTS: "/admin/reports",
+    REPORTS: "/reports",
     COMPLETE_PROFILE: "/admin/complete-profile", // For completing graduate profile after registration
     VIEW_PROFILE: "/profile", // For viewing specific user profiles
   },
@@ -29,7 +29,7 @@ export const ROUTES = {
   DEAN: {
     DASHBOARD: "/dashboard",
     SEARCH_GRADUATES: "/search-graduates",
-    REPORTS: "/dean/reports",
+    REPORTS: "/reports",
     VIEW_PROFILE: "/profile", // For viewing specific user profiles
   },
 } as const

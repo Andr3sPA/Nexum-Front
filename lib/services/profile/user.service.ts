@@ -30,6 +30,7 @@ export interface UserResponse {
   birthdate: string;
   creationDate: string;
   lastUpdate: string;
+  role: string; // <-- Agregado para control de acceso
 }
 
 export const UserService = {

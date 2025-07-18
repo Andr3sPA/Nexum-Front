@@ -109,10 +109,16 @@ const GraduateCard = React.forwardRef<HTMLDivElement, GraduateCardProps>(
         <CardContent className="space-y-4">
           {/* Información de contacto */}
           <div className="space-y-2">
-            {email && (
+            {graduate.email && (
               <div className="flex items-center gap-2 text-sm">
                 <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                <span className="text-gray-700 truncate">{email}</span>
+                <span className="text-gray-700 truncate">{graduate.email}</span>
+              </div>
+            )}
+            {graduate.academicEmail && (
+              <div className="flex items-center gap-2 text-sm">
+                <Mail className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                <span className="text-blue-700 truncate">{graduate.academicEmail}</span>
               </div>
             )}
             {graduate.mobile && (
