@@ -3,15 +3,17 @@ import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { headers } from 'next/headers';
 import { Providers } from "@/components/providers"
+import { Toaster } from "@/components/organisms/toaster"
+import { ToastProvider } from "@/hooks/use-toast"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "UdeA Egresados - Universidad de Antioquia",
+  title: "Nexum",
   description: "Plataforma segura de gestión para egresados de la Universidad de Antioquia",
-  keywords: ["Universidad de Antioquia", "UdeA", "Egresados", "Alumni"],
-  authors: [{ name: "Universidad de Antioquia" }],
+  keywords: ["Universidad de Antioquia", "UdeA", "Egresados", "Alumni", "Nexum"],
+  authors: [{ name: "Universidad de Antioquia" }, { name: "Cristian Tamayo" }, { name: "Gerardo Castillo" }],
   creator: "Universidad de Antioquia",
   publisher: "Universidad de Antioquia",
   robots: "index, follow",
@@ -44,7 +46,10 @@ export default async function RootLayout({
         {/* Pass the nonce as a data attribute to make it available to client components */}
         <div id="root" data-nonce={nonce}>
           <Providers>
-            {children}
+            <ToastProvider>
+              <Toaster />
+              {children}
+            </ToastProvider>
           </Providers>
         </div>
       </body>

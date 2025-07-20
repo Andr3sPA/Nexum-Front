@@ -62,12 +62,6 @@ const SearchResults = React.forwardRef<HTMLDivElement, SearchResultsProps>(
             <div className="text-sm text-gray-600">
               Mostrando {start}-{end} de {totalCount} resultados
             </div>
-            {onExport && (
-              <Button variant="outline" size="sm" onClick={onExport}>
-                <Download className="h-4 w-4 mr-2" />
-                Exportar
-              </Button>
-            )}
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

@@ -10,11 +10,10 @@ import { DashboardTemplate } from "@/components/templates/dashboard-template"
 import { DashboardContainer } from "@/components/organisms/dashboard-container"
 import { DashboardCardData } from "@/components/molecules/dashboard-grid"
 import { UserService } from "@/lib/services/profile/user.service"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 
 export default function UnifiedDashboardPage() {
   const router = useRouter()
-  const { toast } = useToast()
   const user = LocalStorageService.getItem<{ name?: string; email?: string; initials?: string; role?: string }>("user")
   const userProfile = LocalStorageService.getItem<any>("userProfile")
   const [showRegisterModal, setShowRegisterModal] = useState(false)
@@ -107,24 +106,39 @@ export default function UnifiedDashboardPage() {
 
   const handleRegisterGraduate = async (formData: any) => {
     try {
-      const newUser = await UserService.create({
+      console.log("📝 handleRegisterGraduate received formData:", formData)
+      
+      const userData = {
         ...formData,
         idIdentityDocumentType: parseInt(formData.idIdentityDocumentType),
-      })
-      toast({
-        title: "Usuario registrado exitosamente",
-        description: `El usuario ha sido registrado correctamente.`,
-      })
-      setShowRegisterModal(false)
+      }
+      
+      console.log("📝 handleRegisterGraduate sending userData:", userData)
+      
+      const newUser = await UserService.create(userData)
+      
+      console.log("📝 handleRegisterGraduate received newUser:", newUser)
+      
       if (newUser?.id) {
+        setShowRegisterModal(false)
+        console.log("Disparando toast de éxito")
+        toast({
+          title: "Usuario registrado exitosamente",
+          description: `El usuario ha sido registrado correctamente.`,
+          type: "success",
+        })
+        // Espera al menos 1.5 segundos para asegurar el render del toast antes de navegar
         setTimeout(() => {
-          router.replace(`/profile/${newUser.id}`)
-        }, 200)
+          router.push(`${ROUTES.ADMIN.VIEW_PROFILE}?userId=${newUser.id}`)
+        }, 1500)
       }
     } catch (error) {
+      console.error("❌ handleRegisterGraduate error:", error)
+      setShowRegisterModal(false)
       toast({
         title: "Error al registrar usuario",
         description: error instanceof Error ? error.message : "Ocurrió un error inesperado.",
+        type: "error",
       })
     }
   }

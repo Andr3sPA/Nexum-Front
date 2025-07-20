@@ -14,7 +14,6 @@ import { FormField } from "@/components/molecules/form-field"
 import { ModalActions } from "@/components/molecules/modal-actions"
 import { UserService, UserRequest } from "@/lib/services/profile/user.service"
 import { IdentityDocumentTypeService, IdentityDocumentTypeResponse } from "@/lib/services/catalog/identity-document-type.service"
-import { useToast } from "@/hooks/use-toast"
 
 interface RegisterFormData {
   identityDocument: string
@@ -48,7 +47,6 @@ export default function RegisterGraduateModal({ open, onOpenChange, onSave }: Re
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
-  const { toast } = useToast()
 
   useEffect(() => {
     const loadDocumentTypes = async () => {
@@ -177,10 +175,10 @@ export default function RegisterGraduateModal({ open, onOpenChange, onSave }: Re
                   required
                 >
                   <option value="">Seleccionar género</option>
-                  <option value="Hombre">Masculino</option>
-                  <option value="Mujer">Femenino</option>
-                  <option value="No binario">No binario</option>
-                  <option value="Otro">Otro</option>
+                  <option value="MALE">Masculino</option>
+                  <option value="FEMALE">Femenino</option>
+                  <option value="NON_BINARY">No binario</option>
+                  <option value="OTHER">Otro</option>
                 </Select>
               </FormField>
             </div>
