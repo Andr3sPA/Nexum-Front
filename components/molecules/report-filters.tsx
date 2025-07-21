@@ -45,7 +45,6 @@ const ReportFilters = React.forwardRef<HTMLDivElement, ReportFiltersProps>(
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()
-      console.log("📝 Formulario enviado, previniendo recarga de página")
       onSubmit?.(e)
     }
 

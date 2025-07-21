@@ -71,7 +71,6 @@ export const AuthenticationService = {
 
   // Login
   async login(user: AuthenticationRequest): Promise<AuthenticatedUserResponse> {
-    console.log("🌐 AuthenticationService.login called with:", { email: user.email, password: "***" })
     
     try {
       const { status, body } = await service(
@@ -81,17 +80,12 @@ export const AuthenticationService = {
         user,
       );
       
-      console.log("📡 Login API response:", { status, body })
-      
       if (status !== 202) {
-        console.error("❌ Login failed with status:", status, "body:", body)
         throw new Error(body?.message || "Error Iniciando sesión");
       }
       
-      console.log("✅ Login successful, returning user data")
       return body;
     } catch (error) {
-      console.error("💥 Login service error:", error)
       throw error
     }
   },

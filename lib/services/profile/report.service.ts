@@ -69,7 +69,6 @@ export const ReportService = {
     try {
       // El body ahora es un ArrayBuffer directamente
       const arrayBuffer = body as ArrayBuffer
-      console.log("ArrayBuffer size:", arrayBuffer.byteLength)
       
       // Determinar el tipo MIME basado en el formato
       const mimeType = format === "PDF" 
@@ -79,7 +78,6 @@ export const ReportService = {
           : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       
       const blob = new Blob([arrayBuffer], { type: mimeType })
-      console.log("Blob created, size:", blob.size, "type:", blob.type)
       
       // Intentar descarga automática
       const url = window.URL.createObjectURL(blob)
@@ -107,28 +105,25 @@ export const ReportService = {
           window.URL.revokeObjectURL(url)
         }, 100)
         
-        console.log("Download initiated for:", filename)
       } catch (downloadError) {
-        console.warn("Automatic download failed, trying window.open:", downloadError)
-        
         // Método 2: Fallback con window.open
         const newWindow = window.open(url, '_blank')
         if (newWindow) {
-          console.log("File opened in new window")
+          // logger.info("File opened in new window")
         } else {
           // Método 3: Último recurso - mostrar URL para descarga manual
-          console.log("Download URL:", url)
+          // logger.info("Download URL:", url)
           alert(`No se pudo descargar automáticamente. Por favor, copia esta URL y ábrela en una nueva pestaña: ${url}`)
         }
       }
     } catch (error) {
-      console.error("Error during download:", error)
-      console.error("Error details:", {
-        message: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-        bodyType: typeof body,
-        bodySize: body instanceof ArrayBuffer ? body.byteLength : 'N/A'
-      })
+      // logger.error("Error during download:", error)
+      // logger.error("Error details:", {
+      //   message: error instanceof Error ? error.message : String(error),
+      //   stack: error instanceof Error ? error.stack : undefined,
+      //   bodyType: typeof body,
+      //   bodySize: body instanceof ArrayBuffer ? body.byteLength : 'N/A'
+      // })
       throw new Error(`Error al procesar la descarga del archivo: ${error instanceof Error ? error.message : String(error)}`)
     }
   },
@@ -136,7 +131,7 @@ export const ReportService = {
   async getGraduateReportSummary(
     filterRequest: ReportFilterRequest
   ): Promise<GraduateReportResponse> {
-    console.log("📡 Llamando a getGraduateReportSummary con filtros:", filterRequest)
+    // logger.info("📡 Llamando a getGraduateReportSummary con filtros:", filterRequest)
     
     const params = new URLSearchParams()
     Object.entries(filterRequest).forEach(([key, value]) => {
@@ -144,8 +139,8 @@ export const ReportService = {
     })
     const endpoint = `/reports/graduates/summary?${params.toString()}`
     
-    console.log("🔗 Endpoint:", endpoint)
-    console.log("📋 Parámetros:", params.toString())
+    // logger.info("🔗 Endpoint:", endpoint)
+    // logger.info("📋 Parámetros:", params.toString())
     
     const { status, body } = await serviceWithAuth<undefined, GraduateReportResponse>(
       endpoint,
@@ -154,8 +149,8 @@ export const ReportService = {
       PROFILE_HOST
     )
     
-    console.log("📊 Status de respuesta:", status)
-    console.log("📄 Body de respuesta:", body)
+    // logger.info("📊 Status de respuesta:", status)
+    // logger.info("📄 Body de respuesta:", body)
     
     if (status !== 200) {
       throw new Error("No se pudo obtener el resumen del reporte")

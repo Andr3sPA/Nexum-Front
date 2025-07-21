@@ -34,7 +34,7 @@ export function InnovationTypesProvider({ children }: InnovationTypesProviderPro
       
       logger.info("Innovation types loaded successfully")
     } catch (error) {
-      console.error("Error loading innovation types:", error)
+      logger.error("Error loading innovation types:", error)
       setError("Error al cargar los tipos de innovación")
       setInnovationTypes([])
     } finally {

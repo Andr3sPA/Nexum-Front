@@ -34,28 +34,27 @@ export function AcademicProvider({ children }: AcademicProviderProps) {
     // Check if user is authenticated
     const user = LocalStorageService.getItem<{ token?: string }>("user")
     if (!user?.token) {
-      console.log("User not authenticated, skipping program load")
+      logger.info("User not authenticated, skipping program load")
       return
     }
 
-    console.log("Starting to load programs...")
+    logger.info("Starting to load programs...")
     try {
       setIsLoadingPrograms(true)
-      console.log("Calling ProgramService.getAll()...")
+      logger.info("Calling ProgramService.getAll()...")
       const programsData = await ProgramService.getAll()
-      console.log("Programs data received:", programsData)
-      console.log("Type of programsData:", typeof programsData)
-      console.log("Is array:", Array.isArray(programsData))
-      console.log("Length:", programsData?.length)
+      logger.info("Programs data received:", programsData)
+      logger.info("Type of programsData:", typeof programsData)
+      logger.info("Is array:", Array.isArray(programsData))
+      logger.info("Length:", programsData?.length)
       setPrograms(Array.isArray(programsData) ? programsData : [])
-      console.log("Programs state set successfully")
+      logger.info("Programs state set successfully")
     } catch (error) {
-      console.error("Error loading programs:", error)
       logger.error("Error loading programs:", error)
       setPrograms([])
     } finally {
       setIsLoadingPrograms(false)
-      console.log("Loading programs finished")
+      logger.info("Loading programs finished")
     }
   }, [])
 

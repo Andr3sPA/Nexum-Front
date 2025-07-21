@@ -43,7 +43,7 @@ export default function ParticipationTab({ userProfile, isViewOnly = false, onDa
     try {
       return LocalStorageService.getItem<any>("userProfile")
     } catch (error) {
-      console.error("Error getting userProfile from localStorage:", error)
+      logger.error("Error getting userProfile from localStorage:", error)
       return null
     }
   }, [userProfile])
@@ -65,7 +65,7 @@ export default function ParticipationTab({ userProfile, isViewOnly = false, onDa
 
       setHasInitialized(true)
     } catch (error) {
-      console.error("Error loading participation information:", error)
+      logger.error("Error loading participation information:", error)
       setError("Error al cargar la información de participación")
     } finally {
       setIsLoading(false)
@@ -145,7 +145,7 @@ export default function ParticipationTab({ userProfile, isViewOnly = false, onDa
       
       logger.info("Participation information saved successfully")
     } catch (error) {
-      console.error("Error saving participation information:", error)
+      logger.error("Error saving participation information:", error)
       setError("Error al guardar la información de participación")
     } finally {
       setIsLoading(false)
@@ -230,7 +230,7 @@ export default function ParticipationTab({ userProfile, isViewOnly = false, onDa
       
       logger.info("Innovation process saved successfully")
     } catch (error) {
-      console.error("Error saving innovation process:", error)
+      logger.error("Error saving innovation process:", error)
       setError("Error al guardar el proceso de innovación")
     } finally {
       setIsLoading(false)
@@ -260,7 +260,7 @@ export default function ParticipationTab({ userProfile, isViewOnly = false, onDa
       
       logger.info("Innovation process deleted successfully")
     } catch (error) {
-      console.error("Error deleting innovation process:", error)
+      logger.error("Error deleting innovation process:", error)
       setError("Error al eliminar el proceso de innovación")
     } finally {
       setIsLoading(false)

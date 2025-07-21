@@ -26,7 +26,7 @@ interface UseSearchJobParametersReturn {
 }
 
 export function useSearchJobParameters(): UseSearchJobParametersReturn {
-  console.log("🔍 useSearchJobParameters hook initialized")
+  // Elimina los console.log de debug
   
   const [salaryRanges, setSalaryRanges] = useState<SalaryRangeResponse[]>([])
   const [jobDelays, setJobDelays] = useState<JobDelayResponse[]>([])
@@ -49,9 +49,8 @@ export function useSearchJobParameters(): UseSearchJobParametersReturn {
       setSalaryRanges(salaryRangesData)
       setJobDelays(jobDelaysData)
     } catch (error) {
-      console.error("Error loading general catalog data:", error)
-      setError("Error al cargar datos del catálogo")
       logger.error("Error loading general catalog data:", error)
+      setError("Error al cargar datos del catálogo")
     } finally {
       setIsLoading(false)
     }
@@ -62,23 +61,17 @@ export function useSearchJobParameters(): UseSearchJobParametersReturn {
       setIsLoading(true)
       setError(null)
 
-      console.log("Loading program-specific data for programId:", programId)
-
       // Load program-specific job areas and institution types
       const [jobAreasData, institutionTypesData] = await Promise.all([
         JobAreaService.getAllByProgramId(programId),
         JobInstitutionTypeService.getAllByProgramId(programId)
       ])
 
-      console.log("Job areas loaded:", jobAreasData)
-      console.log("Institution types loaded:", institutionTypesData)
-
       setJobAreas(jobAreasData)
       setInstitutionTypes(institutionTypesData)
     } catch (error) {
-      console.error("Error loading program-specific catalog data:", error)
-      setError("Error al cargar datos específicos del programa")
       logger.error("Error loading program-specific catalog data:", error)
+      setError("Error al cargar datos específicos del programa")
     } finally {
       setIsLoading(false)
     }
@@ -94,32 +87,17 @@ export function useSearchJobParameters(): UseSearchJobParametersReturn {
     // Get user profile from localStorage inside useEffect to avoid infinite loops
     const userProfile = LocalStorageService.getItem<any>("userProfile")
     
-    console.log("useEffect triggered - userProfile:", userProfile)
     if (userProfile?.coursedPrograms && userProfile.coursedPrograms.length > 0) {
       const firstProgram = userProfile.coursedPrograms[0]
-      console.log("First program:", firstProgram)
-      console.log("First program programVersion:", firstProgram.programVersion)
       
       // Try different possible paths to find the program ID
       const programId = firstProgram.programVersion?.program?.id || 
                        firstProgram.programVersion?.id ||
                        firstProgram.id
       
-      console.log("Trying to find program ID:", {
-        'programVersion.program.id': firstProgram.programVersion?.program?.id,
-        'programVersion.id': firstProgram.programVersion?.id,
-        'firstProgram.id': firstProgram.id,
-        'final programId': programId
-      })
-      
       if (programId) {
-        console.log("Loading data for program ID:", programId)
         loadProgramSpecificData(programId)
-      } else {
-        console.log("No program ID found in first program")
       }
-    } else {
-      console.log("No coursed programs found in userProfile")
     }
   }, [loadProgramSpecificData]) // Remove userProfile from dependencies
 

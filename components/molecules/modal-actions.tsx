@@ -18,7 +18,6 @@ export function ModalActions({
   submitText = "Guardar Cambios",
 }: ModalActionsProps) {
   const handleSubmit = () => {
-    console.log("🔘 ModalActions submit button clicked")
     if (onSubmit) {
       onSubmit()
     }

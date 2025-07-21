@@ -36,7 +36,6 @@ export interface UserResponse {
 export const UserService = {
   // Create new user
   async create(data: UserRequest): Promise<UserResponse> {
-    console.log("🚀 UserService.create called with data:", data)
     
     try {
       const { status, body } = await serviceWithAuth<UserRequest, UserResponse>(
@@ -45,17 +44,12 @@ export const UserService = {
         data
       );
       
-      console.log("📊 UserService.create response:", { status, body })
-      
       if (status !== 200 && status !== 201) {
-        console.error("❌ UserService.create failed with status:", status, "body:", body)
         throw new Error((body as any)?.message || "No se pudo crear el usuario");
       }
       
-      console.log("✅ UserService.create successful:", body)
       return body;
     } catch (error) {
-      console.error("💥 UserService.create error:", error)
       throw error
     }
   },

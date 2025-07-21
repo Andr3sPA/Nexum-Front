@@ -1,4 +1,5 @@
 import { LocalStorageService } from "@/lib/services/local-storage.service"
+import { logger } from "@/lib/logging"
 
 export type RequestHeaders = Record<string, string>;
 export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -7,9 +8,9 @@ const defaultApiUrl = process.env.NEXT_PUBLIC_API_PROFILE_URL ?? 'http://localho
 
 export function getAuthToken(): string | null {
   const user = LocalStorageService.getItem<{ token: string }>("user");
-  console.log("🔑 getAuthToken - user from localStorage:", user)
+  logger.info("🔑 getAuthToken - user from localStorage:", user)
   const token = user?.token || null;
-  console.log("🔑 getAuthToken - token:", token ? "Present" : "Missing")
+  logger.info("🔑 getAuthToken - token:", token ? "Present" : "Missing")
   return token;
 }
 
@@ -39,20 +40,20 @@ export async function service<Request, Response = any>(
   const fullUrl = `${apiUrl}${endpoint}`;
   const body = requestBody ? JSON.stringify(requestBody) : undefined;
   
-  console.log("🌐 Making HTTP request:", { method, fullUrl, hasBody: !!body, headers })
+  logger.info("🌐 Making HTTP request:", { method, fullUrl, hasBody: !!body, headers })
   
   try {
-    console.log("📡 Sending fetch request...")
+    logger.info("📡 Sending fetch request...")
     const response = await fetch(fullUrl, { method, headers, body });
-    console.log("📡 Response received:", { status: response.status, ok: response.ok, statusText: response.statusText })
+    logger.info("📡 Response received:", { status: response.status, ok: response.ok, statusText: response.statusText })
     
-    console.log("📦 Parsing response body...")
+    logger.info("📦 Parsing response body...")
     const responseBody = await response.json();
-    console.log("📦 Response body:", responseBody)
+    logger.info("📦 Response body:", responseBody)
     
     return { status: response.status, ok: response.ok, body: responseBody };
   } catch (error) {
-    console.error("💥 Fetch error:", error)
+    logger.error("💥 Fetch error:", error)
     throw error
   }
 }
@@ -63,17 +64,17 @@ export async function serviceWithAuth<Request, Response = any>(
   requestBody?: Request,
   host?: string
 ): Promise<{ status: number; ok: boolean; body: Response }> {
-  console.log("🔗 serviceWithAuth called with:", { endpoint, method, host })
+  logger.info("🔗 serviceWithAuth called with:", { endpoint, method, host })
   const headers = getAuthHeaders()
-  console.log("🔑 Auth headers:", { ...headers, Authorization: headers.Authorization ? "Bearer [REDACTED]" : "None" })
+  logger.info("🔑 Auth headers:", { ...headers, Authorization: headers.Authorization ? "Bearer [REDACTED]" : "None" })
   
   try {
-    console.log("📤 About to call service function...")
+    logger.info("📤 About to call service function...")
     const result = await service(endpoint, method, headers, requestBody, host)
-    console.log("✅ serviceWithAuth result:", { status: result.status, ok: result.ok })
+    logger.info("✅ serviceWithAuth result:", { status: result.status, ok: result.ok })
     return result
   } catch (error) {
-    console.error("❌ serviceWithAuth error:", error)
+    logger.error("❌ serviceWithAuth error:", error)
     throw error
   }
 }
@@ -89,25 +90,25 @@ export async function serviceWithAuthBinary<Request>(
   const headers = getAuthHeadersForBinary();
   const body = requestBody ? JSON.stringify(requestBody) : undefined;
   
-  console.log("🌐 Making binary HTTP request:", { method, fullUrl, hasBody: !!body })
-  console.log("🔑 Binary Auth headers:", { ...headers, Authorization: headers.Authorization ? "Bearer [REDACTED]" : "None" })
+  logger.info("🌐 Making binary HTTP request:", { method, fullUrl, hasBody: !!body })
+  logger.info("🔑 Binary Auth headers:", { ...headers, Authorization: headers.Authorization ? "Bearer [REDACTED]" : "None" })
   
   try {
-    console.log("📡 Sending binary fetch request...")
+    logger.info("📡 Sending binary fetch request...")
     const response = await fetch(fullUrl, { method, headers, body });
-    console.log("📡 Binary response received:", { status: response.status, ok: response.ok, statusText: response.statusText })
+    logger.info("📡 Binary response received:", { status: response.status, ok: response.ok, statusText: response.statusText })
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    console.log("📦 Getting response as text (base64)...")
+    logger.info("📦 Getting response as text (base64)...")
     const responseText = await response.text();
-    console.log("📦 Response text length:", responseText.length)
+    logger.info("📦 Response text length:", responseText.length)
     
     return { status: response.status, ok: response.ok, body: responseText };
   } catch (error) {
-    console.error("💥 Binary fetch error:", error)
+    logger.error("💥 Binary fetch error:", error)
     throw error
   }
 }
@@ -123,25 +124,25 @@ export async function serviceWithAuthRawBinary<Request>(
   const headers = getAuthHeadersForBinary();
   const body = requestBody ? JSON.stringify(requestBody) : undefined;
   
-  console.log("🌐 Making raw binary HTTP request:", { method, fullUrl, hasBody: !!body })
-  console.log("🔑 Raw Binary Auth headers:", { ...headers, Authorization: headers.Authorization ? "Bearer [REDACTED]" : "None" })
+  logger.info("🌐 Making raw binary HTTP request:", { method, fullUrl, hasBody: !!body })
+  logger.info("🔑 Raw Binary Auth headers:", { ...headers, Authorization: headers.Authorization ? "Bearer [REDACTED]" : "None" })
   
   try {
-    console.log("📡 Sending raw binary fetch request...")
+    logger.info("📡 Sending raw binary fetch request...")
     const response = await fetch(fullUrl, { method, headers, body });
-    console.log("📡 Raw binary response received:", { status: response.status, ok: response.ok, statusText: response.statusText })
+    logger.info("📡 Raw binary response received:", { status: response.status, ok: response.ok, statusText: response.statusText })
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    console.log("📦 Getting response as ArrayBuffer...")
+    logger.info("📦 Getting response as ArrayBuffer...")
     const responseBuffer = await response.arrayBuffer();
-    console.log("📦 Response buffer size:", responseBuffer.byteLength)
+    logger.info("📦 Response buffer size:", responseBuffer.byteLength)
     
     return { status: response.status, ok: response.ok, body: responseBuffer };
   } catch (error) {
-    console.error("💥 Raw binary fetch error:", error)
+    logger.error("💥 Raw binary fetch error:", error)
     throw error
   }
 } 

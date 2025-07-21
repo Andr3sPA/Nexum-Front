@@ -45,9 +45,6 @@ export default function ReportsPage() {
   }
 
   const generateReport = async () => {
-    console.log("🚀 Iniciando generación de reporte...")
-    console.log("📊 Filtros configurados:", reportConfig)
-    
     setIsGenerating(true)
     try {
       // Prepara los filtros para el servicio
@@ -62,13 +59,9 @@ export default function ReportsPage() {
         programId: reportConfig.programId ? Number(reportConfig.programId) : undefined,
       }
       
-      console.log("🔍 Filtros procesados para API:", filters)
-      
       const summaryData = await ReportService.getGraduateReportSummary(filters)
-      console.log("✅ Datos recibidos de la API:", summaryData)
       setReportData(summaryData)
     } catch (error) {
-      console.error("❌ Error generating report:", error)
       alert("No se pudo generar el reporte: " + (error instanceof Error ? error.message : String(error)))
     } finally {
       setIsGenerating(false)

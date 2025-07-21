@@ -35,7 +35,7 @@ export default function PersonalInfoTab({ userProfile, isViewOnly = false, onDat
     try {
       return LocalStorageService.getItem<any>("user")
     } catch (error) {
-      console.error("Error getting user from localStorage:", error)
+      logger.error("Error getting user from localStorage:", error)
       return null
     }
   }, [])
@@ -50,7 +50,7 @@ export default function PersonalInfoTab({ userProfile, isViewOnly = false, onDat
     try {
       return LocalStorageService.getItem<any>("userProfile")
     } catch (error) {
-      console.error("Error getting userProfile from localStorage:", error)
+      logger.error("Error getting userProfile from localStorage:", error)
       return null
     }
   }, [userProfile])
@@ -91,7 +91,7 @@ export default function PersonalInfoTab({ userProfile, isViewOnly = false, onDat
 
       setHasInitialized(true)
     } catch (error) {
-      console.error("Error loading personal information:", error)
+      logger.error("Error loading personal information:", error)
       setError("Error al cargar la información personal")
     } finally {
       setIsLoading(false)
@@ -127,7 +127,6 @@ export default function PersonalInfoTab({ userProfile, isViewOnly = false, onDat
         whatsappAuthorization: formData.whatsappAuthorization,
         current: true
       }
-      console.log("Contact request:", contactRequest)
 
       let savedContactInfo: ContactInformationResponse
 
@@ -154,7 +153,7 @@ export default function PersonalInfoTab({ userProfile, isViewOnly = false, onDat
       
       logger.info("Contact information saved successfully")
     } catch (error) {
-      console.error("Error saving contact information:", error)
+      logger.error("Error saving contact information:", error)
       setError("Error al guardar la información de contacto")
     } finally {
       setIsLoading(false)
@@ -211,7 +210,7 @@ export default function PersonalInfoTab({ userProfile, isViewOnly = false, onDat
       
       logger.info("Family information saved successfully")
     } catch (error) {
-      console.error("Error saving family information:", error)
+      logger.error("Error saving family information:", error)
       setError("Error al guardar la información familiar")
     } finally {
       setIsLoading(false)

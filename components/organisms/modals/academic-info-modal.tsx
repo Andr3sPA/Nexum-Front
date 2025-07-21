@@ -47,7 +47,7 @@ export function AcademicInfoModal({
   // Load programs if not already loaded
   useEffect(() => {
     if (isOpen && (!Array.isArray(programs) || programs.length === 0)) {
-      console.log("Modal opened, loading programs...")
+      logger.info("Modal opened, loading programs...")
       loadPrograms()
     }
   }, [isOpen, programs, loadPrograms])
@@ -57,13 +57,13 @@ export function AcademicInfoModal({
     if (isOpen) {
       if (editingProgram) {
         // Editing an existing program
-        console.log("Editing program:", editingProgram)
+        logger.info("Editing program:", editingProgram)
         if (editingProgram.programVersion) {
           // Get the complete program version information to find the parent program
           const fetchProgramVersionInfo = async () => {
             try {
               const programVersionInfo = await getProgramVersionInfo(editingProgram.programVersion.id)
-              console.log("Program version info:", programVersionInfo)
+              logger.info("Program version info:", programVersionInfo)
               
               // Set the program that corresponds to this version
               setSelectedProgram(programVersionInfo.program.id.toString())
@@ -80,7 +80,7 @@ export function AcademicInfoModal({
               setWeaknesses(editingProgram.weaknesses || [])
               setImprovementSuggestions(editingProgram.improvementSuggestions || [])
             } catch (error) {
-              console.error("Error fetching program version info:", error)
+              logger.error("Error fetching program version info:", error)
               // Fallback: just set the version without the program
               setSelectedVersion(editingProgram.programVersion.id.toString())
               loadProgramVersions(editingProgram.programVersion.id)
@@ -110,7 +110,7 @@ export function AcademicInfoModal({
         }
       } else {
         // Creating new program with no existing data
-        console.log("Creating new program")
+        logger.info("Creating new program")
         setSelectedProgram("")
         setSelectedVersion("")
         setGraduationYear(new Date().getFullYear().toString())
@@ -154,11 +154,11 @@ export function AcademicInfoModal({
 
       if (editingProgram) {
         // Update existing coursed program
-        console.log("Updating existing program:", editingProgram.id)
+        logger.info("Updating existing program:", editingProgram.id)
         await updateCoursedProgram(editingProgram.id, formData)
       } else {
         // Create new coursed program
-        console.log("Creating new program")
+        logger.info("Creating new program")
         await createCoursedProgram(formData)
       }
 

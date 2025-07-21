@@ -17,11 +17,6 @@ export default function RegisterPage() {
     setError(null)
     
     try {
-      console.log("🔐 Register attempt with data:", { 
-        email: formData.email, 
-        firstName: formData.firstName,
-        password: "***" 
-      })
       
       await AuthenticationService.register({
         identityDocument: formData.idNumber,
@@ -36,10 +31,8 @@ export default function RegisterPage() {
         password: formData.password,
       })
 
-      console.log("✅ Registration successful, redirecting...")
       router.push("/login?success=1")
     } catch (err: any) {
-      console.error("❌ Registration error:", err)
       setError(err.message || "Error al registrarse")
     } finally {
       setIsLoading(false)

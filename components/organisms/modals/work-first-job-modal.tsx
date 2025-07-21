@@ -63,23 +63,17 @@ export function WorkFirstJobModal({
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    console.log("🔄 WorkFirstJobModal useEffect - isOpen:", isOpen, "initialData:", initialData)
     // Use initialData if it exists, otherwise use default values
     setFormData(initialData || defaultFormData)
   }, [initialData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("🔵 WorkFirstJobModal - handleSubmit called")
-    console.log("🔵 WorkFirstJobModal - formData:", formData)
     setIsSubmitting(true)
 
     try {
-      console.log("🔵 WorkFirstJobModal - calling onSave with formData:", formData)
       onSave(formData)
-      console.log("🔵 WorkFirstJobModal - onSave completed")
     } catch (error) {
-      console.error("🔴 WorkFirstJobModal - Error saving data:", error)
       logger.error("Error saving data:", error)
     } finally {
       setIsSubmitting(false)

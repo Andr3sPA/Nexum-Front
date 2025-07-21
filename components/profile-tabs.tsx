@@ -17,17 +17,9 @@ interface ProfileTabsProps {
 }
 
 export default function ProfileTabs({ userProfile, isViewOnly = false, onDataUpdate }: ProfileTabsProps) {
-  console.log("📋 ProfileTabs rendered with:", { 
-    hasUserProfile: !!userProfile, 
-    isViewOnly, 
-    hasOnDataUpdate: !!onDataUpdate 
-  })
-  
   // Initialize data from detailed user profile
   useEffect(() => {
     if (userProfile) {
-      console.log("📋 ProfileTabs - userProfile data:", userProfile)
-      
       // Initialize participation data if available
       if (userProfile.graduateParticipation) {
         // This could be used to populate participation tab data

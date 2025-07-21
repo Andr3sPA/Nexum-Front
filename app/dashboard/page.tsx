@@ -11,6 +11,7 @@ import { DashboardContainer } from "@/components/organisms/dashboard-container"
 import { DashboardCardData } from "@/components/molecules/dashboard-grid"
 import { UserService } from "@/lib/services/profile/user.service"
 import { toast } from "@/hooks/use-toast"
+import { logger } from "@/lib/logging"
 
 export default function UnifiedDashboardPage() {
   const router = useRouter()
@@ -123,7 +124,7 @@ export default function UnifiedDashboardPage() {
 
       if (newUser?.id) {
         setShowRegisterModal(false)
-        console.log("Disparando toast de éxito")
+        logger.info("Disparando toast de éxito")
         toast({
           title: "Usuario registrado exitosamente",
           description: `El usuario ha sido registrado correctamente.`,
@@ -135,7 +136,7 @@ export default function UnifiedDashboardPage() {
         }, 1500)
       }
     } catch (error) {
-      console.error("❌ handleRegisterGraduate error:", error)
+      logger.error("❌ handleRegisterGraduate error:", error)
       setShowRegisterModal(false)
       toast({
         title: "Error al registrar usuario",

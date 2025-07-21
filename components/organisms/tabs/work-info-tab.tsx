@@ -25,7 +25,7 @@ interface WorkInfoTabProps {
 }
 
 export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpdate }: WorkInfoTabProps) {
-  console.log("🏢 WorkInfoTab rendered with:", { userProfile: !!userProfile, isViewOnly, hasOnDataUpdate: !!onDataUpdate })
+  // Elimina todos los console.log de debug
   
   const [isCurrentJobModalOpen, setIsCurrentJobModalOpen] = useState(false)
   const [isFirstJobModalOpen, setIsFirstJobModalOpen] = useState(false)
@@ -51,7 +51,7 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
     try {
       return LocalStorageService.getItem<any>("user")
     } catch (error) {
-      console.error("Error getting user from localStorage:", error)
+      logger.error("Error getting user from localStorage:", error)
       return null
     }
   }, [])
@@ -74,7 +74,7 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
             const version = await ProgramVersionService.getById(programVersionId);
             setProgramId(version.program.id);
           } catch (e) {
-            console.error("No se pudo obtener la versión del programa para catálogo laboral", e);
+            logger.error("No se pudo obtener la versión del programa para catálogo laboral", e);
             setProgramId(null);
           }
         } else {
@@ -99,7 +99,7 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
       setJobs(jobsData)
       setHasInitialized(true)
     } catch (error) {
-      console.error("Error loading jobs:", error)
+      logger.error("Error loading jobs:", error)
       setError("Error al cargar la información laboral")
     } finally {
       setIsLoading(false)
@@ -123,13 +123,12 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
   const firstJob = useMemo(() => jobs.find(job => job.firstJob), [jobs])
 
   // Debug log for modal data
-  console.log("Modal data - jobAreas:", jobAreas, "institutionTypes:", institutionTypes, "hasAcademicInfo:", hasAcademicInfo)
+  // Elimina todos los console.log de debug
 
   // Current job handlers
   const handleCurrentJobSave = useCallback(async (formData: any) => {
-    console.log("🟢 WorkInfoTab - handleCurrentJobSave called with formData:", formData)
     if (!userProfile?.id) {
-      console.error("🟠 WorkInfoTab - No userProfile.id found")
+      logger.warn("🟠 WorkInfoTab - No userProfile.id found")
       setError("No se pudo identificar al usuario")
       return
     }
@@ -152,21 +151,21 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
         currentJob: true
       }
 
-      console.log("🟢 WorkInfoTab - jobRequest:", jobRequest)
+      logger.info("🟢 WorkInfoTab - jobRequest:", jobRequest)
 
       let savedJob: JobResponse
 
       if (currentJob) {
-        console.log("🟢 WorkInfoTab - Updating existing current job with ID:", currentJob.id)
+        logger.info("🟢 WorkInfoTab - Updating existing current job with ID:", currentJob.id)
         // Update existing current job
         savedJob = await JobService.updateById(currentJob.id, jobRequest)
       } else {
-        console.log("🟢 WorkInfoTab - Creating new current job")
+        logger.info("🟢 WorkInfoTab - Creating new current job")
         // Create new current job
         savedJob = await JobService.create(jobRequest)
       }
 
-      console.log("🟢 WorkInfoTab - savedJob:", savedJob)
+      logger.info("🟢 WorkInfoTab - savedJob:", savedJob)
 
       // Update jobs list
       setJobs(prev => {
@@ -182,7 +181,7 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
       setIsCurrentJobModalOpen(false)
       logger.info("Current job saved successfully")
     } catch (error) {
-      console.error("🔴 WorkInfoTab - Error saving current job:", error)
+      logger.error("🔴 WorkInfoTab - Error saving current job:", error)
       setError("Error al guardar el trabajo actual")
     } finally {
       setIsLoading(false)
@@ -191,9 +190,8 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
 
   // First job handlers
   const handleFirstJobSave = useCallback(async (formData: any) => {
-    console.log("🟡 WorkInfoTab - handleFirstJobSave called with formData:", formData)
     if (!userProfile?.id) {
-      console.error("🟠 WorkInfoTab - No userProfile.id found")
+      logger.warn("🟠 WorkInfoTab - No userProfile.id found")
       setError("No se pudo identificar al usuario")
       return
     }
@@ -216,21 +214,21 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
         currentJob: formData.alsoCurrentJob
       }
 
-      console.log("🟡 WorkInfoTab - jobRequest:", jobRequest)
+      logger.info("🟡 WorkInfoTab - jobRequest:", jobRequest)
 
       let savedJob: JobResponse
 
       if (firstJob) {
-        console.log("🟡 WorkInfoTab - Updating existing first job with ID:", firstJob.id)
+        logger.info("🟡 WorkInfoTab - Updating existing first job with ID:", firstJob.id)
         // Update existing first job
         savedJob = await JobService.updateById(firstJob.id, jobRequest)
       } else {
-        console.log("🟡 WorkInfoTab - Creating new first job")
+        logger.info("🟡 WorkInfoTab - Creating new first job")
         // Create new first job
         savedJob = await JobService.create(jobRequest)
       }
 
-      console.log("🟡 WorkInfoTab - savedJob:", savedJob)
+      logger.info("🟡 WorkInfoTab - savedJob:", savedJob)
 
       // Update jobs list
       setJobs(prev => {
@@ -246,7 +244,7 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
       setIsFirstJobModalOpen(false)
       logger.info("First job saved successfully")
     } catch (error) {
-      console.error("🔴 WorkInfoTab - Error saving first job:", error)
+      logger.error("🔴 WorkInfoTab - Error saving first job:", error)
       setError("Error al guardar el primer trabajo")
     } finally {
       setIsLoading(false)
@@ -265,7 +263,7 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
       setError(null)
 
       // TODO: Implement questions save logic
-      console.log("Questions form data:", formData)
+      logger.info("Questions form data:", formData)
       
       // Refresh profile data
       if (onDataUpdate) {
@@ -275,7 +273,7 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
       setIsQuestionsModalOpen(false)
       logger.info("Questions saved successfully")
     } catch (error) {
-      console.error("Error saving questions:", error)
+      logger.error("Error saving questions:", error)
       setError("Error al guardar las preguntas")
     } finally {
       setIsLoading(false)

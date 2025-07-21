@@ -61,7 +61,6 @@ export default function InnovationProcessModal({
     setIsSubmitting(true)
 
     try {
-      console.log("Submitting innovation process data:", formData)
       await onSave(formData)
       onClose()
     } catch (error) {

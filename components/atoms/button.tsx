@@ -39,7 +39,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     )
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      console.log("🔘 Button clicked:", { type, variant })
       if (onClick) {
         onClick(e)
       }

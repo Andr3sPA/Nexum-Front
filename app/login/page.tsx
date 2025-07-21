@@ -9,6 +9,7 @@ import AuthTemplate from "@/components/templates/auth-template"
 import { AuthenticationService } from "@/lib/services/profile/auth.service"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { DetailedUserService } from "@/lib/services/profile/detailed-user.service"
+import { logger } from "@/lib/logging"
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
@@ -22,7 +23,6 @@ export default function LoginPage() {
     setError(null)
     
     try {
-      console.log("🔐 Login attempt with data:", { email: formData.email, password: "***" })
       
       const user = await AuthenticationService.login(formData)
 
@@ -32,12 +32,12 @@ export default function LoginPage() {
         const userProfile = await DetailedUserService.getCurrentUserDetailed()
         LocalStorageService.setItem("userProfile", userProfile)
       } catch (profileErr) {
-        console.warn("⚠️ No se pudo obtener el perfil detallado:", profileErr)
+        logger.warn("⚠️ No se pudo obtener el perfil detallado:", profileErr)
       }
 
       await router.replace("/dashboard")
     } catch (err: any) {
-      console.error("❌ Login error:", err)
+      logger.error("❌ Login error:", err)
       setError(err.message || "Error al iniciar sesión")
     } finally {
       setIsLoading(false)

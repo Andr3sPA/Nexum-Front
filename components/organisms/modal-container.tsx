@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import { Dialog, DialogContent } from "@/components/molecules/dialog"
 import { ModalHeader } from "@/components/atoms/modal-header"
 import { LucideIcon } from "lucide-react"
+import { logger } from "@/lib/logging"
 
 interface ModalContainerProps {
   title: string
@@ -32,12 +33,12 @@ export function ModalContainer({
 }: ModalContainerProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("📝 ModalContainer.handleSubmit called")
+    logger.info("📝 ModalContainer.handleSubmit called")
     if (onSubmit) {
-      console.log("📝 ModalContainer calling onSubmit")
+      logger.info("📝 ModalContainer calling onSubmit")
       onSubmit(e)
     } else {
-      console.log("📝 ModalContainer no onSubmit provided")
+      logger.info("📝 ModalContainer no onSubmit provided")
     }
   }
 

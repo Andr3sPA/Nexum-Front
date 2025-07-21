@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/atoms/alert"
 import { NexumLogo } from "@/components/molecules/nexum-logo"
 import { Eye, EyeOff, Mail, Lock, User, Calendar, CreditCard, Users } from "lucide-react"
 import { IdentityDocumentTypeService, IdentityDocumentTypeResponse } from "@/lib/services/catalog/identity-document-type.service"
+import { logger } from "@/lib/logging"
 
 export interface RegisterFormData {
   email: string
@@ -65,26 +66,20 @@ export function RegisterForm({
   }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("🚀 RegisterForm.handleSubmit called")
     e.preventDefault()
     e.stopPropagation()
-    console.log("📝 RegisterForm.handleSubmit called with formData:", { 
-      email: formData.email, 
-      firstName: formData.firstName,
-      password: "***" 
-    })
     
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      console.error("❌ Passwords don't match")
+      logger.error("❌ Passwords don't match")
       return
     }
     
     try {
       await onSubmit(formData)
-      console.log("✅ RegisterForm.handleSubmit completed successfully")
+      logger.info("✅ RegisterForm.handleSubmit completed successfully")
     } catch (error) {
-      console.error("❌ RegisterForm.handleSubmit error:", error)
+      logger.error("❌ RegisterForm.handleSubmit error:", error)
     }
   }
 
@@ -351,7 +346,7 @@ export function RegisterForm({
           type="submit" 
           className="w-full h-11 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
           disabled={isLoading}
-          onClick={() => console.log("🔘 Register button clicked")}
+          onClick={() => logger.info("🔘 Register button clicked")}
         >
           {isLoading ? (
             <div className="flex items-center space-x-2">

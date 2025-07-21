@@ -45,20 +45,17 @@ export const JobAreaService = {
   // Get job areas by program ID
   async getAllByProgramId(programId: number): Promise<JobAreaResponse[]> {
     try {
-      console.log("🔍 JobAreaService.getAllByProgramId called with programId:", programId)
       const { status, body } = await serviceWithAuth(
         `${CATALOG_JOB_AREA_ENDPOINT}/program?programId=${programId}`,
         METHOD.get,
         undefined,
         CATALOG_HOST
       );
-      console.log("✅ JobAreaService.getAllByProgramId result:", { status, body })
       if (status !== 200) {
         throw new Error(`HTTP ${status}: ${(body as any)?.message || "Error al obtener áreas de trabajo"}`)
       }
       return body;
     } catch (error) {
-      console.error("❌ JobAreaService.getAllByProgramId error:", error)
       throw error
     }
   },

@@ -15,6 +15,7 @@ import { ROUTES, getDashboardRoute } from "@/lib/routes"
 import { ROLES } from "@/lib/services/constants/api.constants"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { useState, useEffect } from "react"
+import { UserMenu } from './organisms/user-menu';
 
 interface NavbarUser {
   firstName?: string;
@@ -66,7 +67,6 @@ export default function Navbar({ user }: { user: NavbarUser }) {
       <div className="px-6 sm:px-8 lg:px-10">
         <div className="flex items-center h-16">
 
-          {/* Logo/Brand */}
           <div className="flex items-center">
             <Link href={getDashboardRoute((user.role || ROLES.GRADUATE) as keyof typeof ROLES)} className="flex items-center space-x-2">
               <NexumWhiteLogo className="w-14 h-14 p-1" />
@@ -88,64 +88,17 @@ export default function Navbar({ user }: { user: NavbarUser }) {
             </div>
 
             {/* Enhanced Profile Avatar */}
-            <DropdownMenu>
-              <DropdownMenuTrigger className="relative h-12 w-12 rounded-full border-2 border-transparent hover:border-white/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 group p-0 bg-transparent">
-                <div className="relative">
-                  <Avatar className="h-10 w-10 ring-2 ring-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                    <AvatarImage src="" alt={user.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-[#026937] via-[#35944b] to-[#43b649] text-white font-semibold text-sm">
-                      {String(user.initials || "U")}
-                    </AvatarFallback>
-                  </Avatar>
-                  {/* Enhanced online indicator */}
-                  <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-400 border-2 border-white rounded-full shadow-sm animate-pulse"></div>
-                  {/* Role indicator */}
-                  <div className="absolute -top-1 -right-1 h-4 w-4 bg-white rounded-full flex items-center justify-center shadow-md">
-                    <div className="text-[#026937] scale-75">{getRoleIcon()}</div>
-                  </div>
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64" align="end">
-                {/* Enhanced User info in dropdown - No role display */}
-                <div className="flex items-center space-x-3 p-4 border-b bg-gradient-to-r from-gray-50 to-gray-100">
-                  <Avatar className="h-12 w-12 ring-2 ring-[#026937]/20">
-                    <AvatarImage src="" alt={user.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-[#026937] via-[#35944b] to-[#43b649] text-white font-semibold">
-                      {String(user.initials || "U")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col flex-1">
-                    <span className="text-sm font-semibold text-gray-900">
-                      {isClient ? `${firstName} ${firstLastname}` : "Cargando..."}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {isClient ? email : "cargando@email.com"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Show profile option for all users */}
-                <DropdownMenuItem>
-                  <Link 
-                    href={ROUTES.PROFILE}
-                    className="cursor-pointer w-full flex items-center"
-                  >
-                    <User className="mr-3 h-4 w-4" />
-                    <span>Mi Perfil</span>
-                  </Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem>
-                  <Link
-                    href={ROUTES.LOGIN}
-                    className="cursor-pointer w-full flex items-center text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <LogOut className="mr-3 h-4 w-4" />
-                    <span>Cerrar Sesión</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserMenu
+              user={{
+                name: user.name ?? '',
+                initials: user.initials ?? '',
+                email: user.email ?? email,
+                firstName,
+                firstLastname,
+              }}
+              isClient={isClient}
+              getRoleIcon={getRoleIcon}
+            />
           </div>
         </div>
       </div>

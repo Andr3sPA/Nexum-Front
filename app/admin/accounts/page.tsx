@@ -8,7 +8,7 @@ import { Input } from "@/components/atoms/input"
 import { Select } from "@/components/atoms/select"
 import { Button } from "@/components/atoms/button"
 import Navbar from "@/components/navbar"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/molecules/dropdown-menu"
+import { LocalStorageService } from '@/lib/services/local-storage.service'
 
 const ROLES = [
   { value: '', label: 'Todos' },
@@ -100,12 +100,23 @@ export default function AdminAccountsPage() {
     fetchAccounts()
   }
 
-  // Dummy user for Navbar
-  const navbarUser = { name: "Admin", lastname: "", email: "admin@demo.com", role: "ADMINISTRATIVE", initials: "A" }
+  const userProfile = LocalStorageService.getItem<any>("userProfile")
+  const firstName = userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
+  const user = LocalStorageService.getItem<any>("user")
+  const email = user?.email || ""
+  const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      <Navbar user={navbarUser} />
+      <Navbar user={{
+        firstName,
+        firstLastname,
+        email,
+        role: user?.role,
+        initials,
+        ...userProfile
+      }} />
       <div className="mx-auto py-10 px-32">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Administrar Cuentas</h1>

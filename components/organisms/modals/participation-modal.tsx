@@ -66,7 +66,7 @@ export default function ParticipationModal({ isOpen, onClose, onSave, initialDat
     setIsSubmitting(true)
 
     try {
-      console.log("Submitting participation data:", formData)
+      logger.info("Submitting participation data:", formData)
       await onSave(formData)
       onClose()
     } catch (error) {

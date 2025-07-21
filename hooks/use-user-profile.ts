@@ -30,7 +30,7 @@ export function useUserProfile({
   isViewOnly = false,
   redirectOnUnauthorized = true
 }: UseUserProfileOptions = {}): UseUserProfileReturn {
-  console.log("👤 useUserProfile hook initialized with:", { userId, isViewOnly, redirectOnUnauthorized })
+  // Elimina los console.log de debug
   
   const router = useRouter()
   const [detailedUser, setDetailedUser] = useState<DetailedUserResponse | null>(null)
@@ -69,8 +69,6 @@ export function useUserProfile({
   const targetUserId = userId || currentUserId
 
   // Determine if the current user can edit this profile
-  console.log('DEBUG user object:', user)
-  console.log('DEBUG user.role:', user?.role, 'ROLES.ADMINISTRATIVE:', ROLES.ADMINISTRATIVE, 'ROLES.DEAN:', ROLES.DEAN, 'isViewOnly:', isViewOnly)
   const canEdit = isCurrentUser || ((user?.role === ROLES.ADMINISTRATIVE || user?.role === ROLES.DEAN) && !isViewOnly)
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import { FormField } from "@/components/molecules/form-field"
 import { Alert, AlertDescription } from "@/components/atoms/alert"
 import { NexumLogo } from "@/components/molecules/nexum-logo"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
+import { logger } from "@/lib/logging"
 
 export interface LoginFormData {
   email: string
@@ -39,15 +40,12 @@ export function LoginForm({
   const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("🚀 LoginForm.handleSubmit called")
     e.preventDefault()
     e.stopPropagation()
-    console.log("📝 LoginForm.handleSubmit called with formData:", { email: formData.email, password: "***" })
     try {
       await onSubmit(formData)
-      console.log("✅ LoginForm.handleSubmit completed successfully")
     } catch (error) {
-      console.error("❌ LoginForm.handleSubmit error:", error)
+      logger.error("❌ LoginForm.handleSubmit error:", error)
     }
   }
 
@@ -108,7 +106,7 @@ export function LoginForm({
               onChange={(e) => handleInputChange("email", e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  console.log("🔤 Enter pressed in email field")
+                  logger.info("🔤 Enter pressed in email field")
                 }
               }}
               placeholder="tu@correo.com"
@@ -129,7 +127,7 @@ export function LoginForm({
               onChange={(e) => handleInputChange("password", e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  console.log("🔤 Enter pressed in password field")
+                  logger.info("🔤 Enter pressed in password field")
                 }
               }}
               placeholder="••••••••"
@@ -156,7 +154,7 @@ export function LoginForm({
           type="submit" 
           className="w-full h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
           disabled={isLoading}
-          onClick={() => console.log("🔘 Login button clicked")}
+          onClick={() => logger.info("🔘 Login button clicked")}
         >
           {isLoading ? (
             <div className="flex items-center space-x-2">
