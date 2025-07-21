@@ -109,14 +109,16 @@ export default function AdminAccountsPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      <Navbar user={{
-        firstName,
-        firstLastname,
-        email,
-        role: user?.role,
-        initials,
-        ...userProfile
-      }} />
+      {user && userProfile && (
+        <Navbar user={{
+          firstName,
+          firstLastname,
+          email,
+          role: user?.role,
+          initials,
+          ...userProfile
+        }} />
+      )}
       <div className="mx-auto py-10 px-32">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Administrar Cuentas</h1>

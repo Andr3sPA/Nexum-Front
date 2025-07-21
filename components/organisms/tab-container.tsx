@@ -61,13 +61,12 @@ export function TabContainer({
   className = ""
 }: TabContainerProps) {
   return (
-    <div className={`space-y-6 ${className}`}>
-      {/* Header with title and action buttons */}
+    <div className={`${className}`}>
       <div className="flex justify-between items-center">
         <SectionTitle>{title}</SectionTitle>
         <div className="flex gap-2">
           {showAddButton && onAdd && (
-            <AddButton onClick={onAdd} text={addButtonText} />
+            <AddButton onClick={onAdd}>{addButtonText}</AddButton>
           )}
           {showEditButton && onEdit && (
             <EditButton onClick={onEdit} text={editButtonText} />
@@ -116,14 +115,13 @@ export function TabSection({
         action={
           <div className="flex gap-2">
             {showAddButton && onAdd && (
-              <AddButton onClick={onAdd} text={addButtonText} />
+              <AddButton onClick={onAdd}>{addButtonText}</AddButton>
             )}
             {showEditButton && onEdit && (
               <EditButton onClick={onEdit} text={editButtonText} />
             )}
           </div>
         }
-        className={className}
       >
         {children}
       </DataSection>
@@ -137,7 +135,7 @@ export function TabSection({
         <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
         <div className="flex gap-2">
           {showAddButton && onAdd && (
-            <AddButton onClick={onAdd} text={addButtonText} />
+            <AddButton onClick={onAdd}>{addButtonText}</AddButton>
           )}
           {showEditButton && onEdit && (
             <EditButton onClick={onEdit} text={editButtonText} />

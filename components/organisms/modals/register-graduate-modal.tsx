@@ -114,8 +114,8 @@ export default function RegisterGraduateModal({ open, onOpenChange, onSave }: Re
       }
       onSubmit={handleSubmit}
     >
-      <form className="space-y-6">
-        <div className="space-y-6">
+      <div>
+        <div>
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Información Personal</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -215,7 +215,7 @@ export default function RegisterGraduateModal({ open, onOpenChange, onSave }: Re
             </div>
           </div>
         </div>
-      </form>
+      </div>
     </ModalContainer>
   )
 }

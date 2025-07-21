@@ -41,7 +41,7 @@ const Dialog = ({ open = false, onOpenChange, children }: DialogProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+      className="p-16 fixed inset-0 z-50 bg-black/30 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
       onClick={handleBackdropClick}
     >
       {children}

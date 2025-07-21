@@ -49,14 +49,18 @@ function ProfilePageContent() {
   if (isLoading) {
     return (
       <>
-        <Navbar user={{
-          firstName,
-          firstLastname,
-          email,
-          role: user?.role,
-          initials,
-          ...userProfile
-        }} />
+        {user && userProfile && (
+          <Navbar user={{
+            name: userProfile.name,
+            lastname: userProfile.lastname,
+            email: user.email,
+            role: user.role,
+            initials: user.initials,
+            firstName: userProfile.name?.split(' ')[0] || '',
+            firstLastname: userProfile.lastname?.split(' ')[0] || '',
+            ...userProfile
+          }} />
+        )}
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
@@ -70,14 +74,18 @@ function ProfilePageContent() {
   if (error) {
     return (
       <>
-        <Navbar user={{
-          firstName,
-          firstLastname,
-          email,
-          role: user?.role,
-          initials,
-          ...userProfile
-        }} />
+        {user && userProfile && (
+          <Navbar user={{
+            name: userProfile.name,
+            lastname: userProfile.lastname,
+            email: user.email,
+            role: user.role,
+            initials: user.initials,
+            firstName: userProfile.name?.split(' ')[0] || '',
+            firstLastname: userProfile.lastname?.split(' ')[0] || '',
+            ...userProfile
+          }} />
+        )}
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="text-red-600 text-xl mb-4">Error</div>
@@ -97,14 +105,18 @@ function ProfilePageContent() {
   if (!detailedUser) {
     return (
       <>
-        <Navbar user={{
-          firstName,
-          firstLastname,
-          email,
-          role: user?.role,
-          initials,
-          ...userProfile
-        }} />
+        {user && userProfile && (
+          <Navbar user={{
+            name: userProfile.name,
+            lastname: userProfile.lastname,
+            email: user.email,
+            role: user.role,
+            initials: user.initials,
+            firstName: userProfile.name?.split(' ')[0] || '',
+            firstLastname: userProfile.lastname?.split(' ')[0] || '',
+            ...userProfile
+          }} />
+        )}
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="text-gray-600 text-xl mb-4">No se pudo cargar el perfil</div>
@@ -127,14 +139,18 @@ function ProfilePageContent() {
 
   return (
     <>
-      <Navbar user={{
-        firstName: userProfile?.name?.split(" ")[0] || "",
-        firstLastname: userProfile?.lastname?.split(" ")[0] || "",
-        email: user?.email || "",
-        role: user?.role,
-        initials: user?.initials || (userProfile?.name?.[0] || "") + (userProfile?.lastname?.[0] || ""),
-        ...userProfile
-      }} />
+      {user && userProfile && (
+        <Navbar user={{
+          name: userProfile.name,
+          lastname: userProfile.lastname,
+          email: user.email,
+          role: user.role,
+          initials: user.initials,
+          firstName: userProfile.name?.split(' ')[0] || '',
+          firstLastname: userProfile.lastname?.split(' ')[0] || '',
+          ...userProfile
+        }} />
+      )}
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">

@@ -192,14 +192,18 @@ export default function SearchGraduatesPage() {
 
   return (
     <>
-      <Navbar user={{
-        firstName,
-        firstLastname,
-        email,
-        role: user?.role,
-        initials,
-        ...userProfile
-      }} />
+      {user && userProfile && (
+        <Navbar user={{
+          name: userProfile.name,
+          lastname: userProfile.lastname,
+          email: user.email,
+          role: user.role,
+          initials: user.initials,
+          firstName: userProfile.name?.split(' ')[0] || '',
+          firstLastname: userProfile.lastname?.split(' ')[0] || '',
+          ...userProfile
+        }} />
+      )}
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto py-6 sm:px-8 lg:px-12">
           <div className="px-0 py-6">
