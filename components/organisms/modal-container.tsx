@@ -48,6 +48,7 @@ export function ModalContainer({
         className={`
           ${maxWidth}
           w-full
+          max-h-[90vh]
           bg-white/95 backdrop-blur-md
           border 
           border-gray-200/50 

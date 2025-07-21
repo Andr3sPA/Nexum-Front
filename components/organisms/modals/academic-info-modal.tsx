@@ -44,44 +44,30 @@ export function AcademicInfoModal({
   const [improvementSuggestions, setImprovementSuggestions] = useState<string[]>([])
   const [isSaving, setIsSaving] = useState(false)
 
-  // Load programs if not already loaded
   useEffect(() => {
     if (isOpen && (!Array.isArray(programs) || programs.length === 0)) {
-      logger.info("Modal opened, loading programs...")
       loadPrograms()
     }
   }, [isOpen, programs, loadPrograms])
 
-  // Initialize form with existing data when modal opens
+
   useEffect(() => {
     if (isOpen) {
       if (editingProgram) {
-        // Editing an existing program
         logger.info("Editing program:", editingProgram)
         if (editingProgram.programVersion) {
-          // Get the complete program version information to find the parent program
           const fetchProgramVersionInfo = async () => {
             try {
               const programVersionInfo = await getProgramVersionInfo(editingProgram.programVersion.id)
-              logger.info("Program version info:", programVersionInfo)
-              
-              // Set the program that corresponds to this version
               setSelectedProgram(programVersionInfo.program.id.toString())
-              
-              // Set the program version
               setSelectedVersion(editingProgram.programVersion.id.toString())
-              
-              // Load program versions for this program
               loadProgramVersions(programVersionInfo.program.id)
               setGraduationYear(editingProgram.graduationYear?.toString() || new Date().getFullYear().toString())
-              
-              // Load existing evaluation data
-              setStrengths(editingProgram.strengths || [])
+                            setStrengths(editingProgram.strengths || [])
               setWeaknesses(editingProgram.weaknesses || [])
               setImprovementSuggestions(editingProgram.improvementSuggestions || [])
             } catch (error) {
               logger.error("Error fetching program version info:", error)
-              // Fallback: just set the version without the program
               setSelectedVersion(editingProgram.programVersion.id.toString())
               loadProgramVersions(editingProgram.programVersion.id)
               setGraduationYear(editingProgram.graduationYear?.toString() || new Date().getFullYear().toString())
@@ -94,16 +80,16 @@ export function AcademicInfoModal({
           fetchProgramVersionInfo()
         }
       } else if (academicData.length > 0) {
-        // Creating new program but there's existing data - use first program as reference
+
         const firstProgram = academicData[0]
         if (firstProgram.programVersion) {
-          // Set the program version directly
+
           setSelectedVersion(firstProgram.programVersion.id.toString())
-          // Try to find the program by loading its versions
+
           loadProgramVersions(firstProgram.programVersion.id)
           setGraduationYear(firstProgram.graduationYear?.toString() || new Date().getFullYear().toString())
           
-          // Load existing evaluation data
+
           setStrengths(firstProgram.strengths || [])
           setWeaknesses(firstProgram.weaknesses || [])
           setImprovementSuggestions(firstProgram.improvementSuggestions || [])
@@ -186,7 +172,7 @@ export function AcademicInfoModal({
         <ModalActions onCancel={onClose} isSubmitting={isSaving} />
       }
     >
-      <div className="space-y-8">
+      <div className="space-y-4">
         <FormSection 
           title="Información del Programa"
           description="Seleccione el programa académico y la versión que cursó"
@@ -229,7 +215,7 @@ export function AcademicInfoModal({
               <Input
                 id="graduationYear"
                 type="number"
-                min="1990"
+                min="1940"
                 max="2030"
                 value={graduationYear}
                 onChange={(e) => setGraduationYear(e.target.value)}
@@ -243,9 +229,10 @@ export function AcademicInfoModal({
         <FormSection 
           title="Evaluación del Programa"
           description="Comparta su experiencia y opinión sobre el programa cursado"
+          color="purple"
           icon={Star}
         >
-          <div className="space-y-8">
+          <div className="space-y-4">
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
               <DynamicInputList
                 items={strengths}
