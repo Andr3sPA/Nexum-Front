@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import React from "react"
 
 export type ToastType = "success" | "error" | "info" | "warning"
 
@@ -59,7 +59,7 @@ const ToastContext = React.createContext<{
   updateToast: (id: string, updates: Partial<ToastProps>) => void
 } | null>(null)
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+export function ToastProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
   const [state, dispatch] = React.useReducer(toastReducer, { toasts: [] })
 
   const addToast = React.useCallback((toast: Omit<ToastProps, "id" | "open">) => {

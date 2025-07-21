@@ -15,6 +15,7 @@ export { ContactInformationCard } from "./contact-information-card"
 export { FamilyInformationCard } from "./family-information-card"
 export { ParticipationInfoCard } from "./participation-info-card"
 export { InnovationProcessesCard } from "./innovation-processes-card"
+export { LoginForm } from "../organisms/login-form"
 
 // New molecules for search functionality
 export { SearchFilters } from "./search-filters"

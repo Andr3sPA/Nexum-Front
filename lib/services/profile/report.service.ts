@@ -1,5 +1,5 @@
 import { serviceWithAuth, serviceWithAuthRawBinary } from "@/lib/services/base.service"
-import { METHOD, API_HOST } from "@/lib/services/constants/api.constants"
+import { METHOD, PROFILE_HOST } from "@/lib/services/constants/api.constants"
 
 export type ReportFormat = "PDF" | "HTML" | "XLSX"
 
@@ -60,7 +60,7 @@ export const ReportService = {
       endpoint,
       METHOD.get,
       undefined,
-      API_HOST
+      PROFILE_HOST
     )
     if (status !== 200) {
       throw new Error("No se pudo generar el reporte")
@@ -151,7 +151,7 @@ export const ReportService = {
       endpoint,
       METHOD.get,
       undefined,
-      API_HOST
+      PROFILE_HOST
     )
     
     console.log("📊 Status de respuesta:", status)

@@ -1,5 +1,5 @@
 import { serviceWithAuth } from "@/lib/services/base.service"
-import { METHOD, USER_ENDPOINT, API_HOST } from "@/lib/services/constants/api.constants"
+import { METHOD, USER_ENDPOINT, PROFILE_HOST } from "@/lib/services/constants/api.constants"
 
 // UserFilterRequest interface based on the API specification
 export interface UserFilterRequest {
@@ -123,7 +123,7 @@ export const GraduateSearchService = {
       endpoint,
       METHOD.get,
       undefined,
-      API_HOST
+      PROFILE_HOST
     )
     if (status !== 200) {
       throw new Error((body as any)?.message || "Error al buscar graduados")

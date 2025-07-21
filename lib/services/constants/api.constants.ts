@@ -1,6 +1,6 @@
 // API Hosts
-export const API_HOST = 'http://localhost:8100/nexum/v1';
-export const CATALOG_HOST = 'http://localhost:8110/nexum/v1';
+export const PROFILE_HOST = process.env.NEXT_PUBLIC_API_PROFILE_URL ?? 'http://localhost:8100/nexum/v1';
+export const CATALOG_HOST = process.env.NEXT_PUBLIC_API_CATALOG_URL ?? 'http://localhost:8110/nexum/v1';
 
 // Endpoints
 export const AUTHENTICATION_ENDPOINT = '/auth';
