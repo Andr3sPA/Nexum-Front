@@ -34,9 +34,9 @@ export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElem
 const Table = React.forwardRef<HTMLTableElement, TableProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div className="relative w-full overflow-auto">
+      <div className="relative w-full overflow-auto rounded-lg">
         <table
-          className={cn("w-full caption-bottom text-sm", className)}
+          className={cn("relative overgflow-auto w-full caption-bottom text-sm", className)}
           ref={ref}
           {...props}
         >

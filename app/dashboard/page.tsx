@@ -50,6 +50,13 @@ export default function UnifiedDashboardPage() {
         color: "green",
       },
       {
+        href: "/admin/accounts",
+        icon: <User className="w-8 h-8 text-orange-500" />,
+        title: "Administrar Cuentas",
+        description: "Gestiona cuentas de usuario, edita emails, contraseñas y roles de acceso.",
+        color: "orange",
+      },
+      {
         href: "#register-graduate",
         icon: <UserPlus className="w-8 h-8 text-purple-600" />,
         title: "Registrar Egresado",
@@ -106,19 +113,14 @@ export default function UnifiedDashboardPage() {
 
   const handleRegisterGraduate = async (formData: any) => {
     try {
-      console.log("📝 handleRegisterGraduate received formData:", formData)
       
       const userData = {
         ...formData,
         idIdentityDocumentType: parseInt(formData.idIdentityDocumentType),
       }
-      
-      console.log("📝 handleRegisterGraduate sending userData:", userData)
-      
+
       const newUser = await UserService.create(userData)
-      
-      console.log("📝 handleRegisterGraduate received newUser:", newUser)
-      
+
       if (newUser?.id) {
         setShowRegisterModal(false)
         console.log("Disparando toast de éxito")

@@ -8,7 +8,7 @@ export interface DashboardCardProps {
   icon: React.ReactNode
   title: string
   description: string
-  color: "blue" | "green" | "purple" | "yellow" | "red" | "indigo"
+  color: "blue" | "green" | "purple" | "yellow" | "red" | "indigo" | "orange"
   disabled?: boolean
   onClick?: () => void
   isButton?: boolean
@@ -63,6 +63,14 @@ const colorStyles = {
     borderHover: "hover:border-indigo-300",
     text: "text-indigo-600",
     textHover: "group-hover:text-indigo-700"
+  },
+  orange: {
+    bg: "bg-orange-50",
+    hover: "hover:bg-orange-100",
+    border: "border-orange-200",
+    borderHover: "hover:border-orange-300",
+    text: "text-orange-600",
+    textHover: "group-hover:text-orange-700"
   }
 }
 

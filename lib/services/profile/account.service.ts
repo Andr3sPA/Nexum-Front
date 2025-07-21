@@ -19,6 +19,7 @@ export interface AuthRequest {
 }
 
 export interface AuthResponse {
+  id: string
   email: string
   name: string
   middleName: string
@@ -40,7 +41,7 @@ export interface PageResponse<T> {
   number: number
 }
 
-const ACCOUNT_ENDPOINT = '/v1/accounts'
+const ACCOUNT_ENDPOINT = '/accounts'
 
 function buildQueryString(params: Record<string, any>): string {
   const searchParams = new URLSearchParams()

@@ -451,15 +451,6 @@ export default function WorkInfoTab({ userProfile, isViewOnly = false, onDataUpd
         )}
       </TabSection>
 
-      {/* Questions Section */}
-      <TabSection 
-        title="Preguntas Adicionales"
-        onEdit={handleEditQuestions}
-        showEditButton={!isViewOnly}
-      >
-        <TabEmptyState message="No hay respuestas a preguntas adicionales registradas." />
-      </TabSection>
-
       <WorkCurrentJobModal
         isOpen={isCurrentJobModalOpen}
         onClose={handleCloseCurrentJobModal}

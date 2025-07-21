@@ -7,7 +7,7 @@ export interface DashboardCardData {
   icon: React.ReactNode
   title: string
   description: string
-  color: "blue" | "green" | "purple" | "yellow" | "red" | "indigo"
+  color: "blue" | "green" | "purple" | "yellow" | "red" | "indigo" | "orange"
   disabled?: boolean
   onClick?: () => void
   isButton?: boolean
@@ -23,8 +23,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ cards, className }
   const getGridCols = () => {
     if (cards.length === 1) return "grid-cols-1"
     if (cards.length === 2) return "grid-cols-1 md:grid-cols-2"
-    if (cards.length === 3) return "grid-cols-1 md:grid-cols-3"
-    if (cards.length >= 4) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+    if (cards.length >= 3) return "grid-cols-1 md:grid-cols-3"
     return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
   }
 

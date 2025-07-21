@@ -3,7 +3,7 @@ import { LocalStorageService } from "@/lib/services/local-storage.service"
 export type RequestHeaders = Record<string, string>;
 export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
-const defaultApiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8100/nexum/v1';
+const defaultApiUrl = process.env.NEXT_PUBLIC_API_PROFILE_URL ?? 'http://localhost:8100/nexum/v1';
 
 export function getAuthToken(): string | null {
   const user = LocalStorageService.getItem<{ token: string }>("user");

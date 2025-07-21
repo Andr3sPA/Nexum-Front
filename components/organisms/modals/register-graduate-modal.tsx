@@ -214,13 +214,6 @@ export default function RegisterGraduateModal({ open, onOpenChange, onSave }: Re
               </FormField>
             </div>
           </div>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Información de Contacto</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Eliminado el campo de correo institucional */}
-            </div>
-          </div>
         </div>
       </form>
     </ModalContainer>
