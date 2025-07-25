@@ -175,10 +175,10 @@ export default function RegisterGraduateModal({ open, onOpenChange, onSave }: Re
                   required
                 >
                   <option value="">Seleccionar género</option>
-                  <option value="MALE">Masculino</option>
-                  <option value="FEMALE">Femenino</option>
-                  <option value="NON_BINARY">No binario</option>
-                  <option value="OTHER">Otro</option>
+                  <option value="Hombre">Masculino</option>
+                  <option value="Mujer">Femenino</option>
+                  <option value="No binario">No binario</option>;
+                  <option value="Oto">Otro</option>
                 </Select>
               </FormField>
             </div>

@@ -20,6 +20,7 @@ export interface ReportUserResponse {
   email: string
   mobile: string
   graduateGender: string
+  program: string
   occupation: string
   identityDocument: string
   graduationYear: number

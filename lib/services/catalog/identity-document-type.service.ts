@@ -34,7 +34,6 @@ export const IdentityDocumentTypeService = {
     return body;
   },
 
-  // Legacy function for backward compatibility
   async getIdentityDocumentTypes(): Promise<IdentityDocumentTypeResponse[]> {
     return this.getAll();
   }

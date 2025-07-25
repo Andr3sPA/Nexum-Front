@@ -64,6 +64,7 @@ const ReportContainer = React.forwardRef<HTMLDivElement, ReportContainerProps>(
       { key: "mobile", label: "Teléfono" },
       { key: "graduateGender", label: "Género" },
       { key: "occupation", label: "Ocupación" },
+      { key: "program", label: "Programa" },
       { key: "identityDocument", label: "Documento" },
       { key: "graduationYear", label: "Año Graduación", align: "center" as const }
     ]

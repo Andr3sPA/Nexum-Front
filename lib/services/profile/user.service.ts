@@ -30,11 +30,10 @@ export interface UserResponse {
   birthdate: string;
   creationDate: string;
   lastUpdate: string;
-  role: string; // <-- Agregado para control de acceso
+  role: string;
 }
 
 export const UserService = {
-  // Create new user
   async create(data: UserRequest): Promise<UserResponse> {
     
     try {
