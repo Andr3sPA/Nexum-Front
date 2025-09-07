@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   // Reduce build verbosity
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,
