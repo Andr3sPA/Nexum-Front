@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
   // Reduce build verbosity
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,
@@ -17,10 +16,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  
+
   // Enable React strict mode for better development experience
   reactStrictMode: true,
-  
+
   // Configure webpack for better compatibility
   webpack: (config, { dev, isServer }) => {
     // Soporte para importar SVGs como componentes React
@@ -29,14 +28,14 @@ const nextConfig = {
       issuer: { and: [/\.[jt]sx?$/] },
       use: [
         {
-          loader: require.resolve('@svgr/webpack'),
+          loader: require.resolve("@svgr/webpack"),
           options: {
             icon: true,
             svgo: true,
             svgoConfig: {
               plugins: [
                 {
-                  name: 'removeViewBox',
+                  name: "removeViewBox",
                   active: false,
                 },
               ],
@@ -51,19 +50,19 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
           },
         ],
       },
