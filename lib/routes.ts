@@ -3,7 +3,7 @@
  * Defines all available routes and role-based access
  */
 
-import { ROLES } from "./services/constants/api.constants"
+import { ROLES } from "./services/constants/api.constants";
 
 export const ROUTES = {
   // Public routes
@@ -32,7 +32,13 @@ export const ROUTES = {
     REPORTS: "/reports",
     VIEW_PROFILE: "/profile", // For viewing specific user profiles
   },
-} as const
+
+  EMPLOYER: {
+    DASHBOARD: "/dashboard",
+    SEARCH_GRADUATES: "/search-graduates",
+    VIEW_PROFILE: "/profile", // For viewing specific user profiles
+  },
+} as const;
 
 export const ROLE_ROUTES = {
   [ROLES.GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE],
@@ -44,15 +50,20 @@ export const ROLE_ROUTES = {
     ROUTES.PROFILE,
   ],
   [ROLES.DEAN]: [
-    ROUTES.DASHBOARD, 
-    ROUTES.SEARCH_GRADUATES, 
+    ROUTES.DASHBOARD,
+    ROUTES.SEARCH_GRADUATES,
     ROUTES.DEAN.REPORTS,
     ROUTES.PROFILE,
   ],
-} as const
+  [ROLES.EMPLOYER]: [
+    ROUTES.EMPLOYER.DASHBOARD,
+    ROUTES.EMPLOYER.SEARCH_GRADUATES,
+    ROUTES.EMPLOYER.VIEW_PROFILE,
+  ],
+} as const;
 
-export type UserRole = keyof typeof ROLE_ROUTES
-export type RouteKey = (typeof ROUTES)[keyof typeof ROUTES]
+export type UserRole = keyof typeof ROLE_ROUTES;
+export type RouteKey = (typeof ROUTES)[keyof typeof ROUTES];
 
 /**
  * Get dashboard route based on user role
@@ -60,11 +71,13 @@ export type RouteKey = (typeof ROUTES)[keyof typeof ROUTES]
 export function getDashboardRoute(role: UserRole): string {
   switch (role) {
     case ROLES.ADMINISTRATIVE:
-      return ROUTES.ADMIN.DASHBOARD
+      return ROUTES.ADMIN.DASHBOARD;
     case ROLES.DEAN:
-      return ROUTES.DEAN.DASHBOARD
+      return ROUTES.DEAN.DASHBOARD;
+    case ROLES.EMPLOYER:
+      return ROUTES.EMPLOYER.DASHBOARD;
     default:
-      return ROUTES.DASHBOARD
+      return ROUTES.DASHBOARD;
   }
 }
 
@@ -72,5 +85,7 @@ export function getDashboardRoute(role: UserRole): string {
  * Check if user has access to route
  */
 export function hasRouteAccess(role: UserRole, route: string): boolean {
-  return ROLE_ROUTES[role].some((allowedRoute) => route.startsWith(allowedRoute))
+  return ROLE_ROUTES[role].some((allowedRoute) =>
+    route.startsWith(allowedRoute),
+  );
 }

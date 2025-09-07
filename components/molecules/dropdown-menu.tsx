@@ -10,16 +10,19 @@ export interface DropdownMenuProps {
 
 export interface DropdownMenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
+  asChild?: boolean
 }
 
 export interface DropdownMenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
   align?: "start" | "center" | "end"
   sideOffset?: number
+  forceMount?: boolean
 }
 
 export interface DropdownMenuItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
+  asChild?: boolean
 }
 
 const DropdownMenuContext = React.createContext<{
@@ -40,10 +43,24 @@ const DropdownMenu = ({ children }: DropdownMenuProps) => {
 }
 
 const DropdownMenuTrigger = React.forwardRef<HTMLButtonElement, DropdownMenuTriggerProps>(
-  ({ className, children, ...props }, ref) => {
+  ({ className, children, asChild = false, ...props }, ref) => {
     const context = React.useContext(DropdownMenuContext)
     if (!context) {
       throw new Error("DropdownMenuTrigger must be used within a DropdownMenu component")
+    }
+
+    if (asChild) {
+      const child = React.Children.only(children) as React.ReactElement<any>
+      return React.cloneElement(child, {
+        onClick: (e: React.MouseEvent) => {
+          context.setOpen(!context.open)
+          if (child.props && typeof child.props.onClick === "function") {
+            child.props.onClick(e)
+          }
+        },
+        ref,
+        ...props,
+      })
     }
 
     return (
@@ -65,13 +82,13 @@ const DropdownMenuTrigger = React.forwardRef<HTMLButtonElement, DropdownMenuTrig
 DropdownMenuTrigger.displayName = "DropdownMenuTrigger"
 
 const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenuContentProps>(
-  ({ className, children, align = "start", sideOffset = 4, ...props }, ref) => {
+  ({ className, children, align = "start", sideOffset = 4, forceMount = false, ...props }, ref) => {
     const context = React.useContext(DropdownMenuContext)
     if (!context) {
       throw new Error("DropdownMenuContent must be used within a DropdownMenu component")
     }
 
-    if (!context.open) return null
+    if (!context.open && !forceMount) return null
 
     const alignClasses = {
       start: "left-0",
@@ -98,7 +115,14 @@ const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenuContent
 DropdownMenuContent.displayName = "DropdownMenuContent"
 
 const DropdownMenuItem = React.forwardRef<HTMLButtonElement, DropdownMenuItemProps>(
-  ({ className, children, ...props }, ref) => {
+  ({ className, children, asChild = false, ...props }, ref) => {
+    if (asChild) {
+      const child = React.Children.only(children) as React.ReactElement<any>
+      return React.cloneElement(child, {
+        ref,
+        ...props,
+      })
+    }
     return (
       <button
         className={cn(

@@ -10,7 +10,6 @@ export * from "./program-opinion.service"
 export * from "./auth.service"
 export * from "./user.service"
 export * from "./graduate-search.service"
-export * from "./detailed-user.service"
 
 // Re-export specific types to avoid conflicts
 export type {

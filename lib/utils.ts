@@ -222,17 +222,30 @@ export function applyDesignSystem(component: string, variant?: string, size?: st
   
   const componentStyles = baseStyles[component as keyof typeof baseStyles]
   if (!componentStyles) return ""
-  
-  let styles = componentStyles.base || ""
-  
-  if (variant && componentStyles.variants) {
+
+  let styles = ""
+  if ("base" in componentStyles && typeof componentStyles.base === "string") {
+    styles = componentStyles.base
+  }
+
+  if (
+    variant &&
+    "variants" in componentStyles &&
+    typeof componentStyles.variants === "object" &&
+    componentStyles.variants
+  ) {
     styles += " " + (componentStyles.variants[variant as keyof typeof componentStyles.variants] || "")
   }
-  
-  if (size && componentStyles.sizes) {
+
+  if (
+    size &&
+    "sizes" in componentStyles &&
+    typeof componentStyles.sizes === "object" &&
+    componentStyles.sizes
+  ) {
     styles += " " + (componentStyles.sizes[size as keyof typeof componentStyles.sizes] || "")
   }
-  
+
   return styles
 }
 

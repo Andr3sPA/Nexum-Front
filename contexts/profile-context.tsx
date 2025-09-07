@@ -5,8 +5,8 @@ import { logger } from "@/lib/logging"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { CoursedProgramService } from "@/lib/services/profile/coursed-program.service"
 import { AcademicEducationService } from "@/lib/services/profile/academic-education.service"
-import { ContactInformationService } from "@/lib/services/profile/contact-information.service"
-import { FamilyInformationService } from "@/lib/services/profile/family-information.service"
+import { ContactInformationRequest, ContactInformationService } from "@/lib/services/profile/contact-information.service"
+import { FamilyInformationRequest, FamilyInformationService } from "@/lib/services/profile/family-information.service"
 import { ProgramVersionService } from "@/lib/services/catalog/program-version.service"
 import { DetailedCoursedProgramResponse, DetailedAcademicEducationResponse } from "@/lib/services/profile/detailed-user.service"
 import { ContactInformationResponse } from "@/lib/services/profile/contact-information.service"
@@ -49,42 +49,12 @@ interface ProfileContextType {
   }) => Promise<void>
   
   // Contact information methods
-  createContactInformation: (data: {
-    userId: string
-    address: string
-    country: string
-    state: string
-    city: string
-    landline: string
-    mobile: string
-    email: string
-    academicEmail: string
-    whatsappAuthorization: boolean
-  }) => Promise<void>
-  updateContactInformation: (id: number, data: {
-    userId: string
-    address: string
-    country: string
-    state: string
-    city: string
-    landline: string
-    mobile: string
-    email: string
-    academicEmail: string
-    whatsappAuthorization: boolean
-  }) => Promise<void>
-  
+  createContactInformation: (data: ContactInformationRequest) => Promise<void>
+  updateContactInformation: (id: number, data: ContactInformationRequest) => Promise<void>
+
   // Family information methods
-  createFamilyInformation: (data: {
-    userId: string
-    maritalState: string
-    childNumber: number
-  }) => Promise<void>
-  updateFamilyInformation: (id: number, data: {
-    userId: string
-    maritalState: string
-    childNumber: number
-  }) => Promise<void>
+  createFamilyInformation: (data: FamilyInformationRequest) => Promise<void>
+  updateFamilyInformation: (id: number, data: FamilyInformationRequest) => Promise<void>
   
   // Utility methods
   getUserId: () => string | null
@@ -174,18 +144,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
     }
   }, [])
 
-  const createContactInformation = useCallback(async (data: {
-    userId: string
-    address: string
-    country: string
-    state: string
-    city: string
-    landline: string
-    mobile: string
-    email: string
-    academicEmail: string
-    whatsappAuthorization: boolean
-  }) => {
+  const createContactInformation = useCallback(async (data: ContactInformationRequest) => {
     try {
       await ContactInformationService.create(data)
     } catch (error) {
@@ -194,18 +153,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
     }
   }, [])
 
-  const updateContactInformation = useCallback(async (id: number, data: {
-    userId: string
-    address: string
-    country: string
-    state: string
-    city: string
-    landline: string
-    mobile: string
-    email: string
-    academicEmail: string
-    whatsappAuthorization: boolean
-  }) => {
+  const updateContactInformation = useCallback(async (id: number, data: ContactInformationRequest) => {
     try {
       await ContactInformationService.updateById(id, data)
     } catch (error) {
@@ -214,11 +162,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
     }
   }, [])
 
-  const createFamilyInformation = useCallback(async (data: {
-    userId: string
-    maritalState: string
-    childNumber: number
-  }) => {
+  const createFamilyInformation = useCallback(async (data: FamilyInformationRequest) => {
     try {
       await FamilyInformationService.create(data)
     } catch (error) {
@@ -227,11 +171,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
     }
   }, [])
 
-  const updateFamilyInformation = useCallback(async (id: number, data: {
-    userId: string
-    maritalState: string
-    childNumber: number
-  }) => {
+  const updateFamilyInformation = useCallback(async (id: number, data: FamilyInformationRequest) => {
     try {
       await FamilyInformationService.updateById(id, data)
     } catch (error) {

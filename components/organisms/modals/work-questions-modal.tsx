@@ -21,13 +21,13 @@ interface WorkQuestionsData {
   question2: string
   question3: string
   updateDate?: string
-}
-
-interface WorkQuestionsModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (data: WorkQuestionsData) => void
-  initialData?: WorkQuestionsData | null
+  jobSatisfaction?: string
+  salarySatisfaction?: string
+  careerGrowth?: string
+  trainingOpportunities?: string
+  workEnvironment?: string
+  workLifeBalance?: string
+  futurePlans?: string
 }
 
 // Default values for the form
@@ -38,7 +38,22 @@ const defaultFormData: WorkQuestionsData = {
   question1: "",
   question2: "",
   question3: "",
-  updateDate: ""
+  updateDate: "",
+  jobSatisfaction: "",
+  salarySatisfaction: "",
+  careerGrowth: "",
+  trainingOpportunities: "",
+  workEnvironment: "",
+  workLifeBalance: "",
+  futurePlans: ""
+}
+
+
+interface WorkQuestionsModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onSave: (data: WorkQuestionsData) => void
+  initialData?: WorkQuestionsData
 }
 
 export function WorkQuestionsModal({ isOpen, onClose, onSave, initialData }: WorkQuestionsModalProps) {

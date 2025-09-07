@@ -12,6 +12,13 @@ interface EvaluationData {
   infrastructureQuality: string
   administrativeSupport: string
   overallExperience: string
+  overallSatisfaction: string
+  recommendProgram: string
+  curriculumQuality: string
+  facultyQuality: string
+  practicalTraining: string
+  jobPreparation: string
+  skillsRelevance: string
   comments: string
   strengths: string
   weaknesses: string
@@ -34,32 +41,46 @@ export default function EvaluationTab({ userProfile }: EvaluationTabProps) {
     infrastructureQuality: "",
     administrativeSupport: "",
     overallExperience: "",
+    overallSatisfaction: "",
+    recommendProgram: "",
+    curriculumQuality: "",
+    facultyQuality: "",
+    practicalTraining: "",
+    jobPreparation: "",
+    skillsRelevance: "",
     comments: "",
     strengths: "",
     weaknesses: "",
     additionalCompetencies: "",
     question1: "",
     question2: "",
-    question3: "",
+    question3: ""
   })
 
   // Update data when userProfile changes
   useEffect(() => {
     if (userProfile) {
       setEvaluationData({
-        programSatisfaction: "",
-        teacherQuality: "",
-        infrastructureQuality: "",
-        administrativeSupport: "",
-        overallExperience: "",
-        comments: "",
-        strengths: userProfile?.coursedPrograms?.[0]?.strengths?.join(", ") || "",
-        weaknesses: userProfile?.coursedPrograms?.[0]?.weaknesses?.join(", ") || "",
-        additionalCompetencies: userProfile?.coursedPrograms?.[0]?.improvementSuggestions?.join(", ") || "",
-        question1: "",
-        question2: "",
-        question3: "",
-      })
+    programSatisfaction: "",
+    teacherQuality: "",
+    infrastructureQuality: "",
+    administrativeSupport: "",
+    overallExperience: "",
+    overallSatisfaction: "",
+    recommendProgram: "",
+    curriculumQuality: "",
+    facultyQuality: "",
+    practicalTraining: "",
+    jobPreparation: "",
+    skillsRelevance: "",
+    comments: "",
+    strengths: "",
+    weaknesses: "",
+    additionalCompetencies: "",
+    question1: "",
+    question2: "",
+    question3: ""
+  })
     }
   }, [userProfile])
 
