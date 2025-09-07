@@ -1,15 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
   const nonce = crypto.randomUUID();
 
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isDevelopment = process.env.NODE_ENV === "development";
 
-  const scriptSrc = [
-    "'self'",
-    `'nonce-${nonce}'`,
-    "'strict-dynamic'",
-  ];
+  const scriptSrc = ["'self'", `'nonce-${nonce}'`, "'strict-dynamic'"];
 
   // Allow specific hashes for essential functionality
   // These are placeholder hashes - you'll need to generate actual hashes for your scripts
@@ -17,12 +13,12 @@ export function middleware(req: NextRequest) {
     // Add specific script hashes here for critical functionality
     // Example: "'sha256-XXXX'"
   ];
-  
+
   scriptSrc.push(...essentialScriptHashes);
 
   // We've removed 'unsafe-eval' since our vanilla UI components don't require it
   // If you're using libraries that still need eval, you can add specific hashes instead
-  
+
   // In development mode only, we can allow unsafe-eval for better developer experience
   if (isDevelopment) {
     scriptSrc.push("'unsafe-eval'");
@@ -44,21 +40,28 @@ export function middleware(req: NextRequest) {
 
   const connectSrc = [
     "'self'",
-    ...(isDevelopment ? [
-      'ws:', 'wss:',
-      'http://localhost:8110',
-      'http://localhost:8100',
-      'http://localhost:3000',
-    ] : []),
+    (process.env.NEXT_PUBLIC_API_PROFILE_URL ??
+      "http://localhost:8100/nexum/v1") + "/",
+    (process.env.NEXT_PUBLIC_API_CATALOG_URL ??
+      "http://localhost:8110/nexum/v1") + "/",
+    ...(isDevelopment
+      ? [
+          "ws:",
+          "wss:",
+          "http://localhost:8110",
+          "http://localhost:8100",
+          "http://localhost:3000",
+        ]
+      : []),
   ];
 
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc.join(' ')};
-    style-src ${styleSrc.join(' ')};
+    script-src ${scriptSrc.join(" ")};
+    style-src ${styleSrc.join(" ")};
     img-src 'self' data: blob:;
     font-src 'self' data:;
-    connect-src ${connectSrc.join(' ')};
+    connect-src ${connectSrc.join(" ")};
     frame-ancestors 'none';
     form-action 'self';
     base-uri 'self';
@@ -67,10 +70,12 @@ export function middleware(req: NextRequest) {
     worker-src 'self';
     manifest-src 'self';
     upgrade-insecure-requests;
-  `.replace(/\s+/g, ' ').trim();
+  `
+    .replace(/\s+/g, " ")
+    .trim();
 
   const requestHeaders = new Headers(req.headers);
-  requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set("x-nonce", nonce);
 
   const response = NextResponse.next({
     request: {
@@ -78,15 +83,16 @@ export function middleware(req: NextRequest) {
     },
   });
 
-  response.headers.set('Content-Security-Policy', cspHeader);
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set("Content-Security-Policy", cspHeader);
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
   return response;
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
+

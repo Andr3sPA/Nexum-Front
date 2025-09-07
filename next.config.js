@@ -64,16 +64,6 @@ const nextConfig = {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
           },
-          {
-            key: "Content-Security-Policy",
-            value: `
-              default-src 'self';
-              script-src 'self';
-              style-src 'self' 'unsafe-inline';
-              img-src * blob: data:;
-              connect-src 'self' ${process.env.NEXT_PUBLIC_API_PROFILE_URL ?? "http://localhost:8100/nexum/v1"} ${process.env.NEXT_PUBLIC_API_CATALOG_URL ?? "http://localhost:8110/nexum/v1"};
-            `.replace(/\s{2,}/g, " "),
-          },
         ],
       },
     ];
