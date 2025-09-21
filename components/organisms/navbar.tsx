@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { User, LogOut, Menu } from "lucide-react"
 import { Button } from "@/components/atoms/button"
@@ -19,11 +19,27 @@ interface NavbarProps {
 }
 
 export default function Navbar({ user }: NavbarProps) {
+
   const userName = user?.firstName && user?.firstLastname 
     ? `${user.firstName} ${user.firstLastname}`
     : user?.name || "Usuario"
   const userEmail = user?.email || "usuario@udea.edu.co"
-  const userInitials = user?.initials || "U"
+
+  // Iniciales solo en cliente para evitar error de hidratación
+  const [userInitials, setUserInitials] = useState("U")
+  useEffect(() => {
+    if (user?.initials) {
+      setUserInitials(user.initials)
+    } else if (user?.firstName || user?.firstLastname) {
+      const first = user?.firstName?.[0] || ""
+      const last = user?.firstLastname?.[0] || ""
+      setUserInitials((first + last).toUpperCase() || "U")
+    } else if (user?.name) {
+      setUserInitials(user.name.split(" ").map(n => n[0]).join('').toUpperCase())
+    } else {
+      setUserInitials("U")
+    }
+  }, [user])
 
   return (
     <nav className="border-b bg-white shadow-sm sticky top-0 z-40">

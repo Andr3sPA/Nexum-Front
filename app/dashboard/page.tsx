@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   User,
   ArrowRight,
@@ -84,6 +85,22 @@ export default function UnifiedDashboardPage() {
         onClick: () => setShowRegisterModal(true),
         isButton: true,
       },
+      {
+        href: "/employer/opportunity",
+        icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
+        title: "Oportunidades",
+        description: "Descubre nuevas oportunidades académicas y laborales",
+        color: "yellow",
+        
+      },
+       {
+        href: "/employer/opportunity?register=1",
+        icon: <ArrowRight className="w-8 h-8 text-green-600" />, 
+        title: "Registrar Oportunidad",
+        description:
+          "Publica una nueva oportunidad laboral para egresados.",
+        color: "green",
+      },
     ];
   } else if (role === ROLES.DEAN) {
     cards = [
@@ -102,6 +119,14 @@ export default function UnifiedDashboardPage() {
         description:
           "Genera reportes estadísticos detallados de egresados para análisis institucional.",
         color: "green",
+      },
+      {
+        href: "/employer/opportunity",
+        icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
+        title: "Oportunidades",
+        description: "Descubre nuevas oportunidades académicas y laborales",
+        color: "yellow",
+        
       },
     ];
   } else if (role === ROLES.GRADUATE) {
@@ -122,12 +147,12 @@ export default function UnifiedDashboardPage() {
         disabled: true,
       },
       {
-        href: "#opportunities",
+        href: "/employer/opportunity",
         icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
         title: "Oportunidades",
         description: "Descubre nuevas oportunidades académicas y laborales",
         color: "yellow",
-        disabled: true,
+        
       },
     ];
   } else if (role === ROLES.EMPLOYER) {
@@ -139,6 +164,22 @@ export default function UnifiedDashboardPage() {
         description:
           "Consulta y filtra información de egresados por diferentes criterios académicos y profesionales.",
         color: "blue",
+      },
+      {
+        href: "/employer/opportunity?register=1",
+        icon: <ArrowRight className="w-8 h-8 text-green-600" />, 
+        title: "Registrar Oportunidad",
+        description:
+          "Publica una nueva oportunidad laboral para egresados.",
+        color: "green",
+      },
+      {
+        href: "/employer/opportunity",
+        icon: <BarChart3 className="w-8 h-8 text-yellow-600" />, 
+        title: "Ver Oportunidades",
+        description:
+          "Consulta las oportunidades laborales que has registrado en el sistema.",
+        color: "yellow",
       },
     ];
   }
@@ -190,6 +231,8 @@ export default function UnifiedDashboardPage() {
         ...userProfile,
       }}
     >
+
+      {/* Enlace para ver oportunidades para todos los roles */}
       <DashboardContainer role={role} cards={cards} />
 
       {/* Modal para registrar egresado solo para admin */}

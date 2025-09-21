@@ -3,11 +3,14 @@ export const PROFILE_HOST =
   process.env.NEXT_PUBLIC_API_PROFILE_URL ?? "http://localhost:8100/nexum/v1";
 export const CATALOG_HOST =
   process.env.NEXT_PUBLIC_API_CATALOG_URL ?? "http://localhost:8110/nexum/v1";
+export const OPPORTUNITY_HOST =
+  process.env.NEXT_PUBLIC_API_OPPORTUNITY_URL ??"http://localhost:8120/nexum/v1";
 
 // Endpoints
 export const AUTHENTICATION_ENDPOINT = "/auth";
 export const USER_ENDPOINT = "/users";
 export const DETAILED_USER_ENDPOINT = "/detailed-users";
+export const OPPORTUNITY_ENDPOINT = "/opportunities";
 
 // Catalog endpoints
 export const CATALOG_IDENTITY_DOCUMENT_TYPE_ENDPOINT =

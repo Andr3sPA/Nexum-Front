@@ -53,6 +53,10 @@ const nextConfig = {
         source: "/(.*)",
         headers: [
           {
+            key: "Content-Security-Policy",
+            value: "connect-src 'self' http://localhost:8100/nexum/v1/ http://localhost:8110/nexum/v1/ http://localhost:8120/nexum/v1/ ws: wss: http://localhost:8110 http://localhost:8100 http://localhost:3000 http://localhost:8120;",
+          },
+          {
             key: "X-Frame-Options",
             value: "DENY",
           },
