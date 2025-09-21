@@ -132,7 +132,7 @@ export default function UnifiedDashboardPage() {
   } else if (role === ROLES.GRADUATE) {
     cards = [
       {
-        href: ROUTES.PROFILE,
+        href: "/profile",
         icon: <User className="w-8 h-8 text-green-600" />,
         title: "Actualiza tu Perfil",
         description: "Mantén tu información personal y profesional actualizada",
