@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { OpportunityService, OpportunityRequest } from "@/lib/services/opportunity/opportunity.service";
 import { ROLES } from "@/lib/services/constants/api.constants";
@@ -15,7 +16,9 @@ import OpportunityTable from "@/components/organisms/opportunity-table";
 
 export default function EmployerOpportunityPage() {
   const router = useRouter();
-  const user = LocalStorageService.getItem<{ id?: string; role?: string }>("user");
+  const searchParams = useSearchParams();
+  const showRegister = searchParams.get("register") === "1";
+  const [user, setUser] = useState<{ id?: string; role?: string } | null>(null);
   const [form, setForm] = useState<OpportunityRequest>({
     title: "",
     description: "",
@@ -26,6 +29,12 @@ export default function EmployerOpportunityPage() {
   });
   const [salaryRanges, setSalaryRanges] = useState<SalaryRangeResponse[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Solo se ejecuta en el cliente
+    const storedUser = LocalStorageService.getItem<{ id?: string; role?: string }>("user");
+    setUser(storedUser);
+  }, []);
 
   useEffect(() => {
     // Cargar rangos salariales
@@ -42,16 +51,19 @@ export default function EmployerOpportunityPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await OpportunityService.create({
-        ...form,
-        salaryRangeId: form.salaryRangeId ? Number(form.salaryRangeId) : undefined,
-        // graduateId puede ser opcional o venir de otro flujo
+      await OpportunityService.create(form);
+  toast({ title: "Oportunidad registrada exitosamente" });
+      setForm({
+        title: "",
+        description: "",
+        location: "",
+        employmentType: "",
+        salaryRangeId: undefined,
+        graduateId: undefined,
       });
-      toast({ title: "Oportunidad registrada", description: "La oportunidad fue publicada exitosamente.", type: "success" });
-      setForm({ title: "", description: "", location: "", employmentType: "", salaryRangeId: undefined, graduateId: undefined });
-  // Aquí podrías recargar la tabla si lo deseas, usando un estado global o trigger
+      router.push("/employer/opportunity");
     } catch (error) {
-      toast({ title: "Error", description: "No se pudo registrar la oportunidad.", type: "error" });
+  toast({ title: "Error al registrar oportunidad", description: String(error) });
     } finally {
       setLoading(false);
     }
@@ -59,7 +71,7 @@ export default function EmployerOpportunityPage() {
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      {(user?.role === ROLES.EMPLOYER || user?.role === ROLES.ADMINISTRATIVE) && (
+      {showRegister && user && (user.role === ROLES.EMPLOYER || user.role === ROLES.ADMINISTRATIVE) && (
         <>
           <h1 className="text-2xl font-bold mb-4">Registrar Oportunidad</h1>
           <form onSubmit={handleSubmit} className="space-y-4 mb-10">
