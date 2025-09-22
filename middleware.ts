@@ -44,6 +44,8 @@ export function middleware(req: NextRequest) {
       "http://localhost:8100/nexum/v1") + "/",
     (process.env.NEXT_PUBLIC_API_CATALOG_URL ??
       "http://localhost:8110/nexum/v1") + "/",
+    (process.env.NEXT_PUBLIC_API_OPPORTUNITY_URL ??
+      "http://localhost:8120/nexum/v1") + "/",
     ...(isDevelopment
       ? [
           "ws:",
@@ -95,4 +97,3 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
-
