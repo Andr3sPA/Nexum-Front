@@ -1,6 +1,7 @@
 // Atoms
 export { Button } from "./button"
 export { Input } from "./input"
+export { NumberInput } from "./number-input"
 export { Label } from "./label"
 export { Select } from "./select"
 export { Textarea } from "./textarea"
