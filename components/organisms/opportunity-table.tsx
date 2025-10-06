@@ -10,6 +10,7 @@ import {
   TableRow 
 } from "@/components/atoms/table";
 import { Button } from "@/components/atoms/button";
+import OpportunityDetailModal from "./opportunity-detail-modal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card";
 import { SectionTitle } from "@/components/atoms/section-title";
 import { EmptyStateCard } from "@/components/atoms/empty-state-card";
@@ -18,19 +19,30 @@ import { Briefcase, Edit } from "lucide-react";
 interface OpportunityTableProps {
   refetchTrigger?: number;
   onEditOpportunity?: (opportunity: OpportunityResponse) => void;
+  onApply?: (opportunityId: number) => void;
 }
 
-export default function OpportunityTable({ refetchTrigger, onEditOpportunity }: OpportunityTableProps) {
+export default function OpportunityTable({ refetchTrigger, onEditOpportunity, onApply }: OpportunityTableProps) {
+  const [selectedOpportunity, setSelectedOpportunity] = useState<OpportunityResponse | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [opportunities, setOpportunities] = useState<OpportunityResponse[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchOpportunities = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await OpportunityService.list();
-      setOpportunities(data);
-    } catch {
+      if (Array.isArray(data)) {
+        setOpportunities(data);
+      } else {
+        setOpportunities([]);
+        setError("No se pudo obtener la lista de oportunidades (respuesta inesperada del servidor).");
+      }
+    } catch (err: any) {
       setOpportunities([]);
+      setError("No se pudo obtener la lista de oportunidades. ¿Estás autenticado?");
     } finally {
       setLoading(false);
     }
@@ -43,7 +55,6 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity }: 
   return (
     <div className="mt-10">
       <SectionTitle>Oportunidades Registradas</SectionTitle>
-      
       {loading ? (
         <Card className="mt-6 shadow-sm border-gray-200">
           <CardContent className="p-8">
@@ -55,6 +66,8 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity }: 
             </div>
           </CardContent>
         </Card>
+      ) : error ? (
+        <div className="mt-6 text-red-600 text-center font-medium">{error}</div>
       ) : opportunities.length === 0 ? (
         <div className="mt-6">
           <EmptyStateCard
@@ -93,79 +106,97 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity }: 
                     <TableHead>Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
-            <TableBody>
-              {opportunities.map((opp, index) => (
-                <TableRow 
-                  key={opp.id} 
-                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                >
-                  <TableCell className="font-medium">{opp.title}</TableCell>
-                  <TableCell className="max-w-xs">
-                    <div className="truncate" title={opp.description}>
-                      {opp.description}
-                    </div>
-                  </TableCell>
-                  <TableCell>{opp.location}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {opp.contractType}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {opp.workModality}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    {opp.salaryRange ? (
-                      <div className="text-sm">
-                        <span className="font-medium">
-                          {opp.salaryRange.currency} {opp.salaryRange.min.toLocaleString()} - {opp.salaryRange.max.toLocaleString()}
+                <TableBody>
+                  {opportunities.map((opp, index) => (
+                    <TableRow
+                      key={opp.id}
+                      className={index % 2 === 0 ? "bg-white cursor-pointer" : "bg-gray-50 cursor-pointer"}
+                      onClick={() => { setSelectedOpportunity(opp); setModalOpen(true); }}
+                    >
+                      <TableCell className="font-medium">{opp.title}</TableCell>
+                      <TableCell className="max-w-xs">
+                        <div className="truncate" title={opp.description}>
+                          {opp.description}
+                        </div>
+                      </TableCell>
+                      <TableCell>{opp.location}</TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {opp.contractType}
                         </span>
-                      </div>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      opp.status === 'Active' ? 'bg-green-100 text-green-800' :
-                      opp.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
-                      opp.status === 'Closed' ? 'bg-red-100 text-red-800' :
-                      opp.status === 'Expired' ? 'bg-gray-100 text-gray-800' :
-                      'bg-blue-100 text-blue-800'
-                    }`}>
-                      {opp.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-gray-600">
-                    {opp.creationDate ? new Date(opp.creationDate).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    }) : '-'}
-                  </TableCell>
-                  <TableCell>
-                    {onEditOpportunity && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onEditOpportunity(opp)}
-                        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                      >
-                        <Edit className="h-4 w-4" />
-                        Editar
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                      </TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          {opp.workModality}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {opp.salaryRange ? (
+                          <div className="text-sm">
+                            <span className="font-medium">
+                              {opp.salaryRange.currency} {opp.salaryRange.min.toLocaleString()} - {opp.salaryRange.max.toLocaleString()}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          opp.status === 'Active' ? 'bg-green-100 text-green-800' :
+                          opp.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
+                          opp.status === 'Closed' ? 'bg-red-100 text-red-800' :
+                          opp.status === 'Expired' ? 'bg-gray-100 text-gray-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {opp.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-gray-600">
+                        {opp.creationDate ? new Date(opp.creationDate).toLocaleDateString('es-ES', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        }) : '-'}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          {onEditOpportunity && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={e => { e.stopPropagation(); onEditOpportunity(opp); }}
+                              className="flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            >
+                              <Edit className="h-4 w-4" />
+                              Editar
+                            </Button>
+                          )}
+                          {onApply && (
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onClick={e => { e.stopPropagation(); onApply(opp.id); }}
+                              className="flex items-center gap-2 text-green-600 hover:text-green-700 hover:bg-green-50"
+                            >
+                              Aplicar
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>
       )}
-    </div>
+    <OpportunityDetailModal
+      opportunity={selectedOpportunity}
+      open={modalOpen}
+      onClose={() => setModalOpen(false)}
+    />
+  </div>
   );
 }

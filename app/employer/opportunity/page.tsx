@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules
 import { FormSection } from "@/components/atoms/form-section";
 import Navbar from "@/components/navbar";
 import OpportunityTable from "@/components/organisms/opportunity-table";
+import ApplicationTable from "@/components/organisms/application-table";
+import { ApplicationService } from "@/lib/services/opportunity";
 import { toast } from "@/hooks/use-toast";
 import { ROLES } from "@/lib/services/constants/api.constants";
 import { LocalStorageService } from "@/lib/services/local-storage.service";
@@ -49,6 +51,20 @@ export default function EmployerOpportunityPage() {
   const [refetchTrigger, setRefetchTrigger] = useState(0);
   const [editingOpportunity, setEditingOpportunity] = useState<OpportunityResponse | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [appRefetchTrigger, setAppRefetchTrigger] = useState(0);
+  // Handler para aplicar a una oportunidad
+  const handleApply = async (opportunityId: number) => {
+    setLoading(true);
+    try {
+      await ApplicationService.apply({ opportunityId });
+      toast({ title: "Aplicación enviada exitosamente" });
+      setAppRefetchTrigger((prev) => prev + 1);
+    } catch (error) {
+      toast({ title: "Error al aplicar", description: String(error) });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Solo se ejecuta en el cliente
@@ -361,7 +377,13 @@ export default function EmployerOpportunityPage() {
         <OpportunityTable 
           refetchTrigger={refetchTrigger} 
           onEditOpportunity={handleEditOpportunity}
+          // Solo pasar handleApply si el usuario es GRADUATE
+          {...(user && user.role === ROLES.GRADUATE ? { onApply: handleApply } : {})}
         />
+        {/* Tabla de aplicaciones solo para GRADUATE */}
+        {user && user.role === ROLES.GRADUATE && (
+          <ApplicationTable refetchTrigger={appRefetchTrigger} />
+        )}
       </div>
     </>
   );
