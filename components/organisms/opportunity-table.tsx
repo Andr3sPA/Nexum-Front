@@ -1,13 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
 import { OpportunityService, OpportunityResponse } from "@/lib/services/opportunity";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import { ApplicationService } from "@/lib/services/opportunity";
+import { AuthenticatedUserResponse, DetailedUserResponse } from "@/lib/services/profile";
+import { ROLES } from "@/lib/services/constants/api.constants";
+import { toast } from "@/hooks/use-toast";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/atoms/table";
 import { Button } from "@/components/atoms/button";
 import OpportunityDetailModal from "./opportunity-detail-modal";
@@ -15,19 +19,55 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules
 import { SectionTitle } from "@/components/atoms/section-title";
 import { EmptyStateCard } from "@/components/atoms/empty-state-card";
 import { Briefcase, Edit } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/molecules/dialog";
 
 interface OpportunityTableProps {
   refetchTrigger?: number;
   onEditOpportunity?: (opportunity: OpportunityResponse) => void;
-  onApply?: (opportunityId: number) => void;
+  user?: (AuthenticatedUserResponse & DetailedUserResponse) | null;
+  onApplicationRefetch?: () => void;
 }
 
-export default function OpportunityTable({ refetchTrigger, onEditOpportunity, onApply }: OpportunityTableProps) {
+export default function OpportunityTable({ refetchTrigger, onEditOpportunity, user, onApplicationRefetch }: OpportunityTableProps) {
   const [selectedOpportunity, setSelectedOpportunity] = useState<OpportunityResponse | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [opportunities, setOpportunities] = useState<OpportunityResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [applying, setApplying] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [opportunityToApply, setOpportunityToApply] = useState<number | null>(null);
+
+  const handleApplyClick = (opportunityId: number) => {
+    setOpportunityToApply(opportunityId);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmApply = async () => {
+    if (!opportunityToApply) return;
+
+    setConfirmDialogOpen(false);
+    setApplying(true);
+    try {
+      await ApplicationService.apply({ opportunityId: opportunityToApply });
+      toast({ title: "Aplicación enviada exitosamente" });
+      if (onApplicationRefetch) {
+        onApplicationRefetch();
+      }
+    } catch (error) {
+      toast({ title: "Error al aplicar", description: String(error) });
+    } finally {
+      setApplying(false);
+      setOpportunityToApply(null);
+    }
+  };
 
   const fetchOpportunities = async () => {
     setLoading(true);
@@ -142,13 +182,12 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, on
                         )}
                       </TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          opp.status === 'Active' ? 'bg-green-100 text-green-800' :
-                          opp.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
-                          opp.status === 'Closed' ? 'bg-red-100 text-red-800' :
-                          opp.status === 'Expired' ? 'bg-gray-100 text-gray-800' :
-                          'bg-blue-100 text-blue-800'
-                        }`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${opp.status === 'Active' ? 'bg-green-100 text-green-800' :
+                            opp.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
+                              opp.status === 'Closed' ? 'bg-red-100 text-red-800' :
+                                opp.status === 'Expired' ? 'bg-gray-100 text-gray-800' :
+                                  'bg-blue-100 text-blue-800'
+                          }`}>
                           {opp.status}
                         </span>
                       </TableCell>
@@ -161,7 +200,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, on
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          {onEditOpportunity && (
+                          {user && user.role === ROLES.EMPLOYER && onEditOpportunity && (
                             <Button
                               variant="outline"
                               size="sm"
@@ -172,14 +211,15 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, on
                               Editar
                             </Button>
                           )}
-                          {onApply && (
+                          {user && user.role === ROLES.GRADUATE && (
                             <Button
                               variant="primary"
                               size="sm"
-                              onClick={e => { e.stopPropagation(); onApply(opp.id); }}
-                              className="flex items-center gap-2 text-green-600 hover:text-green-700 hover:bg-green-50"
+                              onClick={e => { e.stopPropagation(); handleApplyClick(opp.id); }}
+                              disabled={applying}
+                              className="flex items-center gap-2"
                             >
-                              Aplicar
+                              {applying ? "Aplicando..." : "Aplicar"}
                             </Button>
                           )}
                         </div>
@@ -192,11 +232,37 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, on
           </CardContent>
         </Card>
       )}
-    <OpportunityDetailModal
-      opportunity={selectedOpportunity}
-      open={modalOpen}
-      onClose={() => setModalOpen(false)}
-    />
-  </div>
+      <OpportunityDetailModal
+        opportunity={selectedOpportunity}
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
+
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <DialogContent className="p-6">
+          <DialogHeader>
+            <DialogTitle>Confirmar aplicación</DialogTitle>
+            <DialogDescription>
+              ¿Estás seguro de que deseas aplicar a esta oportunidad laboral?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setConfirmDialogOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleConfirmApply}
+              disabled={applying}
+            >
+              {applying ? "Aplicando..." : "Confirmar aplicación"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
