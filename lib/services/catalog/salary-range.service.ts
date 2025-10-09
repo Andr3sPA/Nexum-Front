@@ -7,7 +7,9 @@ import { serviceWithAuth } from "@/lib/services/base.service";
 
 // Request interfaces
 export interface SalaryRangeRequest {
-  salary: string;
+  min: number;
+  max: number;
+  currency: string;
   order?: number;
   active: boolean;
 }

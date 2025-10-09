@@ -35,7 +35,7 @@ export function AcademicInfoModal({
 }: AcademicInfoModalProps) {
   const { programs, programVersions, isLoadingPrograms, isLoadingVersions, loadProgramVersions, clearProgramVersions, loadPrograms } = useAcademic()
   const { createCoursedProgram, updateCoursedProgram, getProgramVersionInfo } = useProfile()
-  
+
   const [selectedProgram, setSelectedProgram] = useState<string>("")
   const [selectedVersion, setSelectedVersion] = useState<string>("")
   const [graduationYear, setGraduationYear] = useState<string>(new Date().getFullYear().toString())
@@ -63,7 +63,7 @@ export function AcademicInfoModal({
               setSelectedVersion(editingProgram.programVersion.id.toString())
               loadProgramVersions(programVersionInfo.program.id)
               setGraduationYear(editingProgram.graduationYear?.toString() || new Date().getFullYear().toString())
-                            setStrengths(editingProgram.strengths || [])
+              setStrengths(editingProgram.strengths || [])
               setWeaknesses(editingProgram.weaknesses || [])
               setImprovementSuggestions(editingProgram.improvementSuggestions || [])
             } catch (error) {
@@ -76,7 +76,7 @@ export function AcademicInfoModal({
               setImprovementSuggestions(editingProgram.improvementSuggestions || [])
             }
           }
-          
+
           fetchProgramVersionInfo()
         }
       } else if (academicData.length > 0) {
@@ -88,7 +88,7 @@ export function AcademicInfoModal({
 
           loadProgramVersions(firstProgram.programVersion.id)
           setGraduationYear(firstProgram.graduationYear?.toString() || new Date().getFullYear().toString())
-          
+
 
           setStrengths(firstProgram.strengths || [])
           setWeaknesses(firstProgram.weaknesses || [])
@@ -124,7 +124,7 @@ export function AcademicInfoModal({
 
     try {
       setIsSaving(true)
-      
+
       if (!userId) {
         throw new Error("No se pudo obtener el ID del usuario")
       }
@@ -160,11 +160,11 @@ export function AcademicInfoModal({
   if (!isOpen) return null
 
   return (
-    <ModalContainer 
+    <ModalContainer
       title={editingProgram ? "Editar Carrera Cursada" : "Agregar Carrera Cursada"}
       subtitle="Complete la información académica y evalúe su experiencia en el programa"
-      isOpen={isOpen} 
-      onClose={onClose} 
+      isOpen={isOpen}
+      onClose={onClose}
       maxWidth="max-w-5xl"
       onSubmit={handleSave}
       isSubmitting={isSaving}
@@ -173,7 +173,7 @@ export function AcademicInfoModal({
       }
     >
       <div className="space-y-4">
-        <FormSection 
+        <FormSection
           title="Información del Programa"
           description="Seleccione el programa académico y la versión que cursó"
           icon={GraduationCap}
@@ -226,7 +226,7 @@ export function AcademicInfoModal({
           </div>
         </FormSection>
 
-        <FormSection 
+        <FormSection
           title="Evaluación del Programa"
           description="Comparta su experiencia y opinión sobre el programa cursado"
           color="purple"

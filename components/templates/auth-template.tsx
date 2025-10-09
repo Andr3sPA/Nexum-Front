@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { AuthIllustration } from "@/components/organisms/auth-illustration"
+import Navbar from "@/components/navbar"
 
 interface AuthTemplateProps {
   children: ReactNode

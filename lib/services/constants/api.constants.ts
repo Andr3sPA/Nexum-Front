@@ -4,7 +4,7 @@ export const PROFILE_HOST =
 export const CATALOG_HOST =
   process.env.NEXT_PUBLIC_API_CATALOG_URL ?? "http://localhost:8110/nexum/v1";
 export const OPPORTUNITY_HOST =
-  process.env.NEXT_PUBLIC_API_OPPORTUNITY_URL ??"http://localhost:8120/nexum/v1";
+  process.env.NEXT_PUBLIC_API_OPPORTUNITY_URL ?? "http://localhost:8120/nexum/v1";
 
 // Endpoints
 export const AUTHENTICATION_ENDPOINT = "/auth";
@@ -41,8 +41,10 @@ export const METHOD = {
 
 // User Roles
 export const ROLES = {
+  ADMIN: "ADMIN",
   ADMINISTRATIVE: "ADMINISTRATIVE",
   GRADUATE: "GRADUATE",
+  PRE_GRADUATE: "PRE_GRADUATE",
   DEAN: "DEAN",
   EMPLOYER: "EMPLOYER",
 } as const;

@@ -3,6 +3,7 @@
 import React from "react"
 import { NexumGreenLogo } from "../atoms/nexum-green-logo"
 import { NexumWhiteLogo } from "../atoms/nexum-white-logo"
+import Link from "next/link"
 
 
 interface NexumLogoProps {
@@ -14,7 +15,7 @@ interface NexumLogoProps {
 export function NexumLogo({ size = "md", variant = "default", showText = true }: NexumLogoProps) {
   const sizes = {
     sm: "w-6 h-6",
-    md: "w-8 h-8", 
+    md: "w-8 h-8",
     lg: "w-12 h-12",
     xl: "w-20 h-20"
   }
@@ -32,7 +33,7 @@ export function NexumLogo({ size = "md", variant = "default", showText = true }:
   }
 
   return (
-    <div className="flex items-center space-x-2">
+    <Link className="flex items-center space-x-2 hover:cursor-pointer" href="/">
       <div className={`${sizes[size]} ${colors[variant]} flex items-center justify-center`}>
         {variant === "default" ? <NexumGreenLogo className="w-full h-full" /> : <NexumWhiteLogo className="w-full h-full" />}
       </div>
@@ -41,6 +42,6 @@ export function NexumLogo({ size = "md", variant = "default", showText = true }:
           Nexum
         </span>
       )}
-    </div>
+    </Link>
   )
 } 

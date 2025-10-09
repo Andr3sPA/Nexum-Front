@@ -183,13 +183,14 @@ function ProfilePageContent() {
                   </div>
                 )}
               </CardHeader>
-              <CardContent>
-                <ProfileTabs 
-                  userProfile={{ ...detailedUser, email: user?.email }} 
-                  isViewOnly={!canEdit}
-                  onDataUpdate={refreshData}
-                />
-              </CardContent>
+               <CardContent>
+                 <ProfileTabs
+                   userProfile={{ ...detailedUser, email: user?.email }}
+                   isViewOnly={!canEdit}
+                   onDataUpdate={refreshData}
+                   currentUserRole={user?.role}
+                 />
+               </CardContent>
             </Card>
           </div>
         </div>

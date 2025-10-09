@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { User, LogOut, Shield, GraduationCap } from "lucide-react"
+import { User, LogOut, Shield, GraduationCap, LogIn } from "lucide-react"
 import { Button } from "@/components/atoms/button"
 import {
   DropdownMenu,
@@ -26,7 +26,7 @@ interface NavbarUser {
   [key: string]: any;
 }
 
-export default function Navbar({ user }: { user: NavbarUser }) {
+export default function Navbar({ user }: { user?: NavbarUser | null }) {
   const [email, setEmail] = useState("")
   const [isClient, setIsClient] = useState(false)
 
@@ -36,12 +36,17 @@ export default function Navbar({ user }: { user: NavbarUser }) {
     setEmail(userLogin?.email || "")
   }, [])
 
+  // If no user provided, try to get from localStorage
+  const currentUser = user || LocalStorageService.getItem<any>("user")
+  const userProfile = LocalStorageService.getItem<any>("userProfile")
+
   // Obtener primer nombre y primer apellido del userProfile
-  const firstName = user.name?.split(" ")[0] || ""
-  const firstLastname = user.lastname?.split(" ")[0] || ""
+  const firstName = userProfile?.name?.split(" ")[0] || ""
+  const firstLastname = userProfile?.lastname?.split(" ")[0] || ""
 
   const getRoleIcon = () => {
-    switch (user.role) {
+    if (!currentUser?.role) return <User className="w-3 h-3" />
+    switch (currentUser.role) {
       case ROLES.ADMINISTRATIVE:
         return <Shield className="w-3 h-3" />
       case ROLES.DEAN:
@@ -52,7 +57,8 @@ export default function Navbar({ user }: { user: NavbarUser }) {
   }
 
   const getRoleBadgeColor = () => {
-    switch (user.role) {
+    if (!currentUser?.role) return "bg-green-100 text-green-800 border-green-200"
+    switch (currentUser.role) {
       case ROLES.ADMINISTRATIVE:
         return "bg-blue-100 text-blue-800 border-blue-200"
       case ROLES.DEAN:
@@ -68,7 +74,7 @@ export default function Navbar({ user }: { user: NavbarUser }) {
         <div className="flex items-center h-16">
 
           <div className="flex items-center">
-            <Link href={getDashboardRoute((user.role || ROLES.GRADUATE) as keyof typeof ROLES)} className="flex items-center space-x-2">
+            <Link href={currentUser ? getDashboardRoute((currentUser.role || ROLES.GRADUATE) as keyof typeof ROLES) : "/"} className="flex items-center space-x-2">
               <NexumWhiteLogo className="w-14 h-14 p-1" />
               <span className="text-xl font-bold text-white hidden sm:block">UdeA Nexum</span>
               <span className="text-lg font-bold text-white sm:hidden">Nexum</span>
@@ -77,28 +83,45 @@ export default function Navbar({ user }: { user: NavbarUser }) {
 
           {/* User Profile Section - Enhanced Design */}
           <div className="flex items-center space-x-3 ml-auto">
-            {/* User Info - Desktop */}
-            <div className="hidden lg:flex flex-col items-end">
-              <span className="text-sm font-medium text-white">
-                {isClient ? `${firstName} ${firstLastname}` : "Cargando..."}
-              </span>
-              <span className="text-xs text-green-100">
-                {isClient ? email : "cargando@email.com"}
-              </span>
-            </div>
+            {currentUser ? (
+              <>
+                {/* User Info - Desktop */}
+                <div className="hidden lg:flex flex-col items-end">
+                  <span className="text-sm font-medium text-white">
+                    {isClient ? `${firstName} ${firstLastname}` : "Cargando..."}
+                  </span>
+                  <span className="text-xs text-green-100">
+                    {isClient ? email : "cargando@email.com"}
+                  </span>
+                </div>
 
-            {/* Enhanced Profile Avatar */}
-            <UserMenu
-              user={{
-                name: user.name ?? '',
-                initials: user.initials ?? '',
-                email: user.email ?? email,
-                firstName,
-                firstLastname,
-              }}
-              isClient={isClient}
-              getRoleIcon={getRoleIcon}
-            />
+                {/* Enhanced Profile Avatar */}
+                <UserMenu
+                  user={{
+                    name: userProfile?.name ?? '',
+                    initials: userProfile?.initials ?? '',
+                    email: userProfile?.email ?? email,
+                    firstName,
+                    firstLastname,
+                  }}
+                  isClient={isClient}
+                  getRoleIcon={getRoleIcon}
+                />
+              </>
+            ) : (
+               /* Login Button for unauthenticated users */
+              <Button
+                variant="primary"
+                size="sm"
+                asChild
+                className="flex items-center gap-2 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              >
+                <Link href="/login">
+                  <LogIn className="h-4 w-4" />
+                  Iniciar Sesión
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

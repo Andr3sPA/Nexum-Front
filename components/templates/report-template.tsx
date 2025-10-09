@@ -16,7 +16,7 @@ export interface ReportTemplateProps {
 export const ReportTemplate: React.FC<ReportTemplateProps> = ({ children, user }) => {
   return (
     <>
-      {user && <Navbar user={user} />}
+      <Navbar user={user} />
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto py-6 sm:px-8 lg:px-12">
           <div className="px-0 py-6">

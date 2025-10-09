@@ -34,9 +34,9 @@ export function AuthIllustration({ variant = "login", showText = true }: AuthIll
         <div className="text-center max-w-md">
           {/* Nexum Logo - Icon only */}
           <div className="mb-8 flex justify-center">
-            <NexumLogo 
-              variant="white" 
-              size="xl" 
+            <NexumLogo
+              variant="white"
+              size="xl"
               showText={false}
             />
           </div>
@@ -48,8 +48,8 @@ export function AuthIllustration({ variant = "login", showText = true }: AuthIll
 
           {/* Subtitle */}
           <p className="text-white/80 text-lg mb-8">
-            {variant === "login" 
-              ? "Accede a tu cuenta para continuar" 
+            {variant === "login"
+              ? "Accede a tu cuenta para continuar"
               : "Crea tu cuenta para comenzar"
             }
           </p>

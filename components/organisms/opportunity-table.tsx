@@ -5,6 +5,10 @@ import { ApplicationService } from "@/lib/services/opportunity";
 import { AuthenticatedUserResponse, DetailedUserResponse } from "@/lib/services/profile";
 import { ROLES } from "@/lib/services/constants/api.constants";
 import { toast } from "@/hooks/use-toast";
+import { SalaryRangeService, SalaryRangeResponse } from "@/lib/services/catalog/salary-range.service";
+import { ProgramService, ProgramResponse } from "@/lib/services/catalog/program.service";
+import { ProgramCompetencyService, ProgramCompetencyResponse } from "@/lib/services/catalog/program-competency.service";
+import { JobAreaService, JobAreaResponse } from "@/lib/services/catalog/job-area.service";
 import {
   Table,
   TableBody,
@@ -31,7 +35,7 @@ import {
 interface OpportunityTableProps {
   refetchTrigger?: number;
   onEditOpportunity?: (opportunity: OpportunityResponse) => void;
-  user?: (AuthenticatedUserResponse & DetailedUserResponse) | null;
+  user?: (AuthenticatedUserResponse & Partial<DetailedUserResponse>) | null;
   onApplicationRefetch?: () => void;
 }
 
@@ -44,6 +48,13 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
   const [applying, setApplying] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [opportunityToApply, setOpportunityToApply] = useState<number | null>(null);
+
+  // Catalog data state
+  const [salaryRanges, setSalaryRanges] = useState<SalaryRangeResponse[]>([]);
+  const [programs, setPrograms] = useState<ProgramResponse[]>([]);
+  const [programCompetencies, setProgramCompetencies] = useState<ProgramCompetencyResponse[]>([]);
+  const [jobAreas, setJobAreas] = useState<JobAreaResponse[]>([]);
+  const [catalogLoading, setCatalogLoading] = useState(false);
 
   const handleApplyClick = (opportunityId: number) => {
     setOpportunityToApply(opportunityId);
@@ -73,7 +84,8 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
     setLoading(true);
     setError(null);
     try {
-      const data = await OpportunityService.list();
+      // Use public endpoint to show opportunities to everyone
+      const data = await OpportunityService.listPublic();
       if (Array.isArray(data)) {
         setOpportunities(data);
       } else {
@@ -82,11 +94,38 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
       }
     } catch (err: any) {
       setOpportunities([]);
-      setError("No se pudo obtener la lista de oportunidades. ¿Estás autenticado?");
+      setError("No se pudo obtener la lista de oportunidades. Inténtalo de nuevo más tarde.");
     } finally {
       setLoading(false);
     }
   };
+
+  // Fetch catalog data
+  useEffect(() => {
+    const fetchCatalogData = async () => {
+      setCatalogLoading(true);
+      try {
+        const [salaryRangesData, programsData, competenciesData, jobAreasData] = await Promise.all([
+          SalaryRangeService.getAll(),
+          ProgramService.getAll(),
+          ProgramCompetencyService.getAll(),
+          JobAreaService.getAll()
+        ]);
+
+        setSalaryRanges(salaryRangesData);
+        setPrograms(programsData);
+        setProgramCompetencies(competenciesData);
+        setJobAreas(jobAreasData);
+      } catch (error) {
+        console.error("Error fetching catalog data:", error);
+        // Don't show toast here as it might be too intrusive
+      } finally {
+        setCatalogLoading(false);
+      }
+    };
+
+    fetchCatalogData();
+  }, []); // Fetch catalog data on component mount, no dependency on user
 
   useEffect(() => {
     fetchOpportunities();
@@ -106,17 +145,19 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
             </div>
           </CardContent>
         </Card>
-      ) : error ? (
-        <div className="mt-6 text-red-600 text-center font-medium">{error}</div>
-      ) : opportunities.length === 0 ? (
-        <div className="mt-6">
-          <EmptyStateCard
-            icon={Briefcase}
-            title="No hay oportunidades registradas"
-            description="Aún no se han registrado oportunidades laborales. Comienza creando una nueva oportunidad."
-            color="blue"
-          />
-        </div>
+       ) : error ? (
+         <div className="mt-6">
+           <div className="text-red-600 text-center font-medium">{error}</div>
+         </div>
+       ) : opportunities.length === 0 ? (
+         <div className="mt-6">
+           <EmptyStateCard
+             icon={Briefcase}
+             title="No hay oportunidades disponibles"
+             description="No se encontraron oportunidades disponibles en este momento. Revisa más tarde para nuevas oportunidades."
+             color="blue"
+           />
+         </div>
       ) : (
         <Card className="mt-6 shadow-sm border-gray-200">
           <CardHeader className="bg-gray-50/50 border-b border-gray-100">
@@ -138,11 +179,11 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                     <TableHead>Título</TableHead>
                     <TableHead>Descripción</TableHead>
                     <TableHead>Ubicación</TableHead>
-                    <TableHead>Tipo de Contrato</TableHead>
                     <TableHead>Modalidad</TableHead>
                     <TableHead>Rango Salarial</TableHead>
+                    <TableHead>Área</TableHead>
                     <TableHead>Estado</TableHead>
-                    <TableHead>Fecha Creación</TableHead>
+                    <TableHead>Fecha Expiración</TableHead>
                     <TableHead>Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -161,26 +202,43 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                       </TableCell>
                       <TableCell>{opp.location}</TableCell>
                       <TableCell>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {opp.contractType}
-                        </span>
-                      </TableCell>
-                      <TableCell>
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           {opp.workModality}
                         </span>
                       </TableCell>
-                      <TableCell>
-                        {opp.salaryRange ? (
-                          <div className="text-sm">
-                            <span className="font-medium">
-                              {opp.salaryRange.currency} {opp.salaryRange.min.toLocaleString()} - {opp.salaryRange.max.toLocaleString()}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-gray-400">-</span>
-                        )}
-                      </TableCell>
+                       <TableCell>
+                         {(() => {
+                           const salaryRange = salaryRanges.find(sr => sr.id === opp.salaryRangeId);
+                            return salaryRange ? (
+                              <div className="text-sm">
+                                <span className="font-medium">
+                                  {salaryRange.salary}
+                                </span>
+                              </div>
+                            ) : (
+                             <span className="text-gray-400">-</span>
+                           );
+                         })()}
+                       </TableCell>
+                        <TableCell>
+                          {(() => {
+                            const selectedAreas = jobAreas.filter(ja => opp.jobAreaIds?.includes(ja.id));
+                            return selectedAreas.length > 0 ? (
+                              <div className="flex flex-wrap gap-1">
+                                {selectedAreas.slice(0, 2).map(area => (
+                                  <span key={area.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    {area.name}
+                                  </span>
+                                ))}
+                                {selectedAreas.length > 2 && (
+                                  <span className="text-xs text-gray-500">+{selectedAreas.length - 2}</span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            );
+                          })()}
+                        </TableCell>
                       <TableCell>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${opp.status === 'Active' ? 'bg-green-100 text-green-800' :
                             opp.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
@@ -192,7 +250,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                         </span>
                       </TableCell>
                       <TableCell className="text-gray-600">
-                        {opp.creationDate ? new Date(opp.creationDate).toLocaleDateString('es-ES', {
+                        {opp.expirationDate ? new Date(opp.expirationDate).toLocaleDateString('es-ES', {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric'
@@ -236,6 +294,10 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
         opportunity={selectedOpportunity}
         open={modalOpen}
         onClose={() => setModalOpen(false)}
+        salaryRanges={salaryRanges}
+        programs={programs}
+        programCompetencies={programCompetencies}
+        jobAreas={jobAreas}
       />
 
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>

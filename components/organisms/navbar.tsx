@@ -20,7 +20,7 @@ interface NavbarProps {
 
 export default function Navbar({ user }: NavbarProps) {
 
-  const userName = user?.firstName && user?.firstLastname 
+  const userName = user?.firstName && user?.firstLastname
     ? `${user.firstName} ${user.firstLastname}`
     : user?.name || "Usuario"
   const userEmail = user?.email || "usuario@udea.edu.co"

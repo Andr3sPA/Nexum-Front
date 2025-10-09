@@ -1,7 +1,7 @@
-import { 
-  CATALOG_PROGRAM_VERSION_ENDPOINT, 
+import {
+  CATALOG_PROGRAM_VERSION_ENDPOINT,
   METHOD,
-  CATALOG_HOST 
+  CATALOG_HOST
 } from "@/lib/services/constants/api.constants";
 import { serviceWithAuth } from "@/lib/services/base.service";
 

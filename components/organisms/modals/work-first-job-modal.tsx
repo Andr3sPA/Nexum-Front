@@ -12,6 +12,7 @@ import { Label } from "@/components/atoms/label"
 import { Switch } from "@/components/atoms/switch"
 
 import { logger } from "@/lib/logging"
+import { SalaryRangeResponse } from "@/lib/services/catalog/salary-range.service"
 
 interface WorkFirstJobData {
   companyName: string
@@ -30,7 +31,7 @@ interface WorkFirstJobModalProps {
   onClose: () => void
   onSave: (data: WorkFirstJobData) => void
   initialData?: WorkFirstJobData | null
-  salaryRanges: Array<{ id: number; salary: string }>
+  salaryRanges: SalaryRangeResponse[]
   jobDelays: Array<{ id: number; label: string }>
   jobAreas: Array<{ id: number; name: string }>
   institutionTypes: Array<{ id: number; name: string }>

@@ -41,25 +41,36 @@ export const ROUTES = {
 } as const;
 
 export const ROLE_ROUTES = {
-  [ROLES.GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE],
+  [ROLES.GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE, "/employer/opportunity"],
   [ROLES.ADMINISTRATIVE]: [
     ROUTES.DASHBOARD,
     ROUTES.SEARCH_GRADUATES,
     ROUTES.ADMIN.REPORTS,
     ROUTES.ADMIN.COMPLETE_PROFILE,
     ROUTES.PROFILE,
+    "/employer/opportunity",
   ],
   [ROLES.DEAN]: [
     ROUTES.DASHBOARD,
     ROUTES.SEARCH_GRADUATES,
     ROUTES.DEAN.REPORTS,
     ROUTES.PROFILE,
+    "/employer/opportunity",
   ],
   [ROLES.EMPLOYER]: [
     ROUTES.EMPLOYER.DASHBOARD,
     ROUTES.EMPLOYER.SEARCH_GRADUATES,
     ROUTES.EMPLOYER.VIEW_PROFILE,
+    "/employer/opportunity",
   ],
+  [ROLES.ADMIN]: [
+    ROUTES.DASHBOARD,
+    ROUTES.SEARCH_GRADUATES,
+    ROUTES.ADMIN.REPORTS,
+    ROUTES.PROFILE,
+    "/employer/opportunity",
+  ],
+  [ROLES.PRE_GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE, "/employer/opportunity"],
 } as const;
 
 export type UserRole = keyof typeof ROLE_ROUTES;
@@ -76,6 +87,10 @@ export function getDashboardRoute(role: UserRole): string {
       return ROUTES.DEAN.DASHBOARD;
     case ROLES.EMPLOYER:
       return ROUTES.EMPLOYER.DASHBOARD;
+    case ROLES.ADMIN:
+      return ROUTES.DASHBOARD; // Admin uses regular dashboard
+    case ROLES.PRE_GRADUATE:
+      return ROUTES.DASHBOARD; // Pre-graduates use regular dashboard
     default:
       return ROUTES.DASHBOARD;
   }

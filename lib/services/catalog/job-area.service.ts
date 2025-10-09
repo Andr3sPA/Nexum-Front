@@ -1,7 +1,7 @@
-import { 
-  CATALOG_JOB_AREA_ENDPOINT, 
+import {
+  CATALOG_JOB_AREA_ENDPOINT,
   METHOD,
-  CATALOG_HOST 
+  CATALOG_HOST
 } from "@/lib/services/constants/api.constants";
 import { serviceWithAuth } from "@/lib/services/base.service";
 

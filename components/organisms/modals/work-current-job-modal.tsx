@@ -14,6 +14,7 @@ import { Switch } from "@/components/atoms/switch"
 
 import { logger } from "@/lib/logging"
 import { Building2, MapPin, Briefcase, DollarSign, Clock, Users, Building, CheckCircle } from "lucide-react"
+import { SalaryRangeResponse } from "@/lib/services/catalog/salary-range.service"
 
 interface WorkCurrentJobData {
   companyName: string
@@ -32,7 +33,7 @@ interface WorkCurrentJobModalProps {
   onClose: () => void
   onSave: (data: WorkCurrentJobData) => void
   initialData?: WorkCurrentJobData | null
-  salaryRanges: Array<{ id: number; salary: string }>
+  salaryRanges: SalaryRangeResponse[]
   jobDelays: Array<{ id: number; label: string }>
   jobAreas: Array<{ id: number; name: string }>
   institutionTypes: Array<{ id: number; name: string }>

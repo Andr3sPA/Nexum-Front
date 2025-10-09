@@ -49,7 +49,7 @@ export default function UnifiedDashboardPage() {
   // Opciones por rol
   let cards: DashboardCardData[] = [];
 
-  if (role === ROLES.ADMINISTRATIVE) {
+  if (role === ROLES.ADMINISTRATIVE || role === ROLES.ADMIN) {
     cards = [
       {
         href: "/search-graduates",
@@ -91,11 +91,11 @@ export default function UnifiedDashboardPage() {
         title: "Oportunidades",
         description: "Descubre nuevas oportunidades académicas y laborales",
         color: "yellow",
-        
+
       },
-       {
+      {
         href: "/employer/opportunity?register=1",
-        icon: <ArrowRight className="w-8 h-8 text-green-600" />, 
+        icon: <ArrowRight className="w-8 h-8 text-green-600" />,
         title: "Registrar Oportunidad",
         description:
           "Publica una nueva oportunidad laboral para egresados.",
@@ -126,7 +126,7 @@ export default function UnifiedDashboardPage() {
         title: "Oportunidades",
         description: "Descubre nuevas oportunidades académicas y laborales",
         color: "yellow",
-        
+
       },
     ];
   } else if (role === ROLES.GRADUATE) {
@@ -152,7 +152,7 @@ export default function UnifiedDashboardPage() {
         title: "Oportunidades",
         description: "Descubre nuevas oportunidades académicas y laborales",
         color: "yellow",
-        
+
       },
     ];
   } else if (role === ROLES.EMPLOYER) {
@@ -167,7 +167,7 @@ export default function UnifiedDashboardPage() {
       },
       {
         href: "/employer/opportunity?register=1",
-        icon: <ArrowRight className="w-8 h-8 text-green-600" />, 
+        icon: <ArrowRight className="w-8 h-8 text-green-600" />,
         title: "Registrar Oportunidad",
         description:
           "Publica una nueva oportunidad laboral para egresados.",
@@ -175,7 +175,7 @@ export default function UnifiedDashboardPage() {
       },
       {
         href: "/employer/opportunity",
-        icon: <BarChart3 className="w-8 h-8 text-yellow-600" />, 
+        icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
         title: "Ver Oportunidades",
         description:
           "Consulta las oportunidades laborales que has registrado en el sistema.",

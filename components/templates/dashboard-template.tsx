@@ -16,7 +16,7 @@ export interface DashboardTemplateProps {
 export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({ children, user }) => {
   return (
     <>
-      {user && <Navbar user={user} />}
+      <Navbar user={user} />
       <div className="min-h-screen bg-gray-50">
         {children}
       </div>

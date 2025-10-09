@@ -20,6 +20,16 @@ export interface UserRegisterRequest {
   password: string;
 }
 
+export interface EmployerRegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  businessName?: string;
+  nit?: string;
+  editCode?: string;
+}
+
 export interface AuthenticatedUserResponse {
   id: string;
   role: string;
@@ -69,9 +79,21 @@ export const AuthenticationService = {
     return body;
   },
 
+  // Register employer
+  async registerEmployer(user: EmployerRegisterRequest): Promise<UserRegisteredResponse> {
+    const { status, body } = await service(
+      `${AUTHENTICATION_ENDPOINT}/register/employer`,
+      METHOD.post,
+      BASIC_HEADER,
+      user,
+    );
+    if (status !== 201) throw new Error(body?.message || "Error en el registro de empleador");
+    return body;
+  },
+
   // Login
   async login(user: AuthenticationRequest): Promise<AuthenticatedUserResponse> {
-    
+
     try {
       const { status, body } = await service(
         `${AUTHENTICATION_ENDPOINT}/login`,
@@ -79,11 +101,11 @@ export const AuthenticationService = {
         BASIC_HEADER,
         user,
       );
-      
+
       if (status !== 202) {
         throw new Error(body?.message || "Error Iniciando sesión");
       }
-      
+
       return body;
     } catch (error) {
       throw error

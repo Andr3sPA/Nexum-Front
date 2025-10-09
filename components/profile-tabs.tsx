@@ -9,14 +9,76 @@ import ParticipationTab from "@/components/organisms/tabs/participation-tab"
 import EvaluationTab from "@/components/organisms/tabs/evaluation-tab"
 import { logger } from "@/lib/logging"
 import { DetailedUserResponse } from "@/lib/services/profile/detailed-user.service"
+import { useAuth } from "@/contexts/auth-context"
+import { ROLES } from "@/lib/services/constants/api.constants"
 
 interface ProfileTabsProps {
   userProfile?: DetailedUserResponse & { email?: string }
   isViewOnly?: boolean
   onDataUpdate?: () => Promise<void>
+  currentUserRole?: string
 }
 
-export default function ProfileTabs({ userProfile, isViewOnly = false, onDataUpdate }: ProfileTabsProps) {
+export default function ProfileTabs({ userProfile, isViewOnly = false, onDataUpdate, currentUserRole }: ProfileTabsProps) {
+  const { user } = useAuth()
+
+  // Determine which tabs to show based on user role
+  // Use the prop if provided, otherwise get from auth context
+  const userRole = (currentUserRole || user?.role || '').toUpperCase()
+
+
+
+  const getAvailableTabs = () => {
+    const baseTabs = [
+      { id: "personal", label: "Información Personal", component: "personal" },
+      { id: "academic", label: "Información Académica", component: "academic" },
+      { id: "work", label: "Información Laboral", component: "work" },
+      { id: "participation", label: "Participación", component: "participation" }
+    ]
+
+    // If no user or no role, show all tabs
+    if (!userRole) {
+      return baseTabs
+    }
+
+    switch (userRole) {
+      case 'EMPLOYER':
+      case 'employer':
+        // Employers see only work-related information
+        return [
+          { id: "personal", label: "Información Personal", component: "personal" },
+          { id: "work", label: "Información Laboral", component: "work" }
+        ]
+      case 'DEAN':
+      case 'dean':
+        // Deans see academic and participation information
+        return [
+          { id: "academic", label: "Información Académica", component: "academic" },
+          { id: "participation", label: "Participación", component: "participation" }
+        ]
+      case 'ADMINISTRATIVE':
+      case 'administrative':
+        // Administrative staff see academic and participation information
+        return [
+          { id: "academic", label: "Información Académica", component: "academic" },
+          { id: "participation", label: "Participación", component: "participation" }
+        ]
+      case 'ADMIN':
+      case 'admin':
+        // Admins see all information
+        return baseTabs
+      case 'GRADUATE':
+      case 'graduate':
+      case 'PRE_GRADUATE':
+      case 'pre_graduate':
+      default:
+        // Graduates and others see all information
+        return baseTabs
+    }
+  }
+
+  const availableTabs = getAvailableTabs()
+
   // Initialize data from detailed user profile
   useEffect(() => {
     if (userProfile) {
@@ -47,35 +109,42 @@ export default function ProfileTabs({ userProfile, isViewOnly = false, onDataUpd
 
   return (
     <>
-      <Tabs defaultValue="personal" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="personal">Información Personal</TabsTrigger>
-          <TabsTrigger value="academic">Información Académica</TabsTrigger>
-          <TabsTrigger value="work">Información Laboral</TabsTrigger>
-          <TabsTrigger value="participation">Participación</TabsTrigger>
+      <Tabs defaultValue={availableTabs[0]?.id || "personal"} className="w-full">
+        <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${availableTabs.length}, 1fr)` }}>
+          {availableTabs.map(tab => (
+            <TabsTrigger key={tab.id} value={tab.id}>{tab.label}</TabsTrigger>
+          ))}
         </TabsList>
 
-        <TabsContent value="personal">
-          <PersonalInfoTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
-        </TabsContent>
+        {availableTabs.some(tab => tab.id === "personal") && (
+          <TabsContent value="personal">
+            <PersonalInfoTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
+          </TabsContent>
+        )}
 
-        <TabsContent value="academic">
-          <AcademicInfoTab 
-            academicData={userProfile?.coursedPrograms || []}
-            postGraduateData={userProfile?.academicEducationList || []}
-            isViewOnly={isViewOnly}
-            onDataUpdate={handleDataUpdate}
-            userId={userProfile?.id || ""}
-          />
-        </TabsContent>
+        {availableTabs.some(tab => tab.id === "academic") && (
+          <TabsContent value="academic">
+            <AcademicInfoTab
+              academicData={userProfile?.coursedPrograms || []}
+              postGraduateData={userProfile?.academicEducationList || []}
+              isViewOnly={isViewOnly}
+              onDataUpdate={handleDataUpdate}
+              userId={userProfile?.id || ""}
+            />
+          </TabsContent>
+        )}
 
-        <TabsContent value="work">
-          <WorkInfoTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
-        </TabsContent>
+        {availableTabs.some(tab => tab.id === "work") && (
+          <TabsContent value="work">
+            <WorkInfoTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
+          </TabsContent>
+        )}
 
-        <TabsContent value="participation">
-          <ParticipationTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
-        </TabsContent>
+        {availableTabs.some(tab => tab.id === "participation") && (
+          <TabsContent value="participation">
+            <ParticipationTab userProfile={userProfile} isViewOnly={isViewOnly} onDataUpdate={handleDataUpdate} />
+          </TabsContent>
+        )}
       </Tabs>
     </>
   )
