@@ -111,16 +111,16 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="businessName">Nombre de la Empresa</Label>
-                <Input name="businessName" id="businessName" value={form.businessName} onChange={onChange} placeholder="Ej: Empresa XYZ S.A.S." />
+                <Label htmlFor="businessName">Nombre de la Empresa *</Label>
+                <Input name="businessName" id="businessName" required value={form.businessName} onChange={onChange} placeholder="Ej: Empresa XYZ S.A.S." />
               </div>
               <div>
-                <Label htmlFor="contactName">Nombre del Contacto</Label>
-                <Input name="contactName" id="contactName" value={form.contactName} onChange={onChange} placeholder="Ej: Juan Pérez" />
+                <Label htmlFor="contactName">Nombre del Contacto *</Label>
+                <Input name="contactName" id="contactName" required value={form.contactName} onChange={onChange} placeholder="Ej: Juan Pérez" />
               </div>
               <div>
-                <Label htmlFor="businessEmail">Correo Electrónico</Label>
-                <Input name="businessEmail" id="businessEmail" type="email" value={form.businessEmail} onChange={onChange} placeholder="contacto@empresa.com" />
+                <Label htmlFor="businessEmail">Correo Electrónico *</Label>
+                <Input name="businessEmail" id="businessEmail" required type="email" value={form.businessEmail} onChange={onChange} placeholder="contacto@empresa.com" />
               </div>
               <div>
                 <Label htmlFor="businessPhone">Teléfono</Label>

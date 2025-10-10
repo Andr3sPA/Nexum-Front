@@ -298,7 +298,7 @@ export default function EmployerOpportunityPage() {
           editCode: createdOpportunity.editCode || ""
         });
 
-        router.push(`/login?${params.toString()}`);
+        router.push(`/register?${params.toString()}`);
         return;
       } catch (error) {
         console.error('Error creating opportunity:', error);

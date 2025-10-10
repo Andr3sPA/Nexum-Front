@@ -158,14 +158,6 @@ export default function UnifiedDashboardPage() {
   } else if (role === ROLES.EMPLOYER) {
     cards = [
       {
-        href: "/search-graduates",
-        icon: <Users className="w-8 h-8 text-blue-600" />,
-        title: "Buscar Egresados",
-        description:
-          "Consulta y filtra información de egresados por diferentes criterios académicos y profesionales.",
-        color: "blue",
-      },
-      {
         href: "/employer/opportunity?register=1",
         icon: <ArrowRight className="w-8 h-8 text-green-600" />,
         title: "Registrar Oportunidad",
