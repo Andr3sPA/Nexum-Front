@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { OpportunityService, OpportunityResponse } from "@/lib/services/opportunity";
 import { ApplicationService } from "@/lib/services/opportunity";
 import { AuthenticatedUserResponse, DetailedUserResponse } from "@/lib/services/profile";
@@ -18,19 +20,11 @@ import {
   TableRow
 } from "@/components/atoms/table";
 import { Button } from "@/components/atoms/button";
-import OpportunityDetailModal from "./opportunity-detail-modal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card";
 import { SectionTitle } from "@/components/atoms/section-title";
 import { EmptyStateCard } from "@/components/atoms/empty-state-card";
 import { Briefcase, Edit } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/molecules/dialog";
+// Dialog removed: applying now happens immediately without confirmation
 
 interface OpportunityTableProps {
   refetchTrigger?: number;
@@ -40,14 +34,11 @@ interface OpportunityTableProps {
 }
 
 export default function OpportunityTable({ refetchTrigger, onEditOpportunity, user, onApplicationRefetch }: OpportunityTableProps) {
-  const [selectedOpportunity, setSelectedOpportunity] = useState<OpportunityResponse | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
   const [opportunities, setOpportunities] = useState<OpportunityResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [applying, setApplying] = useState(false);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [opportunityToApply, setOpportunityToApply] = useState<number | null>(null);
 
   // Catalog data state
   const [salaryRanges, setSalaryRanges] = useState<SalaryRangeResponse[]>([]);
@@ -56,36 +47,179 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
   const [jobAreas, setJobAreas] = useState<JobAreaResponse[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(false);
 
-  const handleApplyClick = (opportunityId: number) => {
-    setOpportunityToApply(opportunityId);
-    setConfirmDialogOpen(true);
-  };
-
-  const handleConfirmApply = async () => {
-    if (!opportunityToApply) return;
-
-    setConfirmDialogOpen(false);
+  const handleApplyClick = async (opportunityId: number) => {
     setApplying(true);
-    try {
-      await ApplicationService.apply({ opportunityId: opportunityToApply });
-      toast({ title: "Aplicación enviada exitosamente" });
-      if (onApplicationRefetch) {
-        onApplicationRefetch();
+    const opp = opportunities.find(o => o.id === opportunityId);
+
+    const openLinkIfPresent = (link?: string | null) => {
+      if (!link) return false;
+      const raw = String(link).trim();
+      let normalized: string | null = null;
+      try {
+        if (/^https?:\/\//i.test(raw)) {
+          normalized = raw;
+        } else if (/^\/\//.test(raw)) {
+          normalized = window.location.protocol + raw;
+        } else if (raw.startsWith('/')) {
+          normalized = window.location.origin + raw;
+        } else if (raw.includes('.') && !raw.includes(' ')) {
+          normalized = 'https://' + raw;
+        }
+
+        if (normalized) {
+          const a = document.createElement('a');
+          a.href = normalized;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          return true;
+        }
+      } catch (e) {
+        console.warn('Error opening opportunity link', link, e);
       }
-    } catch (error) {
-      toast({ title: "Error al aplicar", description: String(error) });
+      return false;
+    };
+
+    try {
+      // If the list item already contains a link, open it and apply internally
+      if (opp && opp.link) {
+        console.debug('[apply] Found link on list item:', opp.link);
+        const opened = openLinkIfPresent(opp.link);
+        console.debug('[apply] openLinkIfPresent returned:', opened);
+        try {
+          await ApplicationService.apply({ opportunityId });
+          toast({ title: 'Aplicación enviada exitosamente' });
+          if (onApplicationRefetch) onApplicationRefetch();
+        } catch (e) {
+          console.warn('Error applying internally after opening link', e);
+          toast({ title: 'Error al enviar aplicación', description: String(e) });
+        }
+        setApplying(false);
+        return;
+      }
+
+      // Otherwise attempt to fetch the full opportunity (some APIs omit fields in list) and open its link
+      // Open a blank window now to avoid popup blocking when we later set location
+      let newWin: Window | null = null;
+      try {
+        newWin = window.open('', '_blank');
+        try { if (newWin) (newWin as any).opener = null; } catch (e) {}
+        console.debug('[apply] Opened blank window:', !!newWin);
+      } catch (err) {
+        newWin = null;
+        console.debug('[apply] Failed to open blank window:', err);
+      }
+
+      try {
+        let full = null;
+        try {
+          // Try authenticated fetch first
+          full = await OpportunityService.getById(opportunityId);
+          console.debug('[apply] Fetched full opportunity (auth):', full);
+        } catch (authErr) {
+          console.debug('[apply] Authenticated fetch failed, trying public fetch:', authErr);
+          // Fallback to public fetch
+          full = await OpportunityService.getPublicById(opportunityId);
+          console.debug('[apply] Fetched full opportunity (public):', full);
+        }
+        if (full && full.link) {
+          console.debug('[apply] Found link on full opportunity:', full.link);
+          const raw = String(full.link).trim();
+          let normalized: string | null = null;
+          if (/^https?:\/\//i.test(raw)) {
+            normalized = raw;
+          } else if (/^\/\//.test(raw)) {
+            normalized = window.location.protocol + raw;
+          } else if (raw.startsWith('/')) {
+            normalized = window.location.origin + raw;
+          } else if (raw.includes('.') && !raw.includes(' ')) {
+            normalized = 'https://' + raw;
+          }
+          console.debug('[apply] Normalized URL:', normalized);
+
+          if (normalized) {
+            if (newWin) {
+              try {
+                console.debug('[apply] Setting newWin.location.href to normalized');
+                newWin.location.href = normalized;
+              } catch (e) {
+                console.warn('[apply] Setting newWin.location.href failed, fallback to window.open', e);
+                try { newWin.close(); } catch (_) {}
+                window.open(normalized, '_blank', 'noopener');
+              }
+            } else {
+              console.debug('[apply] Opening normalized in new window directly');
+              window.open(normalized, '_blank', 'noopener');
+            }
+
+            // register application regardless
+            try {
+              await ApplicationService.apply({ opportunityId });
+              toast({ title: 'Aplicación enviada exitosamente' });
+              if (onApplicationRefetch) onApplicationRefetch();
+            } catch (e) {
+              console.warn('Error applying internally after opening link', e);
+              toast({ title: 'Error al enviar aplicación', description: String(e) });
+            }
+
+            setApplying(false);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Could not fetch full opportunity before applying', e);
+      }
+
+      // If we opened a blank window but couldn't use it, close it
+      try {
+        if (newWin && !newWin.location?.href) {
+          console.debug('[apply] Closing blank window because no link found');
+          newWin.close();
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      // No link available: still apply internally immediately (no confirmation)
+      try {
+        await ApplicationService.apply({ opportunityId });
+        toast({ title: 'Aplicación enviada exitosamente' });
+        if (onApplicationRefetch) onApplicationRefetch();
+      } catch (e) {
+        console.warn('Error applying internally (no link)', e);
+        toast({ title: 'Error al enviar aplicación', description: String(e) });
+      }
+
     } finally {
       setApplying(false);
-      setOpportunityToApply(null);
     }
   };
+
+  const handleRowClick = (opportunityId: number) => {
+    try {
+      console.debug('[opportunity-table] row clicked, navigating to', opportunityId);
+      try {
+        // store a preview of the opportunity so the detail page can use it if the public API is protected
+        sessionStorage.setItem(`opportunity_preview_${opportunityId}`, JSON.stringify(opportunities.find(o => o.id === opportunityId) || {}));
+      } catch (e) {
+        // ignore sessionStorage errors
+      }
+      router.push(`/opportunity/${opportunityId}`);
+    } catch (e) {
+      console.warn('[opportunity-table] navigation failed', e);
+    }
+  };
+
+  // Confirmation dialog removed: applying happens immediately in handleApplyClick
 
   const fetchOpportunities = async () => {
     setLoading(true);
     setError(null);
     try {
       // Use public endpoint to show opportunities to everyone
-      const data = await OpportunityService.listPublic();
+      const data = user ? await OpportunityService.list() : await OpportunityService.listPublic();
       if (Array.isArray(data)) {
         setOpportunities(data);
       } else {
@@ -192,9 +326,11 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                     <TableRow
                       key={opp.id}
                       className={index % 2 === 0 ? "bg-white cursor-pointer" : "bg-gray-50 cursor-pointer"}
-                      onClick={() => { setSelectedOpportunity(opp); setModalOpen(true); }}
+                      onClick={() => { handleRowClick(opp.id); }}
                     >
-                      <TableCell className="font-medium">{opp.title}</TableCell>
+                      <TableCell className="font-medium">
+                        <Link href={`/opportunity/${opp.id}`} className="block">{opp.title}</Link>
+                      </TableCell>
                       <TableCell className="max-w-xs">
                         <div className="truncate" title={opp.description}>
                           {opp.description}
@@ -290,41 +426,9 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
           </CardContent>
         </Card>
       )}
-      <OpportunityDetailModal
-        opportunity={selectedOpportunity}
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        salaryRanges={salaryRanges}
-        programs={programs}
-        programCompetencies={programCompetencies}
-        jobAreas={jobAreas}
-      />
+      {/* Detail page navigation replaces modal */}
 
-      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <DialogContent className="p-6">
-          <DialogHeader>
-            <DialogTitle>Confirmar aplicación</DialogTitle>
-            <DialogDescription>
-              ¿Estás seguro de que deseas aplicar a esta oportunidad laboral?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setConfirmDialogOpen(false)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleConfirmApply}
-              disabled={applying}
-            >
-              {applying ? "Aplicando..." : "Confirmar aplicación"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Confirm dialog removed - applying occurs immediately when pressing "Aplicar" */}
     </div>
   );
 }

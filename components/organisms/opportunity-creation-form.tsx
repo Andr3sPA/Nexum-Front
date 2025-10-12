@@ -95,6 +95,10 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
               <div>
                 <Label htmlFor="description">Descripción *</Label>
                 <Textarea name="description" id="description" value={form.description} onChange={onChange} required />
+              <div>
+                <Label htmlFor="link">Enlace para aplicar a oportunidad *</Label>
+                <Input name="link" id="link" type="url" required value={(form as any).link || ''} onChange={onChange} placeholder="https://www.ejemplo.com/aplicar" />
+              </div>
               </div>
               <div>
                 <Label htmlFor="location">Ubicación</Label>

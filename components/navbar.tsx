@@ -29,16 +29,22 @@ interface NavbarUser {
 export default function Navbar({ user }: { user?: NavbarUser | null }) {
   const [email, setEmail] = useState("")
   const [isClient, setIsClient] = useState(false)
+  const [currentUser, setCurrentUser] = useState<any | null>(user ?? null)
+  const [userProfile, setUserProfile] = useState<any | null>(null)
 
   useEffect(() => {
     setIsClient(true)
-    const userLogin = LocalStorageService.getItem<any>("user")
-    setEmail(userLogin?.email || "")
+    try {
+      const userLogin = LocalStorageService.getItem<any>("user")
+      const profile = LocalStorageService.getItem<any>("userProfile")
+      if (!currentUser && userLogin) setCurrentUser(userLogin)
+      if (profile) setUserProfile(profile)
+      setEmail(userLogin?.email || profile?.email || "")
+    } catch (e) {
+      // localStorage access failed / not available - keep defaults
+      setEmail("")
+    }
   }, [])
-
-  // If no user provided, try to get from localStorage
-  const currentUser = user || LocalStorageService.getItem<any>("user")
-  const userProfile = LocalStorageService.getItem<any>("userProfile")
 
   // Obtener primer nombre y primer apellido del userProfile
   const firstName = userProfile?.name?.split(" ")[0] || ""
