@@ -20,6 +20,8 @@ import {
   TableRow
 } from "@/components/atoms/table";
 import { Button } from "@/components/atoms/button";
+import { Select } from "@/components/atoms/select";
+import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card";
 import { SectionTitle } from "@/components/atoms/section-title";
 import { EmptyStateCard } from "@/components/atoms/empty-state-card";
@@ -34,6 +36,7 @@ interface OpportunityTableProps {
 }
 
 export default function OpportunityTable({ refetchTrigger, onEditOpportunity, user, onApplicationRefetch }: OpportunityTableProps) {
+  const [statusLoadingId, setStatusLoadingId] = useState<number | null>(null);
   const router = useRouter();
   const [opportunities, setOpportunities] = useState<OpportunityResponse[]>([]);
   const [loading, setLoading] = useState(false);
@@ -265,9 +268,111 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
     fetchOpportunities();
   }, [refetchTrigger]);
 
+  // Filtros y ordenamiento
+  const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [filterProgram, setFilterProgram] = useState("");
+  const [filterArea, setFilterArea] = useState("");
+  const [filterModality, setFilterModality] = useState("");
+  const [filterSalary, setFilterSalary] = useState("");
+  const [sortField, setSortField] = useState("expirationDate");
+  const [sortOrder, setSortOrder] = useState<"asc"|"desc">("desc");
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
+
+  // Filtrar y ordenar oportunidades
+  const filteredOpportunities = opportunities
+    .filter(opp =>
+      (!search || opp.title.toLowerCase().includes(search.toLowerCase()) || opp.description.toLowerCase().includes(search.toLowerCase())) &&
+      (!filterStatus || opp.status === filterStatus) &&
+      (!filterProgram || opp.coursedProgramIds?.includes(Number(filterProgram))) &&
+      (!filterArea || opp.jobAreaIds?.includes(Number(filterArea))) &&
+      (!filterModality || opp.workModality === filterModality) &&
+      (!filterSalary || String(opp.salaryRangeId) === filterSalary)
+    )
+    .sort((a, b) => {
+      let aValue = a[sortField as keyof OpportunityResponse];
+      let bValue = b[sortField as keyof OpportunityResponse];
+      if (sortField === "expirationDate") {
+        aValue = a.expirationDate || "";
+        bValue = b.expirationDate || "";
+      }
+      if (aValue === undefined || bValue === undefined) return 0;
+      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+
   return (
     <div className="mt-10">
       <SectionTitle>Oportunidades Registradas</SectionTitle>
+      {/* Filtros y búsqueda */}
+      <div className="flex flex-wrap gap-4 items-end mb-6 mt-4 bg-[#f3f8f4] p-4 rounded-xl shadow-sm">
+  <div className="w-80">
+          <div className="relative">
+            <input
+              type="text"
+              className="w-full h-10 rounded-lg border border-[#43b649] bg-white px-4 pr-10 text-sm focus:ring-2 focus:ring-[#026937] shadow-sm placeholder:text-neutral-400"
+              placeholder="Buscar por título o descripción..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ fontFamily: 'inherit' }}
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#43b649] pointer-events-none">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="#43b649" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 6.5 6.5a7.5 7.5 0 0 0 10.6 10.6Z"/></svg>
+            </span>
+          </div>
+        </div>
+        <div className="w-48">
+          <Select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
+            <option value="">Todos los estados</option>
+            <option value="Draft">Borrador</option>
+            <option value="Active">Activo</option>
+            <option value="Closed">Cerrado</option>
+            <option value="Expired">Expirado</option>
+            <option value="On Hold">En espera</option>
+            <option value="Cancelled">Cancelado</option>
+          </Select>
+        </div>
+        <div className="w-48">
+          <Select value={filterProgram} onChange={e => setFilterProgram(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
+            <option value="">Todos los programas</option>
+            {programs.map(p => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </Select>
+        </div>
+        <div className="w-48">
+          <Select value={filterArea} onChange={e => setFilterArea(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
+            <option value="">Todas las áreas</option>
+            {jobAreas.map(a => (
+              <option key={a.id} value={a.id}>{a.name}</option>
+            ))}
+          </Select>
+        </div>
+        <div className="w-60">
+          <Select value={filterModality} onChange={e => setFilterModality(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
+            <option value="">Todas las modalidades</option>
+            <option value="Remote">Remoto</option>
+            <option value="On Site">Presencial</option>
+            <option value="Hybrid">Híbrido</option>
+          </Select>
+        </div>
+        <div className="w-60">
+          <Select value={filterSalary} onChange={e => setFilterSalary(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
+            <option value="">Todos los rangos salariales</option>
+            {salaryRanges.map(s => (
+              <option key={s.id} value={s.id}>{s.salary}</option>
+            ))}
+          </Select>
+        </div>
+      </div>
       {loading ? (
         <Card className="mt-6 shadow-sm border-gray-200">
           <CardContent className="p-8">
@@ -310,19 +415,61 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Título</TableHead>
-                    <TableHead>Descripción</TableHead>
-                    <TableHead>Ubicación</TableHead>
-                    <TableHead>Modalidad</TableHead>
-                    <TableHead>Rango Salarial</TableHead>
-                    <TableHead>Área</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Fecha Expiración</TableHead>
-                    <TableHead>Acciones</TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('title')}>
+                      Título
+                      {sortField === 'title' && (
+                        <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('description')}>
+                      Descripción
+                      {sortField === 'description' && (
+                        <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('location')}>
+                      Ubicación
+                      {sortField === 'location' && (
+                        <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('workModality')}>
+                      Modalidad
+                      {sortField === 'workModality' && (
+                        <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('salaryRangeId')}>
+                      Rango Salarial
+                      {sortField === 'salaryRangeId' && (
+                        <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('jobAreaIds')}>
+                      Área
+                      {sortField === 'jobAreaIds' && (
+                        <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('status')}>
+                      Estado
+                      {sortField === 'status' && (
+                        <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('expirationDate')}>
+                      Fecha Expiración
+                      {sortField === 'expirationDate' && (
+                        <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
+                    {(user && (user.role === ROLES.DEAN || user.role === ROLES.ADMIN)) && (
+                      <TableHead>Editar Estado</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {opportunities.map((opp, index) => (
+                  {filteredOpportunities.map((opp, index) => (
                     <TableRow
                       key={opp.id}
                       className={index % 2 === 0 ? "bg-white cursor-pointer" : "bg-gray-50 cursor-pointer"}
@@ -392,32 +539,49 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                           day: 'numeric'
                         }) : '-'}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          {user && user.role === ROLES.EMPLOYER && onEditOpportunity && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={e => { e.stopPropagation(); onEditOpportunity(opp); }}
-                              className="flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      {(user && (user.role === ROLES.DEAN || user.role === ROLES.ADMIN)) && (
+                        <TableCell onClick={e => e.stopPropagation()}>
+                          {statusLoadingId === opp.id ? (
+                            <div className="flex items-center justify-center h-10">
+                              <Loader2 className="animate-spin text-green-700 w-5 h-5" />
+                            </div>
+                          ) : (
+                            <Select
+                              value={opp.status}
+                              disabled={!!statusLoadingId || applying}
+                              className="min-w-[120px] text-xs"
+                              onChange={async (e) => {
+                                const newStatus = e.target.value;
+                                setStatusLoadingId(opp.id);
+                                try {
+                                  // cast to any to satisfy the OpportunityStatus typing from the service
+                                  // Asegura que complementaryStudies y otros campos requeridos no sean undefined
+                                  const updatePayload = {
+                                    ...opp,
+                                    status: newStatus as any,
+                                    complementaryStudies: opp.complementaryStudies ?? "",
+                                    travelAvailability: opp.travelAvailability ?? false,
+                                  };
+                                  await OpportunityService.update(opp.id, updatePayload);
+                                  toast({ title: 'Estado actualizado', description: `Nuevo estado: ${newStatus}` });
+                                  fetchOpportunities();
+                                } catch (err) {
+                                  toast({ title: 'Error al actualizar estado', description: String(err) });
+                                } finally {
+                                  setStatusLoadingId(null);
+                                }
+                              }}
                             >
-                              <Edit className="h-4 w-4" />
-                              Editar
-                            </Button>
+                              <option value="Draft">Borrador</option>
+                              <option value="Active">Activo</option>
+                              <option value="Closed">Cerrado</option>
+                              <option value="Expired">Expirado</option>
+                              <option value="On Hold">En espera</option>
+                              <option value="Cancelled">Cancelado</option>
+                            </Select>
                           )}
-                          {user && user.role === ROLES.GRADUATE && (
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              onClick={e => { e.stopPropagation(); handleApplyClick(opp.id); }}
-                              disabled={applying}
-                              className="flex items-center gap-2"
-                            >
-                              {applying ? "Aplicando..." : "Aplicar"}
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
