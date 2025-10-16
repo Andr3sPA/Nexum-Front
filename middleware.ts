@@ -24,6 +24,12 @@ export function middleware(req: NextRequest) {
     scriptSrc.push("'unsafe-eval'");
   }
 
+  // In development mode only, allow unsafe-inline for scripts to reduce CSP friction
+  // (this should NOT be enabled in production)
+  if (isDevelopment) {
+    scriptSrc.push("'unsafe-inline'");
+  }
+
   // Style sources with nonce-based approach instead of unsafe-inline
   const styleSrc = [
     "'self'",

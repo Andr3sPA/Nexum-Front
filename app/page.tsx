@@ -187,7 +187,7 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="secondary"
-                onClick={handleCreateOpportunity}
+                onClick={() => router.push("/register?employer=1")}
                 className="flex items-center gap-2"
               >
                 <Plus className="h-5 w-5" />

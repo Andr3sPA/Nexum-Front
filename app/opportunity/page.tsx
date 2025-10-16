@@ -2,9 +2,9 @@
 
 import Navbar from "@/components/navbar";
 import OpportunityTable from "@/components/organisms/opportunity-table";
-import ApplicationTable from "@/components/organisms/application-table";
 import { OpportunityCreationForm } from "@/components/organisms/opportunity-creation-form";
 import { OpportunityConfirmationDialog } from "@/components/organisms/opportunity-confirmation-dialog";
+import FloatingNotice from "@/components/atoms/floating-notice";
 
 import { toast } from "@/hooks/use-toast";
 import { ROLES } from "@/lib/services/constants/api.constants";
@@ -40,6 +40,7 @@ export default function EmployerOpportunityPage() {
     contactName: "",
     businessEmail: "",
     businessPhone: "",
+  link: '',
 
     complementaryStudies: "",
     requiredExperience: "Not specified",
@@ -56,7 +57,6 @@ export default function EmployerOpportunityPage() {
   const [refetchTrigger, setRefetchTrigger] = useState(0);
   const [editingOpportunity, setEditingOpportunity] = useState<OpportunityResponse | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [appRefetchTrigger, setAppRefetchTrigger] = useState(0);
   const [lastCreatedOpportunity, setLastCreatedOpportunity] = useState<{ editCode?: string } | null>(null);
 
 
@@ -224,6 +224,7 @@ export default function EmployerOpportunityPage() {
       contactName: opportunity.contactName || "",
       businessEmail: opportunity.businessEmail || "",
       businessPhone: opportunity.businessPhone || "",
+  link: opportunity.link || '',
 
       complementaryStudies: opportunity.complementaryStudies || "",
       requiredExperience: opportunity.requiredExperience,
@@ -254,7 +255,7 @@ export default function EmployerOpportunityPage() {
       contactName: "",
       businessEmail: "",
       businessPhone: "",
-
+  link: '',
       complementaryStudies: "",
       requiredExperience: "Not specified",
       travelAvailability: false,
@@ -280,6 +281,18 @@ export default function EmployerOpportunityPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate link is present and is a valid URL
+    if (!form.link) {
+      alert('El campo "Enlace para aplicar a oportunidad" es obligatorio.');
+      return;
+    }
+    try {
+      new URL(form.link);
+    } catch (err) {
+      alert('El enlace ingresado no es una URL válida.');
+      return;
+    }
+
     // If user is anonymous, redirect to login with employer registration
     if (!user) {
       // Create the opportunity first (as anonymous)
@@ -298,7 +311,7 @@ export default function EmployerOpportunityPage() {
           editCode: createdOpportunity.editCode || ""
         });
 
-        router.push(`/login?${params.toString()}`);
+        router.push(`/register?${params.toString()}`);
         return;
       } catch (error) {
         console.error('Error creating opportunity:', error);
@@ -320,6 +333,20 @@ export default function EmployerOpportunityPage() {
     setLoading(true);
 
     try {
+      // Validate link in pending data as well
+      if (!pendingFormData.link) {
+        toast({ title: 'El campo "Enlace para aplicar a oportunidad" es obligatorio.' });
+        setLoading(false);
+        return;
+      }
+      try {
+        new URL(pendingFormData.link);
+      } catch (err) {
+        toast({ title: 'El enlace ingresado no es una URL válida.' });
+        setLoading(false);
+        return;
+      }
+
       if (isEditMode && editingOpportunity) {
         // Update existing opportunity
         await OpportunityService.update(editingOpportunity.id, pendingFormData);
@@ -353,7 +380,13 @@ export default function EmployerOpportunityPage() {
   return (
     <>
       <Navbar user={user} />
-      <div className="max-w-6xl mx-auto mt-10 p-6">
+    <div className="max-w-6xl mx-auto mt-10 p-6">
+  <FloatingNotice position="inline" persist={false} prominent={isEditMode}>
+          
+          Las oportunidades publicadas en este portal son responsabilidad exclusiva de las entidades que las ofrecen. No nos hacemos responsables por el contenido, veracidad o vigencia de dichas publicaciones.
+
+          Para postularse, debe hacerlo directamente a través de los enlaces externos proporcionados. En caso de no contar con un enlace, contacte a la organización por correo electrónico.
+        </FloatingNotice>
         {showRegister && (user ? (user.role === ROLES.EMPLOYER || user.role === ROLES.ADMINISTRATIVE) : true) && (
           <OpportunityCreationForm
             form={form}
@@ -391,12 +424,7 @@ export default function EmployerOpportunityPage() {
             refetchTrigger={refetchTrigger}
             onEditOpportunity={handleEditOpportunity}
             user={user}
-            onApplicationRefetch={() => setAppRefetchTrigger((prev) => prev + 1)}
           />
-        )}
-        {/* Tabla de aplicaciones solo para GRADUATE */}
-        {user && user.role === ROLES.GRADUATE && (
-          <ApplicationTable refetchTrigger={appRefetchTrigger} />
         )}
 
         <OpportunityConfirmationDialog

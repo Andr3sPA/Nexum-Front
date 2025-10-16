@@ -31,6 +31,8 @@ export interface OpportunityRequest {
   contactName?: string;
   businessEmail?: string;
   businessPhone?: string;
+  // Optional external link where candidates can apply or get more info
+  link?: string;
 
   // Edit code for anonymous editing
   editCode?: string;
@@ -63,6 +65,8 @@ export interface OpportunityResponse {
   contactName?: string;
   businessEmail?: string;
   businessPhone?: string;
+  // Optional external link where candidates can apply or get more info
+  link?: string;
 
   // Edit code for anonymous editing
   editCode?: string;
@@ -110,9 +114,10 @@ export const OpportunityService = {
 
   // Obtener todas las oportunidades de forma pública (GET) - sin autenticación requerida
   async listPublic(): Promise<OpportunityResponse[]> {
-    const { status, body } = await serviceWithAuth<undefined, OpportunityResponse[]>(
+    const { status, body } = await service<undefined, OpportunityResponse[]>(
       OPPORTUNITY_ENDPOINT,
       METHOD.get,
+      undefined,
       undefined,
       OPPORTUNITY_HOST
     );
@@ -132,6 +137,21 @@ export const OpportunityService = {
     );
     if (status !== 200) {
       throw new Error((body as any)?.message || `Error getting opportunity by id: HTTP ${status}`);
+    }
+    return body;
+  },
+
+  // Obtener oportunidad por id (GET) sin autenticación - útil para vistas públicas
+  async getPublicById(id: number): Promise<OpportunityResponse> {
+    const { status, body } = await service<undefined, OpportunityResponse>(
+      `${OPPORTUNITY_ENDPOINT}/${id}`,
+      METHOD.get,
+      undefined,
+      undefined,
+      OPPORTUNITY_HOST
+    );
+    if (status !== 200) {
+      throw new Error((body as any)?.message || `Error getting public opportunity by id: HTTP ${status}`);
     }
     return body;
   },

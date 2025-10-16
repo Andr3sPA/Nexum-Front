@@ -35,8 +35,7 @@ export const ROUTES = {
 
   EMPLOYER: {
     DASHBOARD: "/dashboard",
-    SEARCH_GRADUATES: "/search-graduates",
-    VIEW_PROFILE: "/profile", // For viewing specific user profiles
+    OPPORTUNITY: "/employer/opportunity",
   },
 } as const;
 
@@ -59,9 +58,7 @@ export const ROLE_ROUTES = {
   ],
   [ROLES.EMPLOYER]: [
     ROUTES.EMPLOYER.DASHBOARD,
-    ROUTES.EMPLOYER.SEARCH_GRADUATES,
-    ROUTES.EMPLOYER.VIEW_PROFILE,
-    "/employer/opportunity",
+    ROUTES.EMPLOYER.OPPORTUNITY,
   ],
   [ROLES.ADMIN]: [
     ROUTES.DASHBOARD,
