@@ -86,7 +86,7 @@ export default function UnifiedDashboardPage() {
         isButton: true,
       },
       {
-        href: "/employer/opportunity",
+        href: "/opportunity",
         icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
         title: "Oportunidades",
         description: "Descubre nuevas oportunidades académicas y laborales",
@@ -147,7 +147,7 @@ export default function UnifiedDashboardPage() {
         disabled: true,
       },
       {
-        href: "/employer/opportunity",
+        href: "/opportunity",
         icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
         title: "Oportunidades",
         description: "Descubre nuevas oportunidades académicas y laborales",
@@ -166,7 +166,7 @@ export default function UnifiedDashboardPage() {
         color: "green",
       },
       {
-        href: "/employer/opportunity",
+        href: "/opportunity",
         icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
         title: "Ver Oportunidades",
         description:
