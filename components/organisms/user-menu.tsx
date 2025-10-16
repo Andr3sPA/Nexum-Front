@@ -1,6 +1,7 @@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../molecules/dropdown-menu';
 import { Avatar, AvatarImage, AvatarFallback } from '../atoms/avatar';
 import Link from 'next/link';
+import { LocalStorageService } from '@/lib/services/local-storage.service';
 import { User, LogOut } from 'lucide-react';
 import { ROUTES } from '@/lib/routes';
 import React from 'react';
@@ -59,10 +60,20 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, isClient, getRoleIcon 
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link href={ROUTES.LOGIN} className="cursor-pointer w-full flex items-center text-red-600 hover:text-red-700 hover:bg-red-50">
+          <button
+            type="button"
+            className="cursor-pointer w-full flex items-center text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent border-none outline-none"
+            onClick={() => {
+              LocalStorageService.removeItem('user');
+              LocalStorageService.removeItem('userProfile');
+              LocalStorageService.removeItem('token');
+              LocalStorageService.clear(); // Opcional: limpia todo
+              window.location.href = ROUTES.LOGIN;
+            }}
+          >
             <LogOut className="mr-3 h-4 w-4" />
             <span>Cerrar Sesión</span>
-          </Link>
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
