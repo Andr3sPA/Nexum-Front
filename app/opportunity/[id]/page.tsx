@@ -11,7 +11,7 @@ import { JobAreaService, JobAreaResponse } from "@/lib/services/catalog/job-area
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card";
 import { FormSection } from "@/components/atoms/form-section";
 import { SectionTitle } from "@/components/atoms/section-title";
-import { Briefcase, DollarSign, Calendar, User, Settings, Building } from "lucide-react";
+import { Briefcase, DollarSign, Calendar, User, Settings, Building, ExternalLink } from "lucide-react";
 import { Button } from "@/components/atoms/button";
 import { toast } from "@/hooks/use-toast";
 import FloatingNotice from "@/components/atoms/floating-notice";
@@ -223,7 +223,10 @@ export default function OpportunityPublicDetailPage() {
             <div className="flex items-center gap-3 mt-6">
               <Button variant="outline" onClick={() => router.back()}>Volver</Button>
               {opportunity.link && (
-                <a href={opportunity.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-3 py-2 rounded-md bg-green-600 text-white text-sm">Ver más información</a>
+                <a href={opportunity.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-3 py-2 rounded-md bg-green-600 text-white text-sm gap-2">
+                  Ver más información
+                  <ExternalLink className="w-4 h-4 ml-1 text-white opacity-80" />
+                </a>
               )}
             </div>
           </CardContent>
