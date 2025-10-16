@@ -29,7 +29,7 @@ export default function HomePage() {
     if (!user) {
       router.push("/login");
     } else {
-      router.push("/employer/opportunity");
+      router.push("/opportunity");
     }
   };
 
