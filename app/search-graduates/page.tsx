@@ -42,7 +42,7 @@ export default function SearchGraduatesPage() {
     gender: "",
     startYear: "",
     endYear: "",
-    programId: "",
+    programIds: [] as string[],
     country: "",
     city: "",
     mobile: "",
@@ -57,6 +57,8 @@ export default function SearchGraduatesPage() {
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [sortBy, setSortBy] = useState<string>("");
+  const [asc, setAsc] = useState<boolean>(true);
 
   // Inicializar datos del usuario cuando el componente se monta en el cliente
   useEffect(() => {
@@ -112,7 +114,7 @@ export default function SearchGraduatesPage() {
     }
   }, [isClient]);
 
-  const handleFilterChange = (field: string, value: string) => {
+  const handleFilterChange = (field: string, value: string | string[]) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -135,8 +137,8 @@ export default function SearchGraduatesPage() {
         endYear: detailedFilters.endYear
           ? Number(detailedFilters.endYear)
           : undefined,
-        programId: detailedFilters.programId
-          ? Number(detailedFilters.programId)
+        programIds: detailedFilters.programIds
+          ? detailedFilters.programIds.map(Number)
           : undefined,
         country: detailedFilters.country || undefined,
         city: detailedFilters.city || undefined,
@@ -145,7 +147,7 @@ export default function SearchGraduatesPage() {
         academicEmail: detailedFilters.academicEmail || undefined,
         role: "GRADUATE", // Por defecto buscar solo graduados
       };
-      const pageQuery: PageQuery = { page, pageSize };
+      const pageQuery: PageQuery = { page, pageSize, sortBy: sortBy || undefined, asc };
       const result = await GraduateSearchService.searchGraduates(
         searchFilters,
         pageQuery,
@@ -177,7 +179,7 @@ export default function SearchGraduatesPage() {
       gender: "",
       startYear: "",
       endYear: "",
-      programId: "",
+      programIds: [],
       country: "",
       city: "",
       mobile: "",
@@ -202,6 +204,13 @@ export default function SearchGraduatesPage() {
   const handlePageSizeChange = (newSize: number) => {
     setPageSize(newSize);
     setPage(0);
+  };
+
+  const handleSortChange = (newSortBy: string, newAsc: boolean) => {
+    setSortBy(newSortBy);
+    setAsc(newAsc);
+    setPage(0);
+    handleSearch();
   };
 
   // No renderizar nada hasta que estemos en el cliente
@@ -256,6 +265,9 @@ export default function SearchGraduatesPage() {
               contentGapClass="gap-10"
               pageSize={pageSize}
               onPageSizeChange={handlePageSizeChange}
+              sortBy={sortBy}
+              asc={asc}
+              onSortChange={handleSortChange}
             />
           </div>
         </div>

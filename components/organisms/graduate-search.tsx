@@ -2,91 +2,49 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Filter, X, Search } from "lucide-react"
+import { Filter, X, Search, Grid3X3, Table as TableIcon } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
 import { Button } from "@/components/atoms/button"
 import { SearchFilters } from "@/components/molecules/search-filters"
 import { SearchResults } from "@/components/molecules/search-results"
 import { SearchEmptyState } from "@/components/atoms/search-empty-state"
-
-export interface GraduateSearchProps {
-  filters: {
-    names: string
-    lastnames: string
-    gender: string
-    startYear: string
-    endYear: string
-    programId: string
-    country: string
-    city: string
-    mobile: string
-    email: string
-    academicEmail: string
-  }
-  onFilterChange: (field: string, value: string) => void
-  onSearch: (e?: React.FormEvent) => void
-  onClearFilters: () => void
-  onViewProfile: (id: string) => void
-  onExport?: () => void
-  onPageChange: (page: number) => void
-  results: Array<{
-    id: string
-    name: string
-    middleName?: string
-    lastname: string
-    secondLastname?: string
-    email?: string
-    academicEmail?: string
-    programs?: Array<{ name: string }>
-    country?: string
-    city?: string
-    gender?: string
-    role?: string
-    graduationYear?: string
-    mobile?: string
-  }>
-  totalCount: number
-  currentPage: number
-  totalPages: number
-  isLoading?: boolean
-  isSearching?: boolean
-  programs: Array<{ id: number, name: string, code: string }>
-  catalogError?: string | null
-  filtersWidthClass?: string
-  contentGapClass?: string
-  pageSize?: number
-  onPageSizeChange?: (size: number) => void
-}
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table"
+import { GraduateSearchProps } from "@/types/graduate-search.types"
 
 const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
-  ({ 
-    filters,
-    onFilterChange,
-    onSearch,
-    onClearFilters,
-    onViewProfile,
-    onExport,
-    onPageChange,
-    results,
-    totalCount,
-    currentPage,
-    totalPages,
-    isLoading = false,
-    isSearching = false,
-    programs,
-    catalogError,
-    filtersWidthClass = "w-80 flex-shrink-0",
-    contentGapClass = "gap-6",
-    pageSize,
-    onPageSizeChange,
-    ...props 
-  }, ref) => {
+  (props, ref) => {
+    const {
+      filters,
+      onFilterChange,
+      onClearFilters,
+      onViewProfile,
+      onExport,
+      onPageChange,
+      results,
+      totalCount,
+      currentPage,
+      totalPages,
+      isLoading = false,
+      isSearching = false,
+      programs,
+      catalogError,
+      filtersWidthClass = "w-80 flex-shrink-0",
+      contentGapClass = "gap-6",
+      pageSize,
+      onPageSizeChange,
+      sortBy = "",
+      asc = true,
+      onSortChange,
+      ...restProps
+    } = props
+
     const [showFilters, setShowFilters] = React.useState(true)
+    const [viewMode, setViewMode] = React.useState<'cards' | 'table'>('cards')
 
     const hasActiveFilters = Object.values(filters).some(value => value !== "")
 
     return (
-      <div ref={ref} {...props}>
+      <div ref={ref} {...restProps}>
         <Card className="mb-6">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -104,6 +62,29 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
                   <Filter className="h-4 w-4" />
                   {showFilters ? "Ocultar" : "Mostrar"} Filtros
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setViewMode(viewMode === 'cards' ? 'table' : 'cards')}
+                  className="flex items-center gap-2"
+                >
+                  {viewMode === 'cards' ? <TableIcon className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
+                  {viewMode === 'cards' ? 'Vista Tabla' : 'Vista Tarjetas'}
+                </Button>
+                <select
+                  value={`${sortBy}-${asc}`}
+                  onChange={(e) => {
+                    const [sb, a] = e.target.value.split('-');
+                    onSortChange && onSortChange(sb === 'none' ? '' : sb, a === 'true');
+                  }}
+                  className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white"
+                >
+                  <option value="none-true">Sin ordenar</option>
+                  <option value="coursedPrograms.graduationYear-true">Año de graduación asc</option>
+                  <option value="coursedPrograms.graduationYear-false">Año de graduación desc</option>
+                  <option value="name-true">Nombre asc</option>
+                  <option value="name-false">Nombre desc</option>
+                </select>
                 {hasActiveFilters && (
                   <Button
                     variant="ghost"
@@ -145,7 +126,7 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
               <SearchFilters
                 filters={filters}
                 onFilterChange={onFilterChange}
-                onSubmit={onSearch}
+                onSubmit={props.onSearch}
                 isLoading={isSearching}
                 programs={programs}
               />
@@ -172,14 +153,15 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
                 onViewProfile={onViewProfile}
                 onExport={onExport}
                 pageSize={pageSize}
+                viewMode={viewMode}
               />
             ) : (
               <SearchEmptyState
                 icon={Search}
                 title={isSearching ? "Buscando egresados..." : "No se encontraron resultados"}
                 description={
-                  isSearching 
-                    ? "Buscando egresados..." 
+                  isSearching
+                    ? "Buscando egresados..."
                     : "Intenta ajustar los filtros de búsqueda para encontrar más resultados."
                 }
                 isLoading={isSearching}
@@ -193,4 +175,4 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
 )
 GraduateSearch.displayName = "GraduateSearch"
 
-export { GraduateSearch } 
+export { GraduateSearch }

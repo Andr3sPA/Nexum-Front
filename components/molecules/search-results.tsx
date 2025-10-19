@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/molecules/card"
 import { Button } from "@/components/atoms/button"
 import { GraduateCard } from "@/components/atoms/graduate-card"
 import { Pagination } from "@/components/atoms/pagination"
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table"
 
 export interface SearchResultsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'results'> {
   results: Array<{
@@ -24,6 +25,9 @@ export interface SearchResultsProps extends Omit<React.HTMLAttributes<HTMLDivEle
     role?: string
     graduationYear?: string
     mobile?: string
+    lastUpdateDate?: string
+    company?: string
+    collaborationInfo?: string
   }>
   totalCount: number
   currentPage: number
@@ -32,11 +36,12 @@ export interface SearchResultsProps extends Omit<React.HTMLAttributes<HTMLDivEle
   onViewProfile: (id: string) => void
   onExport?: () => void
   pageSize?: number
+  viewMode?: 'cards' | 'table'
 }
 
 const SearchResults = React.forwardRef<HTMLDivElement, SearchResultsProps>(
-  ({ 
-    className, 
+  ({
+    className,
     results,
     totalCount,
     currentPage,
@@ -45,7 +50,8 @@ const SearchResults = React.forwardRef<HTMLDivElement, SearchResultsProps>(
     onViewProfile,
     onExport,
     pageSize = 10,
-    ...props 
+    viewMode = 'cards',
+    ...props
   }, ref) => {
     if (results.length === 0) {
       return null
@@ -64,15 +70,50 @@ const SearchResults = React.forwardRef<HTMLDivElement, SearchResultsProps>(
             </div>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {results.map(graduate => (
-              <GraduateCard
-                key={graduate.id}
-                graduate={graduate}
-                onViewProfile={onViewProfile}
-              />
-            ))}
-          </div>
+          {viewMode === 'cards' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {results.map(graduate => (
+                <GraduateCard
+                  key={graduate.id}
+                  graduate={graduate}
+                  onViewProfile={onViewProfile}
+                />
+              ))}
+            </div>
+          ) : (
+            <Table>
+               <TableHeader>
+                 <TableRow>
+                   <TableHead>Nombre Completo</TableHead>
+                   <TableHead>Email</TableHead>
+                   <TableHead>Teléfono</TableHead>
+                   <TableHead>Año de Egreso</TableHead>
+                   <TableHead>Última Actualización</TableHead>
+                   <TableHead>Empresa</TableHead>
+                   <TableHead>Colaboración</TableHead>
+                   <TableHead>Acciones</TableHead>
+                 </TableRow>
+               </TableHeader>
+              <TableBody>
+                {results.map(graduate => (
+                  <TableRow key={graduate.id}>
+                    <TableCell>{`${graduate.name} ${graduate.middleName || ''} ${graduate.lastname} ${graduate.secondLastname || ''}`.trim()}</TableCell>
+                    <TableCell>{graduate.email || graduate.academicEmail || '-'}</TableCell>
+                    <TableCell>{graduate.mobile || '-'}</TableCell>
+                    <TableCell>{graduate.graduationYear || '-'}</TableCell>
+                    <TableCell>{graduate.lastUpdateDate || '-'}</TableCell>
+                    <TableCell>{graduate.company || '-'}</TableCell>
+                    <TableCell>{graduate.collaborationInfo || '-'}</TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="sm" onClick={() => onViewProfile(graduate.id)}>
+                        Ver Perfil
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
           
           <Pagination
             currentPage={currentPage}

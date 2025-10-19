@@ -65,7 +65,7 @@ export function convertFiltersToDetailed(filters: {
   gender: string
   startYear: string
   endYear: string
-  programId: string
+  programIds: string[]
   country: string
   city: string
   mobile: string
@@ -79,7 +79,7 @@ export function convertFiltersToDetailed(filters: {
   gender: string
   startYear: string
   endYear: string
-  programId: string
+  programIds: string[]
   country: string
   city: string
   mobile: string
@@ -97,7 +97,7 @@ export function convertFiltersToDetailed(filters: {
     gender: filters.gender,
     startYear: filters.startYear,
     endYear: filters.endYear,
-    programId: filters.programId,
+    programIds: filters.programIds,
     country: filters.country,
     city: filters.city,
     mobile: filters.mobile,

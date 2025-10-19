@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { MapPin, Mail, Phone, GraduationCap, User } from "lucide-react"
+import { MapPin, Mail, Phone, GraduationCap, User, Building, Users, Calendar } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
 import { Button } from "@/components/atoms/button"
 import { Badge } from "@/components/atoms/badge"
@@ -23,6 +23,9 @@ export interface GraduateCardProps extends React.HTMLAttributes<HTMLDivElement> 
     gender?: string
     role?: string
     graduationYear?: string
+    lastUpdateDate?: string
+    company?: string
+    collaborationInfo?: string
   }
   onViewProfile: (id: string) => void
 }
@@ -96,6 +99,7 @@ const GraduateCard = React.forwardRef<HTMLDivElement, GraduateCardProps>(
               <CardDescription className="mt-1">
                 {roleText} • {genderText}
                 {graduate.graduationYear && ` • ${graduate.graduationYear}`}
+                {graduate.lastUpdateDate && ` • Actualizado: ${graduate.lastUpdateDate}`}
               </CardDescription>
             </div>
             <div className="ml-4">
@@ -107,33 +111,45 @@ const GraduateCard = React.forwardRef<HTMLDivElement, GraduateCardProps>(
         </CardHeader>
         
         <CardContent className="space-y-4">
-          {/* Información de contacto */}
-          <div className="space-y-2">
-            {graduate.email && (
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                <span className="text-gray-700 truncate">{graduate.email}</span>
-              </div>
-            )}
-            {graduate.academicEmail && (
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                <span className="text-blue-700 truncate">{graduate.academicEmail}</span>
-              </div>
-            )}
-            {graduate.mobile && (
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                <span className="text-gray-700">{graduate.mobile}</span>
-              </div>
-            )}
-            {location !== 'No especificado' && (
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                <span className="text-gray-700">{location}</span>
-              </div>
-            )}
-          </div>
+            {/* Información de contacto */}
+            <div className="space-y-2">
+              {graduate.email && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                  <span className="text-gray-700 truncate">{graduate.email}</span>
+                </div>
+              )}
+              {graduate.academicEmail && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Mail className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                  <span className="text-blue-700 truncate">{graduate.academicEmail}</span>
+                </div>
+              )}
+              {graduate.mobile && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                  <span className="text-gray-700">{graduate.mobile}</span>
+                </div>
+              )}
+              {location !== 'No especificado' && (
+                <div className="flex items-center gap-2 text-sm">
+                  <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                  <span className="text-gray-700">{location}</span>
+                </div>
+              )}
+              {graduate.company && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Building className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                  <span className="text-gray-700">{graduate.company}</span>
+                </div>
+              )}
+              {graduate.collaborationInfo && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Users className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                  <span className="text-gray-700">{graduate.collaborationInfo}</span>
+                </div>
+              )}
+            </div>
 
           {/* Programas como chips */}
           {graduate.programs && graduate.programs.length > 0 && (

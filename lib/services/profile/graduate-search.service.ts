@@ -30,7 +30,7 @@ export interface UserFilterRequest {
   // Coursed Program
   startYear?: number
   endYear?: number
-  programId?: number
+  programIds?: number[]
 
   // Contact Information
   address?: string
@@ -74,6 +74,10 @@ export interface BasicUserResponse {
   country?: string
   city?: string
   role?: string
+  graduationYear?: string
+  lastUpdateDate?: string
+  company?: string
+  collaborationInfo?: string
 }
 
 // BasicProgramResponse interface
@@ -107,17 +111,28 @@ export const GraduateSearchService = {
   ): Promise<PageResponse<BasicUserResponse>> {
     // Construir query params
     const params = new URLSearchParams()
-    
+
     // Filtros
     Object.entries(filterRequest).forEach(([key, value]) => {
-      if (value !== undefined && value !== "") params.append(key, String(value))
+      if (value !== undefined && value !== "") {
+        if (key === "programIds" && Array.isArray(value) && value.length > 0) {
+          value.forEach(id => params.append("programId", String(id)))
+        } else if (key !== "programIds") {
+          params.append(key, String(value))
+        }
+      }
     })
-    
+
     // Paginación
     Object.entries(pageQuery).forEach(([key, value]) => {
-      if (value !== undefined && value !== "") params.append(key, String(value))
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          params.append(key, String(v))
+        }
+      }
+      else if (value !== undefined && value !== "") { params.append(key, String(value)) }
     })
-    
+
     const endpoint = `${USER_ENDPOINT}/filter?${params.toString()}`
     const { status, body } = await serviceWithAuth<undefined, PageResponse<BasicUserResponse>>(
       endpoint,

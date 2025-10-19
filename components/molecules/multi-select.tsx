@@ -60,48 +60,23 @@ export function MultiSelect({
 
   const selectedOptions = options.filter((option) => selected.includes(option.value))
 
+  const buttonText = selectedOptions.length > 0
+    ? selectedOptions.length === 1
+      ? selectedOptions[0].label
+      : `${selectedOptions.length} seleccionados`
+    : placeholder
+
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <Label className="block mb-2 text-sm font-medium text-gray-700">
-        Opciones seleccionadas
-      </Label>
-      
-      {/* Selected options display */}
-      <div className="min-h-[40px] p-2 border border-gray-300 rounded-md bg-white">
-        {selectedOptions.length > 0 ? (
-          <div className="flex flex-wrap gap-1">
-            {selectedOptions.map((option) => (
-              <Badge
-                key={option.value}
-                variant="secondary"
-                className="flex items-center gap-1"
-              >
-                {option.label}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveOption(option.value)}
-                  className="ml-1 text-gray-500 hover:text-gray-700"
-                  disabled={disabled}
-                >
-                  ×
-                </button>
-              </Badge>
-            ))}
-          </div>
-        ) : (
-          <span className="text-gray-500 text-sm">{placeholder}</span>
-        )}
-      </div>
-
       {/* Dropdown trigger */}
       <Button
         type="button"
         variant="outline"
         onClick={() => setIsOpen(!isOpen)}
         disabled={disabled}
-        className="w-full mt-2 justify-between"
+        className="w-full justify-between"
       >
-        <span>Seleccionar opciones</span>
+        <span className="truncate">{buttonText}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
           fill="none"

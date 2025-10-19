@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/atoms/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card";
 import { SectionTitle } from "@/components/atoms/section-title";
-import { Briefcase, Users, TrendingUp, Search, Plus, ArrowRight } from "lucide-react";
+import { Briefcase, Users, TrendingUp, Search, Plus, ArrowRight, LayoutDashboard } from "lucide-react";
 import { AuthenticatedUserResponse, DetailedUserResponse } from "@/lib/services/profile";
 import { LocalStorageService } from "@/lib/services/local-storage.service";
 import { useRouter } from "next/navigation";
@@ -64,6 +64,21 @@ export default function HomePage() {
                 <Briefcase className="h-5 w-5" />
                 Ver Oportunidades
                 <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="xl"
+                onClick={() => {
+                  if (!user) {
+                    router.push("/login");
+                  } else {
+                    router.push("/dashboard");
+                  }
+                }}
+                className="flex items-center gap-2"
+              >
+                <LayoutDashboard className="h-5 w-5" />
+                Ir al Dashboard
               </Button>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules
 import { Input } from "@/components/atoms/input"
 import { Select } from "@/components/atoms/select"
 import { Button } from "@/components/atoms/button"
+import { MultiSelect } from "@/components/molecules/multi-select"
 
 export interface SearchFiltersProps extends React.HTMLAttributes<HTMLDivElement> {
   filters: {
@@ -15,14 +16,14 @@ export interface SearchFiltersProps extends React.HTMLAttributes<HTMLDivElement>
     gender: string
     startYear: string
     endYear: string
-    programId: string
+    programIds: string[]
     country: string
     city: string
     mobile: string
     email: string
     academicEmail: string
   }
-  onFilterChange: (field: string, value: string) => void
+  onFilterChange: (field: string, value: string | string[]) => void
   onSubmit: (e?: React.FormEvent) => void
   isLoading?: boolean
   programs: Array<{ id: number, name: string, code: string }>
@@ -82,17 +83,14 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
             </div>
             {/* Programa */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="programId" className="text-sm font-medium text-gray-700">Programa</label>
-              <Select 
-                value={filters.programId} 
-                onChange={e => onFilterChange("programId", e.target.value)}
+              <label className="text-sm font-medium text-gray-700">Programas</label>
+              <MultiSelect
+                options={programs.map(p => ({ value: p.id.toString(), label: p.name }))}
+                selected={filters.programIds}
+                onChange={(selected) => onFilterChange("programIds", selected)}
+                placeholder="Seleccionar programas..."
                 className="h-11 text-base"
-              >
-                <option value="">Seleccionar</option>
-                {programs.map(p => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </Select>
+              />
             </div>
             {/* Email académico */}
             <div className="flex flex-col gap-1">
