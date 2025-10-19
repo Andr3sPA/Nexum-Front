@@ -1,27 +1,23 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import React, { useState } from "react"
+import { useRouter } from "next/navigation"
 import AuthTemplate from "@/components/templates/auth-template"
 import { Input } from "@/components/atoms/input"
 import { Button } from "@/components/atoms/button"
 import { AuthenticationService } from "@/lib/services/profile/auth.service"
 import { toast } from "@/hooks/use-toast"
 
-export default function ResetPasswordPage({ params }: { params: { token?: string } }) {
+export default async function ResetPasswordPage({ params }: { params: Promise<{ token?: string }> }) {
   const router = useRouter()
   const [password, setPassword] = useState("")
   const [confirm, setConfirm] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Next 13 dynamic route: token will be available in params
-  // But to support links with query '?token=' we also read it
-  useEffect(() => {
-    // no-op here; params are passed by Next automatically
-  }, [])
-
-  const token = (params && params.token) || (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("token") || undefined : undefined)
+  // Await params since they are now async in Next.js 13+
+  const resolvedParams = await params;
+  const token = resolvedParams.token || (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("token") || undefined : undefined)
 
   const handleReset = async () => {
     setLoading(true)
