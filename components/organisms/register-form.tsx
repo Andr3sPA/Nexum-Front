@@ -511,13 +511,14 @@ export function RegisterForm({
                     />
                   </FormField>
 
-                  <FormField id="secondLastName" label="Segundo Apellido">
+                  <FormField id="secondLastName" label="Segundo Apellido" required>
                     <Input
                       id="secondLastName"
                       value={formData.secondLastName}
                       onChange={(e) => handleInputChange("secondLastName", e.target.value)}
                       placeholder="García"
                       className="h-10"
+                      required
                       disabled={isLoading}
                     />
                   </FormField>

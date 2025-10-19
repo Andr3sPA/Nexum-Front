@@ -57,7 +57,14 @@ function EditAccountRow({ account, onSave, onCancel }: { account: AuthResponse, 
         </Select>
       </TableCell>
       <TableCell className="flex gap-2 justify-start items-center bg-transparent">
-        <Button size="sm" onClick={async () => { setLoading(true); await onSave({ email, password, role }); setLoading(false); }} disabled={loading} className="px-4">Guardar</Button>
+        <Button size="sm" onClick={async () => { 
+          setLoading(true); 
+          try { 
+            await onSave({ email, password, role }); 
+          } finally { 
+            setLoading(false); 
+          }
+        }} disabled={loading} className="px-4">Guardar</Button>
         <Button size="sm" variant="secondary" onClick={onCancel} className="px-4">Cancelar</Button>
       </TableCell>
     </TableRow>

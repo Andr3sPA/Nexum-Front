@@ -50,7 +50,8 @@ export default function RegisterPage() {
         password: formData.password,
       })
 
-      router.push("/login?success=1")
+  // After registering, redirect user to verification page so they can enter code sent by email
+        router.push("/verify?email=" + encodeURIComponent(formData.email))
     } catch (err: any) {
       setError(err.message || "Error al registrarse")
     } finally {

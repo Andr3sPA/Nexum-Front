@@ -168,12 +168,19 @@ export function LoginForm({
       </form>
 
       {/* Forgot Password */}
-      <div className="text-center">
+      <div className="text-center space-y-2">
         <a 
-          href="/forgot-password" 
+          href="/request-password-reset" 
           className="text-sm font-medium text-[#026937] hover:text-[#35944b] transition-colors duration-200 hover:underline"
         >
           ¿Olvidaste tu contraseña?
+        </a>
+        <br />
+        <a 
+          href="/verify" 
+          className="text-sm font-medium text-[#026937] hover:text-[#35944b] transition-colors duration-200 hover:underline"
+        >
+          ¿Necesitas verificar tu cuenta?
         </a>
       </div>
     </div>
