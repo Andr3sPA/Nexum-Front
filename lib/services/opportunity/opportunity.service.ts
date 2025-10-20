@@ -169,4 +169,19 @@ export const OpportunityService = {
     }
     return body;
   },
+
+  // Actualizar SOLO el estado de la oportunidad (PATCH) - solo ADMIN
+  async updateStatus(id: number, statusParam: 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'EXPIRED' | 'ON_HOLD' | 'CANCELLED'): Promise<OpportunityResponse> {
+    const endpoint = `${OPPORTUNITY_ENDPOINT}/${id}/status?status=${encodeURIComponent(statusParam)}`;
+    const { status, body } = await serviceWithAuth<undefined, OpportunityResponse>(
+      endpoint,
+      METHOD.patch,
+      undefined,
+      OPPORTUNITY_HOST
+    );
+    if (status !== 200) {
+      throw new Error((body as any)?.message || `Error updating opportunity status: HTTP ${status}`);
+    }
+    return body;
+  },
 };

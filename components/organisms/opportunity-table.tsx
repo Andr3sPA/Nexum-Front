@@ -286,8 +286,23 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
     }
   };
 
+  // Helper: verificar si una oportunidad NO está expirada (compara por fecha, ignora hora)
+  const isNotExpired = (dateStr?: string) => {
+    if (!dateStr) return true; // si no hay fecha, no la consideramos expirada
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const d = new Date(dateStr);
+    const onlyDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return onlyDate >= today;
+  };
+
+  // Base list según rol: egresados (GRADUATE) solo ven activas y vigentes a la fecha
+  const baseOpportunities = (user && user.role === ROLES.GRADUATE)
+    ? opportunities.filter(o => o.status === 'Active' && isNotExpired(o.expirationDate))
+    : opportunities;
+
   // Filtrar y ordenar oportunidades
-  const filteredOpportunities = opportunities
+  const filteredOpportunities = baseOpportunities
     .filter(opp =>
       (!search || opp.title.toLowerCase().includes(search.toLowerCase()) || opp.description.toLowerCase().includes(search.toLowerCase())) &&
       (!filterStatus || opp.status === filterStatus) &&
@@ -463,7 +478,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                         <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
                       )}
                     </TableHead>
-                    {(user && (user.role === ROLES.DEAN || user.role === ROLES.ADMIN)) && (
+                    {(user && user.role === ROLES.ADMIN) && (
                       <TableHead>Editar Estado</TableHead>
                     )}
                   </TableRow>
@@ -539,7 +554,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                           day: 'numeric'
                         }) : '-'}
                       </TableCell>
-                      {(user && (user.role === ROLES.DEAN || user.role === ROLES.ADMIN)) && (
+                      {(user && user.role === ROLES.ADMIN) && (
                         <TableCell onClick={e => e.stopPropagation()}>
                           {statusLoadingId === opp.id ? (
                             <div className="flex items-center justify-center h-10">
@@ -554,15 +569,12 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                                 const newStatus = e.target.value;
                                 setStatusLoadingId(opp.id);
                                 try {
-                                  // cast to any to satisfy the OpportunityStatus typing from the service
-                                  // Asegura que complementaryStudies y otros campos requeridos no sean undefined
-                                  const updatePayload = {
-                                    ...opp,
-                                    status: newStatus as any,
-                                    complementaryStudies: opp.complementaryStudies ?? "",
-                                    travelAvailability: opp.travelAvailability ?? false,
-                                  };
-                                  await OpportunityService.update(opp.id, updatePayload);
+                                  // Map UI value (Title Case) -> backend enum (UPPER_SNAKE)
+                                  const mapToEnum = (val: string) =>
+                                    val.replace(/\s+/g, '_').toUpperCase();
+                                  const enumStatus = mapToEnum(newStatus) as 'DRAFT'|'ACTIVE'|'CLOSED'|'EXPIRED'|'ON_HOLD'|'CANCELLED';
+
+                                  await OpportunityService.updateStatus(opp.id, enumStatus);
                                   toast({ title: 'Estado actualizado', description: `Nuevo estado: ${newStatus}` });
                                   fetchOpportunities();
                                 } catch (err) {
