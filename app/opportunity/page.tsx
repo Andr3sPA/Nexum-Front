@@ -363,7 +363,7 @@ export default function EmployerOpportunityPage() {
 
       // Trigger refetch of opportunities table
       setRefetchTrigger(prev => prev + 1);
-      router.push("/opportunity");
+      router.push("/opportunity?register=1");
     } catch (error) {
       toast({
         title: isEditMode ? "Error al actualizar oportunidad" : "Error al registrar oportunidad",

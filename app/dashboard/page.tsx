@@ -94,7 +94,7 @@ export default function UnifiedDashboardPage() {
 
       },
       {
-        href: "/opportunity/register=1",
+        href: "/opportunity?register=1",
         icon: <ArrowRight className="w-8 h-8 text-green-600" />,
         title: "Registrar Oportunidad",
         description:
@@ -158,7 +158,7 @@ export default function UnifiedDashboardPage() {
   } else if (role === ROLES.EMPLOYER) {
     cards = [
       {
-        href: "/opportunity/register=1",
+        href: "/opportunity?register=1",
         icon: <ArrowRight className="w-8 h-8 text-green-600" />,
         title: "Registrar Oportunidad",
         description:
