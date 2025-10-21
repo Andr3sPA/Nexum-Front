@@ -22,7 +22,7 @@ export default function HomePage() {
 
   const handleCreateOpportunity = () => {
     // Allow anyone to create opportunities - anonymous users can create directly
-    router.push("/employer/opportunity?register=1");
+    router.push("/opportunity/register=1");
   };
 
   const handleViewOpportunities = () => {

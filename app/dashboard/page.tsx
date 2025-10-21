@@ -94,7 +94,7 @@ export default function UnifiedDashboardPage() {
 
       },
       {
-        href: "/employer/opportunity?register=1",
+        href: "/opportunity/register=1",
         icon: <ArrowRight className="w-8 h-8 text-green-600" />,
         title: "Registrar Oportunidad",
         description:
@@ -121,7 +121,7 @@ export default function UnifiedDashboardPage() {
         color: "green",
       },
       {
-        href: "/employer/opportunity",
+        href: "/opportunity",
         icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
         title: "Oportunidades",
         description: "Descubre nuevas oportunidades académicas y laborales",
@@ -158,7 +158,7 @@ export default function UnifiedDashboardPage() {
   } else if (role === ROLES.EMPLOYER) {
     cards = [
       {
-        href: "/employer/opportunity?register=1",
+        href: "/opportunity/register=1",
         icon: <ArrowRight className="w-8 h-8 text-green-600" />,
         title: "Registrar Oportunidad",
         description:

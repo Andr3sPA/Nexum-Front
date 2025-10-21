@@ -239,7 +239,7 @@ export default function EmployerOpportunityPage() {
     });
 
     // Navigate to register view
-    router.push("/employer/opportunity?register=1");
+    router.push("?register=1");
   };
 
   const resetForm = () => {
@@ -363,7 +363,7 @@ export default function EmployerOpportunityPage() {
 
       // Trigger refetch of opportunities table
       setRefetchTrigger(prev => prev + 1);
-      router.push("/employer/opportunity");
+      router.push("/opportunity");
     } catch (error) {
       toast({
         title: isEditMode ? "Error al actualizar oportunidad" : "Error al registrar oportunidad",
@@ -396,7 +396,7 @@ export default function EmployerOpportunityPage() {
             onSubmit={handleSubmit}
             onCancel={isEditMode ? () => {
               resetForm();
-              router.push("/employer/opportunity");
+              router.push("/opportunity");
             } : undefined}
             loading={loading}
             isEditMode={isEditMode}
