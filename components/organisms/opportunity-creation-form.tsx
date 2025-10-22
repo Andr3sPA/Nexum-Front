@@ -13,14 +13,15 @@ import { SalaryRangeResponse } from "@/lib/services/catalog/salary-range.service
 import { ProgramResponse } from "@/lib/services/catalog/program.service";
 import { ProgramCompetencyResponse } from "@/lib/services/catalog/program-competency.service";
 import { JobAreaResponse } from "@/lib/services/catalog/job-area.service";
-import { MultiSelectDropdown } from "@/components/molecules/multi-select-dropdown";
+import { MultiSelectNumber } from "@/components/molecules/multi-select-number";
 import { Briefcase, DollarSign, Calendar, User, Settings, Building } from "lucide-react";
+import { ROLES } from "@/lib/services/constants/api.constants";
 
 interface OpportunityCreationFormProps {
   form: OpportunityRequest;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   onSelectChange: (name: string, value: string) => void;
-  onMultiSelectChange: (name: string, values: string[]) => void;
+  onMultiSelectChange: (updater: (prev: OpportunityRequest) => OpportunityRequest) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel?: () => void;
   loading: boolean;
@@ -30,18 +31,7 @@ interface OpportunityCreationFormProps {
   programCompetencies: ProgramCompetencyResponse[];
   jobAreas: JobAreaResponse[];
   catalogLoading: boolean;
-  programSearch: string;
-  onProgramSearchChange: (value: string) => void;
-  showProgramDropdown: boolean;
-  setShowProgramDropdown: (show: boolean) => void;
-  competencySearch: string;
-  onCompetencySearchChange: (value: string) => void;
-  showCompetencyDropdown: boolean;
-  setShowCompetencyDropdown: (show: boolean) => void;
-  jobAreaSearch: string;
-  onJobAreaSearchChange: (value: string) => void;
-  showJobAreaDropdown: boolean;
-  setShowJobAreaDropdown: (show: boolean) => void;
+  userRole?: string;
 }
 
 export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = ({
@@ -58,18 +48,7 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
   programCompetencies,
   jobAreas,
   catalogLoading,
-  programSearch,
-  onProgramSearchChange,
-  showProgramDropdown,
-  setShowProgramDropdown,
-  competencySearch,
-  onCompetencySearchChange,
-  showCompetencyDropdown,
-  setShowCompetencyDropdown,
-  jobAreaSearch,
-  onJobAreaSearchChange,
-  showJobAreaDropdown,
-  setShowJobAreaDropdown,
+  userRole,
 }) => {
   return (
     <Card className="mb-8">
@@ -150,6 +129,38 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
           </FormSection>
 
           <FormSection
+            icon={Settings}
+            title="Estado de la Oportunidad"
+            description="Defina el estado actual de la oportunidad laboral"
+            color="orange"
+          >
+            <div>
+              <Label htmlFor="status">Estado *</Label>
+              <Select name="status" id="status" value={form.status} onChange={onChange} required>
+                <option value="Draft">Borrador</option>
+                {userRole !== ROLES.EMPLOYER && (
+                  <>
+                    <option value="Active">Activa</option>
+                    <option value="Closed">Cerrada</option>
+                    <option value="Expired">Expirada</option>
+                    <option value="On Hold">En Espera</option>
+                    <option value="Cancelled">Cancelada</option>
+                  </>
+                )}
+                {userRole === ROLES.EMPLOYER && (
+                  <>
+                    <option value="Active" disabled>Activa (Solo Admin)</option>
+                    <option value="Closed" disabled>Cerrada (Solo Admin)</option>
+                    <option value="Expired" disabled>Expirada (Solo Admin)</option>
+                    <option value="On Hold" disabled>En Espera (Solo Admin)</option>
+                    <option value="Cancelled" disabled>Cancelada (Solo Admin)</option>
+                  </>
+                )}
+              </Select>
+            </div>
+          </FormSection>
+
+          <FormSection
             icon={DollarSign}
             title="Rango Salarial"
             description="Seleccione el rango salarial aproximado que se ofrece para esta posición laboral"
@@ -211,65 +222,41 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
               </div>
               <div>
                 <Label>Programas Relacionados</Label>
-                <MultiSelectDropdown
+                <MultiSelectNumber
                   items={programs}
                   selectedIds={form.coursedProgramIds}
-                  onSelect={(id) => onMultiSelectChange('coursedProgramIds', [...form.coursedProgramIds.map(String), id.toString()])}
-                  onRemove={(id) => onMultiSelectChange('coursedProgramIds', form.coursedProgramIds.filter(i => i !== id).map(String))}
-                  placeholder="Buscar y seleccionar programas..."
-                  searchValue={programSearch}
-                  onSearchChange={onProgramSearchChange}
-                  showDropdown={showProgramDropdown}
-                  setShowDropdown={setShowProgramDropdown}
-                  onEnterKey={(available) => {
-                    if (available.length > 0) {
-                      onMultiSelectChange('coursedProgramIds', [...form.coursedProgramIds.map(String), available[0].id.toString()]);
-                      onProgramSearchChange('');
-                      setShowProgramDropdown(false);
-                    }
-                  }}
+                  onChange={(selectedIds) => onMultiSelectChange(prev => ({
+                    ...prev,
+                    coursedProgramIds: selectedIds
+                  }))}
+                  placeholder="Seleccionar programas..."
+                  disabled={catalogLoading}
                 />
               </div>
               <div>
                 <Label>Competencias Requeridas</Label>
-                <MultiSelectDropdown
+                <MultiSelectNumber
                   items={programCompetencies}
                   selectedIds={form.programCompetencyIds}
-                  onSelect={(id) => onMultiSelectChange('programCompetencyIds', [...form.programCompetencyIds.map(String), id.toString()])}
-                  onRemove={(id) => onMultiSelectChange('programCompetencyIds', form.programCompetencyIds.filter(i => i !== id).map(String))}
-                  placeholder="Buscar y seleccionar competencias..."
-                  searchValue={competencySearch}
-                  onSearchChange={onCompetencySearchChange}
-                  showDropdown={showCompetencyDropdown}
-                  setShowDropdown={setShowCompetencyDropdown}
-                  onEnterKey={(available) => {
-                    if (available.length > 0) {
-                      onMultiSelectChange('programCompetencyIds', [...form.programCompetencyIds.map(String), available[0].id.toString()]);
-                      onCompetencySearchChange('');
-                      setShowCompetencyDropdown(false);
-                    }
-                  }}
+                  onChange={(selectedIds) => onMultiSelectChange(prev => ({
+                    ...prev,
+                    programCompetencyIds: selectedIds
+                  }))}
+                  placeholder="Seleccionar competencias..."
+                  disabled={catalogLoading}
                 />
               </div>
               <div>
                 <Label>Áreas de Trabajo</Label>
-                <MultiSelectDropdown
+                <MultiSelectNumber
                   items={jobAreas}
                   selectedIds={form.jobAreaIds}
-                  onSelect={(id) => onMultiSelectChange('jobAreaIds', [...form.jobAreaIds.map(String), id.toString()])}
-                  onRemove={(id) => onMultiSelectChange('jobAreaIds', form.jobAreaIds.filter(i => i !== id).map(String))}
-                  placeholder="Buscar y seleccionar áreas de trabajo..."
-                  searchValue={jobAreaSearch}
-                  onSearchChange={onJobAreaSearchChange}
-                  showDropdown={showJobAreaDropdown}
-                  setShowDropdown={setShowJobAreaDropdown}
-                  onEnterKey={(available) => {
-                    if (available.length > 0) {
-                      onMultiSelectChange('jobAreaIds', [...form.jobAreaIds.map(String), available[0].id.toString()]);
-                      onJobAreaSearchChange('');
-                      setShowJobAreaDropdown(false);
-                    }
-                  }}
+                  onChange={(selectedIds) => onMultiSelectChange(prev => ({
+                    ...prev,
+                    jobAreaIds: selectedIds
+                  }))}
+                  placeholder="Seleccionar áreas de trabajo..."
+                  disabled={catalogLoading}
                 />
               </div>
               <div className="flex items-center space-x-3">

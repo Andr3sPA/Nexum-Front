@@ -58,7 +58,6 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                 onClick={() => {
                   onSelect(item.id);
                   onSearchChange('');
-                  setShowDropdown(false);
                 }}
               >
                 {item.name}

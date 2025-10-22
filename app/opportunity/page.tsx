@@ -64,16 +64,6 @@ export default function EmployerOpportunityPage() {
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
   const [pendingFormData, setPendingFormData] = useState<OpportunityRequest | null>(null);
 
-  // Dropdown visibility states
-  const [showProgramDropdown, setShowProgramDropdown] = useState(false);
-  const [showCompetencyDropdown, setShowCompetencyDropdown] = useState(false);
-  const [showJobAreaDropdown, setShowJobAreaDropdown] = useState(false);
-
-  // Search states
-  const [programSearch, setProgramSearch] = useState("");
-  const [competencySearch, setCompetencySearch] = useState("");
-  const [jobAreaSearch, setJobAreaSearch] = useState("");
-
   // Catalog data state
   const [salaryRanges, setSalaryRanges] = useState<SalaryRangeResponse[]>([]);
   const [programs, setPrograms] = useState<ProgramResponse[]>([]);
@@ -198,11 +188,8 @@ export default function EmployerOpportunityPage() {
     }));
   };
 
-  const handleMultiSelectChange = (name: string, values: string[]) => {
-    setForm(prev => ({
-      ...prev,
-      [name]: values.map(v => parseInt(v))
-    }));
+  const handleMultiSelectChange = (updater: (prev: OpportunityRequest) => OpportunityRequest) => {
+    setForm(updater);
   };
 
 
@@ -272,10 +259,6 @@ export default function EmployerOpportunityPage() {
     // Reset cascading dropdowns
     setProgramCompetencies([]);
     setJobAreas([]);
-    // Reset search states
-    setProgramSearch("");
-    setCompetencySearch("");
-    setJobAreaSearch("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -405,18 +388,7 @@ export default function EmployerOpportunityPage() {
             programCompetencies={programCompetencies}
             jobAreas={jobAreas}
             catalogLoading={catalogLoading}
-            programSearch={programSearch}
-            onProgramSearchChange={setProgramSearch}
-            showProgramDropdown={showProgramDropdown}
-            setShowProgramDropdown={setShowProgramDropdown}
-            competencySearch={competencySearch}
-            onCompetencySearchChange={setCompetencySearch}
-            showCompetencyDropdown={showCompetencyDropdown}
-            setShowCompetencyDropdown={setShowCompetencyDropdown}
-            jobAreaSearch={jobAreaSearch}
-            onJobAreaSearchChange={setJobAreaSearch}
-            showJobAreaDropdown={showJobAreaDropdown}
-            setShowJobAreaDropdown={setShowJobAreaDropdown}
+            userRole={user?.role}
           />
         )}
         {user && (

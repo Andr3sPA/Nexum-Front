@@ -481,6 +481,9 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                     {(user && user.role === ROLES.ADMIN) && (
                       <TableHead>Editar Estado</TableHead>
                     )}
+                    {(user && (user.role === ROLES.EMPLOYER || user.role === ROLES.ADMINISTRATIVE || user.role === ROLES.ADMIN || user.role === ROLES.DEAN)) && (
+                      <TableHead>Acciones</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -592,6 +595,19 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                               <option value="Cancelled">Cancelado</option>
                             </Select>
                           )}
+                        </TableCell>
+                      )}
+                      {(user && (user.role === ROLES.EMPLOYER || user.role === ROLES.ADMINISTRATIVE || user.role === ROLES.ADMIN || user.role === ROLES.DEAN)) && (
+                        <TableCell onClick={e => e.stopPropagation()}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onEditOpportunity && onEditOpportunity(opp)}
+                            className="flex items-center gap-1"
+                          >
+                            <Edit className="h-3 w-3" />
+                            Editar
+                          </Button>
                         </TableCell>
                       )}
                     </TableRow>
