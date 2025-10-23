@@ -87,7 +87,10 @@ export const AuthenticationService = {
       BASIC_HEADER,
       user,
     );
-    if (status !== 201) throw new Error(body?.message || "Error en el registro de empleador");
+    if (status !== 201) {
+      const errorMessage = body?.message || body?.error || `Error en el registro de empleador (HTTP ${status})`;
+      throw new Error(errorMessage);
+    }
     return body;
   },
 

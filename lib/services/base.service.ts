@@ -48,8 +48,27 @@ export async function service<Request, Response = any>(
     logger.info("📡 Response received:", { status: response.status, ok: response.ok, statusText: response.statusText })
     
     logger.info("📦 Parsing response body...")
-    const responseBody = await response.json();
-    logger.info("📦 Response body:", responseBody)
+    let responseBody: any;
+    const contentType = response.headers.get('content-type');
+    
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        responseBody = await response.json();
+        logger.info("📦 Response body (JSON):", responseBody)
+      } catch (jsonError) {
+        logger.warn("⚠️ Failed to parse JSON response:", jsonError)
+        responseBody = { message: `HTTP ${response.status}: ${response.statusText}` };
+      }
+    } else {
+      try {
+        const textBody = await response.text();
+        logger.info("📦 Response body (text):", textBody.substring(0, 200))
+        responseBody = { message: textBody || `HTTP ${response.status}: ${response.statusText}` };
+      } catch (textError) {
+        logger.warn("⚠️ Failed to read response text:", textError)
+        responseBody = { message: `HTTP ${response.status}: ${response.statusText}` };
+      }
+    }
     
     return { status: response.status, ok: response.ok, body: responseBody };
   } catch (error) {

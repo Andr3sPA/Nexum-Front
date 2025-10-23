@@ -64,60 +64,29 @@ export default function RegisterPage() {
     setError(null)
 
     try {
+      logger.info("🔄 Starting employer registration", { formData, editCode })
+
       // Register the employer
-      await AuthenticationService.registerEmployer({
+      const registerBody = await AuthenticationService.registerEmployer({
         name: formData.contactName,
         email: formData.email,
         password: formData.password,
-        phone: formData.phone,
-        businessName: formData.businessName,
-        nit: formData.nit,
+        phone: formData.phone || undefined,
+        businessName: formData.businessName || undefined,
+        nit: formData.nit || undefined,
         editCode: editCode,
       })
 
-      // Automatically login the newly registered employer
-      const loginResponse = await AuthenticationService.login({
-        email: formData.email,
-        password: formData.password,
-      })
+      logger.info("✅ Employer registration successful", registerBody)
 
-      // Store user in localStorage
-      LocalStorageService.setItem("user", loginResponse)
-
-      // Try to get detailed user profile
-      try {
-        const userProfile = await DetailedUserService.getCurrentUserDetailed()
-        LocalStorageService.setItem("userProfile", userProfile)
-      } catch (profileErr) {
-        logger.warn("Could not get detailed user profile:", profileErr)
-      }
-
-      // Try to get employer profile
-      try {
-        const employerProfile = await EmployerService.getCurrentEmployer()
-        LocalStorageService.setItem("employerProfile", employerProfile)
-      } catch (employerErr) {
-        logger.warn("Could not get employer profile:", employerErr)
-        // If we can't fetch employer profile, create it from registration data
-        const employerProfile = {
-          id: loginResponse.id,
-          name: formData.contactName,
-          email: formData.email,
-          phone: formData.phone,
-          businessName: formData.businessName,
-          nit: formData.nit,
-          creationDate: new Date().toISOString(),
-          lastUpdate: new Date().toISOString()
-        };
-        LocalStorageService.setItem("employerProfile", employerProfile)
-      }
-
-      // Redirect to dashboard
-      router.replace("/dashboard")
+      // After registering, redirect user to verification page so they can enter code sent by email
+      router.push("/verify?email=" + encodeURIComponent(formData.email))
+      logger.info("✅ Redirected to verification page")
 
     } catch (err: any) {
-      logger.error("Employer registration error:", err)
-      setError(err.message || "Error al registrar empleador")
+      logger.error("❌ Employer registration error:", err)
+      const errorMessage = err.message || err?.response?.data?.message || "Error al registrar empleador"
+      setError(errorMessage)
     } finally {
       setIsLoading(false)
     }

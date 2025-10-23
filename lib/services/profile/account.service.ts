@@ -16,6 +16,7 @@ export interface AuthRequest {
   email: string
   password: string
   role: RoleName
+  verified?: string
 }
 
 export interface AuthResponse {
@@ -26,6 +27,7 @@ export interface AuthResponse {
   lastname: string
   secondLastname: string
   role: RoleName
+  verified?: boolean
 }
 
 export interface PageQuery {

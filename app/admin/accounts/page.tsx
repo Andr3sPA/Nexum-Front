@@ -39,6 +39,7 @@ function EditAccountRow({ account, onSave, onCancel }: { account: AuthResponse, 
   const [email, setEmail] = useState(account.email)
   const [password, setPassword] = useState("")
   const [role, setRole] = useState(account.role)
+  const [verified, setVerified] = useState(account.verified ? "TRUE" : "FALSE")
   const [loading, setLoading] = useState(false)
   return (
     <TableRow className="bg-[#f3f8f4] border-2 border-[#43b649] animate-pulse-[0.5s]">
@@ -56,11 +57,17 @@ function EditAccountRow({ account, onSave, onCancel }: { account: AuthResponse, 
           {ROLES.filter(r => r.value).map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
         </Select>
       </TableCell>
+      <TableCell>
+        <Select value={verified} onChange={e => setVerified(e.target.value)} className="h-9 text-sm">
+          <option value="TRUE">Verificado</option>
+          <option value="FALSE">No Verificado</option>
+        </Select>
+      </TableCell>
       <TableCell className="flex gap-2 justify-start items-center bg-transparent">
         <Button size="sm" onClick={async () => { 
           setLoading(true); 
           try { 
-            await onSave({ email, password, role }); 
+            await onSave({ email, password, role, verified }); 
           } finally { 
             setLoading(false); 
           }
@@ -101,6 +108,10 @@ export default function AdminAccountsPage() {
   const handleSearch = () => { setPage(0); fetchAccounts() }
 
   const handleEditSave = async (idx: number, data: AuthRequest) => {
+    console.log("🔄 Updating account:", data)
+    console.log("🔄 Verified field type:", typeof data.verified, "value:", data.verified)
+    
+    console.log("📤 Sending to backend:", data)
     const account = accounts[idx]
     await AccountService.updateById(account.id, data)
     setEditIdx(null)
@@ -140,6 +151,7 @@ export default function AdminAccountsPage() {
                 <TableHead className="text-white font-bold">Nombre</TableHead>
                 <TableHead className="text-white font-bold">Apellidos</TableHead>
                 <TableHead className="text-white font-bold">Rol</TableHead>
+                <TableHead className="text-white font-bold">Verificado</TableHead>
                 <TableHead className="text-white font-bold">Acciones</TableHead>
               </TableRow>
             </TableHeader>
@@ -158,6 +170,13 @@ export default function AdminAccountsPage() {
                     <TableCell>{acc.name} {acc.middleName}</TableCell>
                     <TableCell>{acc.lastname} {acc.secondLastname}</TableCell>
                     <TableCell>{ROLES.find(r => r.value === acc.role)?.label}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        acc.verified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {acc.verified ? 'Verificado' : 'No Verificado'}
+                      </span>
+                    </TableCell>
                     <TableCell>
                       <Button size="sm" onClick={() => setEditIdx(idx)}>Editar</Button>
                     </TableCell>
