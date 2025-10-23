@@ -40,7 +40,7 @@ export default function EmployerOpportunityPage() {
     contactName: "",
     businessEmail: "",
     businessPhone: "",
-  link: '',
+    link: '',
 
     complementaryStudies: "",
     requiredExperience: "Not specified",
@@ -211,7 +211,7 @@ export default function EmployerOpportunityPage() {
       contactName: opportunity.contactName || "",
       businessEmail: opportunity.businessEmail || "",
       businessPhone: opportunity.businessPhone || "",
-  link: opportunity.link || '',
+      link: opportunity.link || '',
 
       complementaryStudies: opportunity.complementaryStudies || "",
       requiredExperience: opportunity.requiredExperience,
@@ -242,7 +242,7 @@ export default function EmployerOpportunityPage() {
       contactName: "",
       businessEmail: "",
       businessPhone: "",
-  link: '',
+      link: '',
       complementaryStudies: "",
       requiredExperience: "Not specified",
       travelAvailability: false,
@@ -363,12 +363,14 @@ export default function EmployerOpportunityPage() {
   return (
     <>
       <Navbar user={user} />
-    <div className="max-w-6xl mx-auto mt-10 p-6">
-  <FloatingNotice position="inline" persist={false} prominent={isEditMode}>
-          
-          Las oportunidades publicadas en este portal son responsabilidad exclusiva de las entidades que las ofrecen. No nos hacemos responsables por el contenido, veracidad o vigencia de dichas publicaciones.
-
-          Para postularse, debe hacerlo directamente a través de los enlaces externos proporcionados. En caso de no contar con un enlace, contacte a la organización por correo electrónico.
+      <div className="max-w-6xl mx-auto mt-10 p-6">
+        <FloatingNotice position="inline" persist={false} prominent={isEditMode}>
+          La Universidad de Antioquia no se hace responsable por las
+          oportunidades publicadas en este portal, las cuales son responsabilidad exclusiva
+          de las entidades que las ofrecen. No nos hacemos responsables por el contenido,
+          veracidad o vigencia de dichas publicaciones. Para postularse, debe hacerlo
+          directamente a través de los enlaces externos proporcionados. En caso de no contar
+          con un enlace, contacte a la organización por correo electrónico.
         </FloatingNotice>
         {showRegister && (user ? (user.role === ROLES.EMPLOYER || user.role === ROLES.ADMINISTRATIVE) : true) && (
           <OpportunityCreationForm

@@ -143,9 +143,12 @@ export default function OpportunityPublicDetailPage() {
       <Navbar />
       <div className="max-w-6xl mx-auto mt-10 p-6">
         <FloatingNotice>
-          Las oportunidades publicadas en este portal son responsabilidad exclusiva de las entidades que las ofrecen. No nos hacemos responsables por el contenido, veracidad o vigencia de dichas publicaciones.
-
-          Para postularse, debe hacerlo directamente a través de los enlaces externos proporcionados. En caso de no contar con un enlace, contacte a la organización por correo electrónico.
+          La Universidad de Antioquia no se hace responsable por las
+          oportunidades publicadas en este portal, las cuales son responsabilidad exclusiva
+          de las entidades que las ofrecen. No nos hacemos responsables por el contenido,
+          veracidad o vigencia de dichas publicaciones. Para postularse, debe hacerlo
+          directamente a través de los enlaces externos proporcionados. En caso de no contar
+          con un enlace, contacte a la organización por correo electrónico.
         </FloatingNotice>
         <SectionTitle>Detalle de Oportunidad</SectionTitle>
         <Card className="mt-6">
@@ -157,66 +160,66 @@ export default function OpportunityPublicDetailPage() {
           <CardContent>
             <div className="space-y-6">
               <FormSection
-              icon={Briefcase}
-              title="Información Básica"
-              description="Detalles principales de la oportunidad"
-              color="blue"
-            >
-              <div>
-                <div className="mb-2"><strong>Descripción:</strong></div>
-                <div className="mt-2 whitespace-pre-wrap text-sm text-gray-700">{opportunity.description}</div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                icon={Briefcase}
+                title="Información Básica"
+                description="Detalles principales de la oportunidad"
+                color="blue"
+              >
                 <div>
-                  <div className="mb-2"><strong>Ubicación:</strong> <span className="text-gray-600">{opportunity.location || '-'}</span></div>
-                  <div className="mb-2"><strong>Modalidad:</strong> <span className="text-gray-600">{opportunity.workModality}</span></div>
-                  <div className="mb-2"><strong>Rango Salarial:</strong> <span className="text-gray-600">{salaryRange ? salaryRange.salary : '-'}</span></div>
-                  <div className="mb-2"><strong>Estado:</strong> <span className="text-gray-600">{opportunity.status}</span></div>
-                  <div className="mb-2"><strong>Fecha de expiración:</strong> <span className="text-gray-600">{opportunity.expirationDate ? new Date(opportunity.expirationDate).toLocaleDateString('es-ES') : '-'}</span></div>
+                  <div className="mb-2"><strong>Descripción:</strong></div>
+                  <div className="mt-2 whitespace-pre-wrap text-sm text-gray-700">{opportunity.description}</div>
                 </div>
-                <div>
-                  <div className="mb-2"><strong>Empresa:</strong> <span className="text-gray-600">{opportunity.businessName || '-'}</span></div>
-                  <div className="mb-2"><strong>Contacto:</strong> <span className="text-gray-600">{opportunity.contactName || '-'}</span></div>
-                  <div className="mb-2"><strong>Email:</strong> <span className="text-gray-600">{opportunity.businessEmail || '-'}</span></div>
-                  <div className="mb-2"><strong>Teléfono:</strong> <span className="text-gray-600">{opportunity.businessPhone || '-'}</span></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <div className="mb-2"><strong>Ubicación:</strong> <span className="text-gray-600">{opportunity.location || '-'}</span></div>
+                    <div className="mb-2"><strong>Modalidad:</strong> <span className="text-gray-600">{opportunity.workModality}</span></div>
+                    <div className="mb-2"><strong>Rango Salarial:</strong> <span className="text-gray-600">{salaryRange ? salaryRange.salary : '-'}</span></div>
+                    <div className="mb-2"><strong>Estado:</strong> <span className="text-gray-600">{opportunity.status}</span></div>
+                    <div className="mb-2"><strong>Fecha de expiración:</strong> <span className="text-gray-600">{opportunity.expirationDate ? new Date(opportunity.expirationDate).toLocaleDateString('es-ES') : '-'}</span></div>
+                  </div>
+                  <div>
+                    <div className="mb-2"><strong>Empresa:</strong> <span className="text-gray-600">{opportunity.businessName || '-'}</span></div>
+                    <div className="mb-2"><strong>Contacto:</strong> <span className="text-gray-600">{opportunity.contactName || '-'}</span></div>
+                    <div className="mb-2"><strong>Email:</strong> <span className="text-gray-600">{opportunity.businessEmail || '-'}</span></div>
+                    <div className="mb-2"><strong>Teléfono:</strong> <span className="text-gray-600">{opportunity.businessPhone || '-'}</span></div>
+                  </div>
                 </div>
-              </div>
-            </FormSection>
+              </FormSection>
 
               <FormSection icon={User} title="Programas relacionados" description="Programas asociados a la oportunidad" color="purple">
-              {selectedPrograms.length > 0 ? (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {selectedPrograms.map(program => (
-                    <span key={program.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{program.name}</span>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-gray-500 mt-1">Ninguno especificado</div>
-              )}
+                {selectedPrograms.length > 0 ? (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {selectedPrograms.map(program => (
+                      <span key={program.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{program.name}</span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-500 mt-1">Ninguno especificado</div>
+                )}
               </FormSection>
 
               <FormSection icon={Settings} title="Competencias requeridas" description="Habilidades y competencias solicitadas" color="green">
-              {selectedCompetencies.length > 0 ? (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {selectedCompetencies.map(c => (
-                    <span key={c.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{c.name}</span>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-gray-500 mt-1">Ninguna especificada</div>
-              )}
+                {selectedCompetencies.length > 0 ? (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {selectedCompetencies.map(c => (
+                      <span key={c.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{c.name}</span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-500 mt-1">Ninguna especificada</div>
+                )}
               </FormSection>
 
               <FormSection icon={Briefcase} title="Áreas de trabajo" description="Áreas relacionadas con la oferta" color="blue">
-              {selectedJobAreas.length > 0 ? (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {selectedJobAreas.map(a => (
-                    <span key={a.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">{a.name}</span>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-gray-500 mt-1">Ninguna especificada</div>
-              )}
+                {selectedJobAreas.length > 0 ? (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {selectedJobAreas.map(a => (
+                      <span key={a.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">{a.name}</span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-500 mt-1">Ninguna especificada</div>
+                )}
               </FormSection>
             </div>
 
