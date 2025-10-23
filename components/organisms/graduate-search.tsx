@@ -10,7 +10,7 @@ import { SearchResults } from "@/components/molecules/search-results"
 import { SearchEmptyState } from "@/components/atoms/search-empty-state"
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table"
 import { GraduateSearchProps } from "@/types/graduate-search.types"
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 import Papa from 'papaparse'
 
 const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
@@ -45,7 +45,7 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
 
     const hasActiveFilters = Object.values(filters).some(value => value !== "")
 
-    const exportGraduatesToExcel = (graduates: typeof results, filename: string = 'egresados.xlsx') => {
+    const exportGraduatesToExcel = async (graduates: typeof results, filename: string = 'egresados.xlsx') => {
       // Transform data for export
       const exportData = graduates.map(graduate => ({
         'Nombre Completo': `${graduate.name} ${graduate.middleName || ''} ${graduate.lastname} ${graduate.secondLastname || ''}`.trim(),
@@ -64,32 +64,46 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
       }))
 
       // Create workbook and worksheet
-      const wb = XLSX.utils.book_new()
-      const ws = XLSX.utils.json_to_sheet(exportData)
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet('Egresados')
 
-      // Auto-size columns
+      // Define columns with headers and widths
       const colWidths = [
-        { wch: 25 }, // Nombre Completo
-        { wch: 30 }, // Email
-        { wch: 30 }, // Email Académico
-        { wch: 15 }, // Teléfono
-        { wch: 20 }, // Programa
-        { wch: 18 }, // Año de Graduación
-        { wch: 20 }, // Última Actualización
-        { wch: 25 }, // Empresa
-        { wch: 30 }, // Colaboración
-        { wch: 15 }, // País
-        { wch: 20 }, // Ciudad
-        { wch: 12 }, // Género
-        { wch: 15 }  // Rol
+        25, // Nombre Completo
+        30, // Email
+        30, // Email Académico
+        15, // Teléfono
+        20, // Programa
+        18, // Año de Graduación
+        20, // Última Actualización
+        25, // Empresa
+        30, // Colaboración
+        15, // País
+        20, // Ciudad
+        12, // Género
+        15  // Rol
       ]
-      ws['!cols'] = colWidths
+      const headers = Object.keys(exportData[0])
+      worksheet.columns = headers.map((header, index) => ({
+        header,
+        key: header,
+        width: colWidths[index]
+      }))
 
-      // Add worksheet to workbook
-      XLSX.utils.book_append_sheet(wb, ws, 'Egresados')
+      // Add data rows
+      exportData.forEach(row => worksheet.addRow(row))
 
-      // Save file
-      XLSX.writeFile(wb, filename)
+      // Write file
+      const buffer = await workbook.xlsx.writeBuffer()
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
     }
 
     const exportGraduatesToCSV = (graduates: typeof results, filename: string = 'egresados.csv') => {
