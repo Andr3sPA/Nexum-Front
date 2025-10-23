@@ -1,5 +1,6 @@
 "use client"
 
+import { TriangleAlert } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface FloatingNoticeProps {
@@ -63,6 +64,7 @@ export const FloatingNotice: React.FC<FloatingNoticeProps> = ({
   // compute variant classes for prominent mode
   const titleClass = prominent ? 'text-2xl font-bold text-yellow-800 mb-3' : 'font-semibold text-lg text-gray-900 mb-2';
   const bodyClass = prominent ? 'text-base text-gray-800 whitespace-pre-line leading-relaxed' : 'text-base text-gray-700 whitespace-pre-line leading-relaxed';
+  const iconClass = prominent ? 'inline-block text-yellow-600' : 'inline-block text-gray-600 mr-2';
 
   return (
     <div className={containerClass}>
@@ -77,13 +79,17 @@ export const FloatingNotice: React.FC<FloatingNoticeProps> = ({
                   </svg>
                 </div>
                 <div>
-                  <div className={titleClass}>{title}</div>
+                  <div className={titleClass}>
+                    <TriangleAlert className={iconClass} size={16} />
+                    {title}</div>
                   <div className={bodyClass}>{children}</div>
                 </div>
               </div>
             ) : (
               <>
-                <div className={titleClass}>{title}</div>
+                <div className={titleClass}>
+                  <TriangleAlert className={iconClass} size={16} />
+                  {title}</div>
                 <div className={bodyClass}>{children}</div>
               </>
             )}

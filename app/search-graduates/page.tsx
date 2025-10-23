@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/navbar";
 import { GraduateSearch } from "@/components/organisms/graduate-search";
-import { ROUTES } from "@/lib/routes";
+import { hasRouteAccess, ROUTES } from "@/lib/routes";
 import {
   GraduateSearchService,
   UserFilterRequest,
@@ -87,9 +87,7 @@ export default function SearchGraduatesPage() {
     if (
       isClient &&
       role &&
-      role !== ROLES.ADMINISTRATIVE &&
-      role !== ROLES.DEAN &&
-      role !== ROLES.EMPLOYER
+      !hasRouteAccess(role, ROUTES.SEARCH_GRADUATES)
     ) {
       router.replace("/dashboard");
     }
@@ -215,15 +213,6 @@ export default function SearchGraduatesPage() {
 
   // No renderizar nada hasta que estemos en el cliente
   if (!isClient) {
-    return null;
-  }
-
-  // Verificar permisos después de que los datos estén cargados
-  if (
-    role !== ROLES.ADMINISTRATIVE &&
-    role !== ROLES.DEAN &&
-    role !== ROLES.EMPLOYER
-  ) {
     return null;
   }
 

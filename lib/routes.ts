@@ -96,8 +96,11 @@ export function getDashboardRoute(role: UserRole): string {
 /**
  * Check if user has access to route
  */
-export function hasRouteAccess(role: UserRole, route: string): boolean {
-  return ROLE_ROUTES[role].some((allowedRoute) =>
+export function hasRouteAccess(role: UserRole | string, route: string): boolean {
+  if (typeof role === 'string') {
+    role = role as UserRole;
+  }
+  return ROLE_ROUTES[role as UserRole].some((allowedRoute) =>
     route.startsWith(allowedRoute),
   );
 }

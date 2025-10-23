@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Filter, X, Search, Grid3X3, Table as TableIcon } from "lucide-react"
+import { Filter, X, Search, Grid3X3, Table as TableIcon, Download, FileSpreadsheet, ArrowDownToLine, FileDown } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/molecules/card"
 import { Button } from "@/components/atoms/button"
 import { SearchFilters } from "@/components/molecules/search-filters"
@@ -10,6 +10,8 @@ import { SearchResults } from "@/components/molecules/search-results"
 import { SearchEmptyState } from "@/components/atoms/search-empty-state"
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table"
 import { GraduateSearchProps } from "@/types/graduate-search.types"
+import ExcelJS from 'exceljs'
+import Papa from 'papaparse'
 
 const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
   (props, ref) => {
@@ -42,6 +44,100 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
     const [viewMode, setViewMode] = React.useState<'cards' | 'table'>('cards')
 
     const hasActiveFilters = Object.values(filters).some(value => value !== "")
+
+    const exportGraduatesToExcel = async (graduates: typeof results, filename: string = 'egresados.xlsx') => {
+      // Transform data for export
+      const exportData = graduates.map(graduate => ({
+        'Nombre Completo': `${graduate.name} ${graduate.middleName || ''} ${graduate.lastname} ${graduate.secondLastname || ''}`.trim(),
+        'Email': graduate.email || graduate.academicEmail || '',
+        'Email Académico': graduate.academicEmail || '',
+        'Teléfono': graduate.mobile || '',
+        'Programa': graduate.programs?.map(p => p.name).join(', ') || '',
+        'Año de Graduación': graduate.graduationYear || '',
+        'Última Actualización': graduate.lastUpdateDate || '',
+        'Empresa': graduate.company || '',
+        'Colaboración': graduate.collaborationInfo || '',
+        'País': graduate.country || '',
+        'Ciudad': graduate.city || '',
+        'Género': graduate.gender === 'MALE' ? 'Masculino' : graduate.gender === 'FEMALE' ? 'Femenino' : graduate.gender === 'NON_BINARY' ? 'No binario' : graduate.gender === 'OTHER' ? 'Otro' : '',
+        'Rol': graduate.role === 'GRADUATE' ? 'Egresado' : graduate.role === 'ADMINISTRATIVE' ? 'Administrativo' : graduate.role === 'DEAN' ? 'Decano' : ''
+      }))
+
+      // Create workbook and worksheet
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet('Egresados')
+
+      // Define columns with headers and widths
+      const colWidths = [
+        25, // Nombre Completo
+        30, // Email
+        30, // Email Académico
+        15, // Teléfono
+        20, // Programa
+        18, // Año de Graduación
+        20, // Última Actualización
+        25, // Empresa
+        30, // Colaboración
+        15, // País
+        20, // Ciudad
+        12, // Género
+        15  // Rol
+      ]
+      const headers = Object.keys(exportData[0])
+      worksheet.columns = headers.map((header, index) => ({
+        header,
+        key: header,
+        width: colWidths[index]
+      }))
+
+      // Add data rows
+      exportData.forEach(row => worksheet.addRow(row))
+
+      // Write file
+      const buffer = await workbook.xlsx.writeBuffer()
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    }
+
+    const exportGraduatesToCSV = (graduates: typeof results, filename: string = 'egresados.csv') => {
+      // Transform data for export
+      const exportData = graduates.map(graduate => ({
+        'Nombre Completo': `${graduate.name} ${graduate.middleName || ''} ${graduate.lastname} ${graduate.secondLastname || ''}`.trim(),
+        'Email': graduate.email || graduate.academicEmail || '',
+        'Email Académico': graduate.academicEmail || '',
+        'Teléfono': graduate.mobile || '',
+        'Programa': graduate.programs?.map(p => p.name).join(', ') || '',
+        'Año de Graduación': graduate.graduationYear || '',
+        'Última Actualización': graduate.lastUpdateDate || '',
+        'Empresa': graduate.company || '',
+        'Colaboración': graduate.collaborationInfo || '',
+        'País': graduate.country || '',
+        'Ciudad': graduate.city || '',
+        'Género': graduate.gender === 'MALE' ? 'Masculino' : graduate.gender === 'FEMALE' ? 'Femenino' : graduate.gender === 'NON_BINARY' ? 'No binario' : graduate.gender === 'OTHER' ? 'Otro' : '',
+        'Rol': graduate.role === 'GRADUATE' ? 'Egresado' : graduate.role === 'ADMINISTRATIVE' ? 'Administrativo' : graduate.role === 'DEAN' ? 'Decano' : ''
+      }))
+
+      // Use PapaParse to generate CSV
+      const csv = Papa.unparse(exportData)
+
+      // Create and download file
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', filename)
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
 
     return (
       <div ref={ref} {...restProps}>
@@ -85,6 +181,26 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
                   <option value="name-true">Nombre asc</option>
                   <option value="name-false">Nombre desc</option>
                 </select>
+                <div className="relative">
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value === 'excel') {
+                        exportGraduatesToExcel(results, `egresados_${new Date().toISOString().split('T')[0]}.xlsx`)
+                      } else if (e.target.value === 'csv') {
+                        exportGraduatesToCSV(results, `egresados_${new Date().toISOString().split('T')[0]}.csv`)
+                      }
+                      e.target.value = '' // Reset select
+                    }}
+                    className="appearance-none bg-primary text-white border border-primary rounded pl-3 pr-8 py-1 text-sm cursor-pointer hover:bg-primary/90 transition-colors"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>Exportar</option>
+                    <option value="excel">Excel (.xlsx)</option>
+                    <option value="csv">CSV (.csv)</option>
+                  </select>
+
+                  <FileDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 pointer-events-none text-gray-100 z-10" />
+                </div>
                 {hasActiveFilters && (
                   <Button
                     variant="ghost"
