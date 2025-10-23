@@ -116,7 +116,7 @@ export const GraduateSearchService = {
     Object.entries(filterRequest).forEach(([key, value]) => {
       if (value !== undefined && value !== "") {
         if (key === "programIds" && Array.isArray(value) && value.length > 0) {
-          value.forEach(id => params.append("programId", String(id)))
+          value.forEach(id => params.append("programIds", String(id)))
         } else if (key !== "programIds") {
           params.append(key, String(value))
         }
