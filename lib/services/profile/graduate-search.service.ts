@@ -50,6 +50,16 @@ export interface UserFilterRequest {
    academicInstitution?: string
    academicCountry?: string
    complementaryStudies?: string[]
+
+   // Graduate Participation
+   willingToBeSpeaker?: boolean
+   willingToBeProfessor?: boolean
+   willingToTeachNonFormalEducation?: boolean
+   willingToBePostgraduateStudent?: boolean
+   willingToBeNonFormalStudent?: boolean
+   willingToBeGraduateRepresentative?: boolean
+   willingToAttendAlumniMeetings?: boolean
+   willingToParticipateInAlumniActivities?: boolean
 }
 
 // PageQuery interface for pagination

@@ -54,6 +54,14 @@ export default function SearchGraduatesPage() {
     email: "",
     academicEmail: "",
     complementaryStudies: [] as string[],
+    willingToBeSpeaker: undefined as boolean | undefined,
+    willingToBeProfessor: undefined as boolean | undefined,
+    willingToTeachNonFormalEducation: undefined as boolean | undefined,
+    willingToBePostgraduateStudent: undefined as boolean | undefined,
+    willingToBeNonFormalStudent: undefined as boolean | undefined,
+    willingToBeGraduateRepresentative: undefined as boolean | undefined,
+    willingToAttendAlumniMeetings: undefined as boolean | undefined,
+    willingToParticipateInAlumniActivities: undefined as boolean | undefined,
   });
 
   // Resultados y paginación
@@ -123,7 +131,7 @@ export default function SearchGraduatesPage() {
     }
   }, [isClient]);
 
-  const handleFilterChange = (field: string, value: string | string[] | number | number[] | undefined) => {
+  const handleFilterChange = (field: string, value: string | string[] | number | number[] | boolean | undefined) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -150,6 +158,14 @@ export default function SearchGraduatesPage() {
         email: detailedFilters.email || undefined,
         academicEmail: detailedFilters.academicEmail || undefined,
         complementaryStudies: detailedFilters.complementaryStudies.length > 0 ? detailedFilters.complementaryStudies : undefined,
+        willingToBeSpeaker: filters.willingToBeSpeaker,
+        willingToBeProfessor: filters.willingToBeProfessor,
+        willingToTeachNonFormalEducation: filters.willingToTeachNonFormalEducation,
+        willingToBePostgraduateStudent: filters.willingToBePostgraduateStudent,
+        willingToBeNonFormalStudent: filters.willingToBeNonFormalStudent,
+        willingToBeGraduateRepresentative: filters.willingToBeGraduateRepresentative,
+        willingToAttendAlumniMeetings: filters.willingToAttendAlumniMeetings,
+        willingToParticipateInAlumniActivities: filters.willingToParticipateInAlumniActivities,
         role: "GRADUATE", // Por defecto buscar solo graduados
       };
       const pageQuery: PageQuery = { page, pageSize, sortBy: sortBy || undefined, asc };
@@ -192,6 +208,14 @@ export default function SearchGraduatesPage() {
       email: "",
       academicEmail: "",
       complementaryStudies: [],
+      willingToBeSpeaker: undefined,
+      willingToBeProfessor: undefined,
+      willingToTeachNonFormalEducation: undefined,
+      willingToBePostgraduateStudent: undefined,
+      willingToBeNonFormalStudent: undefined,
+      willingToBeGraduateRepresentative: undefined,
+      willingToAttendAlumniMeetings: undefined,
+      willingToParticipateInAlumniActivities: undefined,
     });
   };
 

@@ -9,6 +9,7 @@ import { MultiInput } from "@/components/atoms/multi-input"
 import { Select } from "@/components/atoms/select"
 import { Button } from "@/components/atoms/button"
 import { MultiSelect } from "@/components/molecules/multi-select"
+import { Collapsible } from "@/components/atoms/collapsible"
 import type { SearchFilterData, SearchFilterChangeHandler } from "@/types/graduate-search.types"
 
 export interface SearchFiltersProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -84,16 +85,16 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
                 className="h-11 text-base"
               />
             </div>
-             {/* Área en la que ha trabajado el estudiante */}
-             <div className="flex flex-col gap-1">
-               <label htmlFor="jobAreaId" className="text-sm font-medium text-gray-700">Área en la que ha trabajado el estudiante</label>
+            {/* Área en la que ha trabajado el estudiante */}
+            <div className="flex flex-col gap-1">
+              <label htmlFor="jobAreaId" className="text-sm font-medium text-gray-700">Área en la que ha trabajado el estudiante</label>
               <Select
                 id="jobAreaId"
                 value={filters.jobAreaId?.toString() || ""}
                 onChange={e => onFilterChange("jobAreaId", e.target.value ? Number(e.target.value) : undefined)}
                 className="h-11 text-base"
               >
-                 <option value="">Seleccionar área</option>
+                <option value="">Seleccionar área</option>
                 {jobAreas.map(jobArea => (
                   <option key={jobArea.id} value={jobArea.id.toString()}>
                     {jobArea.name}
@@ -101,6 +102,7 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
                 ))}
               </Select>
             </div>
+
             {/* Estudios complementarios */}
             <div className="flex flex-col gap-1 col-span-1 md:col-span-2">
               <label className="text-sm font-medium text-gray-700">Estudios Complementarios</label>
@@ -214,6 +216,133 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
                 className="h-11 text-base"
               />
             </div>
+
+              {/* Participación de Egresados */}
+              <div className="col-span-1 md:col-span-2">
+                <Collapsible title="Participación de Egresados" defaultOpen={true}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Ponente */}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="willingToBeSpeaker" className="text-xs font-medium text-gray-600">Dispuesto a ser ponente</label>
+                      <Select
+                        id="willingToBeSpeaker"
+                        value={filters.willingToBeSpeaker?.toString() || ""}
+                        onChange={e => onFilterChange("willingToBeSpeaker", e.target.value ? e.target.value === "true" : undefined)}
+                        className="h-9 text-sm"
+                      >
+                        <option value="">Sin especificar</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </Select>
+                    </div>
+
+                    {/* Profesor */}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="willingToBeProfessor" className="text-xs font-medium text-gray-600">Dispuesto a ser profesor</label>
+                      <Select
+                        id="willingToBeProfessor"
+                        value={filters.willingToBeProfessor?.toString() || ""}
+                        onChange={e => onFilterChange("willingToBeProfessor", e.target.value ? e.target.value === "true" : undefined)}
+                        className="h-9 text-sm"
+                      >
+                        <option value="">Sin especificar</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </Select>
+                    </div>
+
+                    {/* Educación no formal */}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="willingToTeachNonFormalEducation" className="text-xs font-medium text-gray-600">Dispuesto a enseñar educación no formal</label>
+                      <Select
+                        id="willingToTeachNonFormalEducation"
+                        value={filters.willingToTeachNonFormalEducation?.toString() || ""}
+                        onChange={e => onFilterChange("willingToTeachNonFormalEducation", e.target.value ? e.target.value === "true" : undefined)}
+                        className="h-9 text-sm"
+                      >
+                        <option value="">Sin especificar</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </Select>
+                    </div>
+
+                    {/* Estudiante posgrado */}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="willingToBePostgraduateStudent" className="text-xs font-medium text-gray-600">Dispuesto a ser estudiante de posgrado</label>
+                      <Select
+                        id="willingToBePostgraduateStudent"
+                        value={filters.willingToBePostgraduateStudent?.toString() || ""}
+                        onChange={e => onFilterChange("willingToBePostgraduateStudent", e.target.value ? e.target.value === "true" : undefined)}
+                        className="h-9 text-sm"
+                      >
+                        <option value="">Sin especificar</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </Select>
+                    </div>
+
+                    {/* Estudiante no formal */}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="willingToBeNonFormalStudent" className="text-xs font-medium text-gray-600">Dispuesto a ser estudiante no formal</label>
+                      <Select
+                        id="willingToBeNonFormalStudent"
+                        value={filters.willingToBeNonFormalStudent?.toString() || ""}
+                        onChange={e => onFilterChange("willingToBeNonFormalStudent", e.target.value ? e.target.value === "true" : undefined)}
+                        className="h-9 text-sm"
+                      >
+                        <option value="">Sin especificar</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </Select>
+                    </div>
+
+                    {/* Representante de egresados */}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="willingToBeGraduateRepresentative" className="text-xs font-medium text-gray-600">Dispuesto a ser representante de egresados</label>
+                      <Select
+                        id="willingToBeGraduateRepresentative"
+                        value={filters.willingToBeGraduateRepresentative?.toString() || ""}
+                        onChange={e => onFilterChange("willingToBeGraduateRepresentative", e.target.value ? e.target.value === "true" : undefined)}
+                        className="h-9 text-sm"
+                      >
+                        <option value="">Sin especificar</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </Select>
+                    </div>
+
+                    {/* Reuniones de egresados */}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="willingToAttendAlumniMeetings" className="text-xs font-medium text-gray-600">Dispuesto a asistir a reuniones de egresados</label>
+                      <Select
+                        id="willingToAttendAlumniMeetings"
+                        value={filters.willingToAttendAlumniMeetings?.toString() || ""}
+                        onChange={e => onFilterChange("willingToAttendAlumniMeetings", e.target.value ? e.target.value === "true" : undefined)}
+                        className="h-9 text-sm"
+                      >
+                        <option value="">Sin especificar</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </Select>
+                    </div>
+
+                    {/* Actividades de egresados */}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="willingToParticipateInAlumniActivities" className="text-xs font-medium text-gray-600">Dispuesto a participar en actividades de egresados</label>
+                      <Select
+                        id="willingToParticipateInAlumniActivities"
+                        value={filters.willingToParticipateInAlumniActivities?.toString() || ""}
+                        onChange={e => onFilterChange("willingToParticipateInAlumniActivities", e.target.value ? e.target.value === "true" : undefined)}
+                        className="h-9 text-sm"
+                      >
+                        <option value="">Sin especificar</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </Select>
+                    </div>
+                  </div>
+                </Collapsible>
+              </div>
             {/* Botón buscar (ocupa las dos columnas) */}
             <div className="col-span-1 md:col-span-2 pt-2">
               <Button

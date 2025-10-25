@@ -1,11 +1,11 @@
 import type { UserFilterRequest } from "@/lib/services/profile/graduate-search.service"
 
-export type SearchFilterData = Pick<UserFilterRequest, 'gender' | 'startYear' | 'endYear' | 'programIds' | 'jobAreaId' | 'country' | 'city' | 'mobile' | 'email' | 'academicEmail' | 'complementaryStudies'> & {
+export type SearchFilterData = Pick<UserFilterRequest, 'gender' | 'startYear' | 'endYear' | 'programIds' | 'jobAreaId' | 'country' | 'city' | 'mobile' | 'email' | 'academicEmail' | 'complementaryStudies' | 'willingToBeSpeaker' | 'willingToBeProfessor' | 'willingToTeachNonFormalEducation' | 'willingToBePostgraduateStudent' | 'willingToBeNonFormalStudent' | 'willingToBeGraduateRepresentative' | 'willingToAttendAlumniMeetings' | 'willingToParticipateInAlumniActivities'> & {
   names: string
   lastnames: string
 }
 
-export type SearchFilterChangeHandler = (field: string, value: string | string[] | number | number[] | undefined) => void
+export type SearchFilterChangeHandler = (field: string, value: string | string[] | number | number[] | boolean | undefined) => void
 
 export interface GraduateSearchProps {
   filters: SearchFilterData
