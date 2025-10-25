@@ -15,6 +15,7 @@ import { LocalStorageService } from "@/lib/services/local-storage.service";
 import { logger } from "@/lib/logging";
 import { ROLES } from "@/lib/services/constants/api.constants";
 import { ProgramService } from "@/lib/services/catalog/program.service";
+import { JobAreaService } from "@/lib/services/catalog/job-area.service";
 import { convertFiltersToDetailed } from "@/lib/utils/search-utils";
 
 export default function SearchGraduatesPage() {
@@ -32,6 +33,9 @@ export default function SearchGraduatesPage() {
   const [programs, setPrograms] = useState<
     { id: number; name: string; code: string }[]
   >([]);
+  const [jobAreas, setJobAreas] = useState<
+    { id: number; name: string }[]
+  >([]);
   const [isLoadingCatalogs, setIsLoadingCatalogs] = useState(false);
   const [catalogError, setCatalogError] = useState<string | null>(null);
 
@@ -43,6 +47,7 @@ export default function SearchGraduatesPage() {
     startYear: undefined as number | undefined,
     endYear: undefined as number | undefined,
     programIds: [] as number[],
+    jobAreaId: undefined as number | undefined,
     country: "",
     city: "",
     mobile: "",
@@ -98,13 +103,18 @@ export default function SearchGraduatesPage() {
     if (isClient) {
       setIsLoadingCatalogs(true);
       setCatalogError(null);
-      ProgramService.getAll()
-        .then((programs) => {
+      Promise.all([
+        ProgramService.getAll(),
+        JobAreaService.getAll()
+      ])
+        .then(([programs, jobAreas]) => {
           setPrograms(programs);
+          setJobAreas(jobAreas);
           setIsLoadingCatalogs(false);
         })
         .catch((err) => {
           setPrograms([]);
+          setJobAreas([]);
           setIsLoadingCatalogs(false);
           setCatalogError(
             "No se pudieron cargar los catálogos. Intenta de nuevo más tarde.",
@@ -133,6 +143,7 @@ export default function SearchGraduatesPage() {
         startYear: detailedFilters.startYear,
         endYear: detailedFilters.endYear,
         programIds: detailedFilters.programIds.length > 0 ? detailedFilters.programIds : undefined,
+        jobAreaId: filters.jobAreaId,
         country: detailedFilters.country || undefined,
         city: detailedFilters.city || undefined,
         mobile: detailedFilters.mobile || undefined,
@@ -174,6 +185,7 @@ export default function SearchGraduatesPage() {
       startYear: undefined,
       endYear: undefined,
       programIds: [],
+      jobAreaId: undefined,
       country: "",
       city: "",
       mobile: "",
@@ -245,8 +257,9 @@ export default function SearchGraduatesPage() {
               currentPage={page}
               totalPages={totalPages}
               isSearching={isSearching}
-              programs={programs}
-              catalogError={catalogError}
+               programs={programs}
+               jobAreas={jobAreas}
+               catalogError={catalogError}
               filtersWidthClass="w-full md:w-[420px] lg:w-[480px]"
               contentGapClass="gap-10"
               pageSize={pageSize}

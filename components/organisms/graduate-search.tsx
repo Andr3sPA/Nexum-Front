@@ -28,8 +28,9 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
       totalPages,
       isLoading = false,
       isSearching = false,
-      programs,
-      catalogError,
+       programs,
+       jobAreas,
+       catalogError,
       filtersWidthClass = "w-80 flex-shrink-0",
       contentGapClass = "gap-6",
       pageSize,
@@ -243,9 +244,10 @@ const GraduateSearch = React.forwardRef<HTMLDivElement, GraduateSearchProps>(
                 filters={filters}
                 onFilterChange={onFilterChange}
                 onSubmit={props.onSearch}
-                isLoading={isSearching}
-                programs={programs}
-              />
+                 isLoading={isSearching}
+                 programs={programs}
+                 jobAreas={jobAreas}
+               />
             </div>
           )}
 

@@ -17,6 +17,7 @@ export interface SearchFiltersProps extends React.HTMLAttributes<HTMLDivElement>
   onSubmit: (e?: React.FormEvent) => void
   isLoading?: boolean
   programs: Array<{ id: number, name: string, code: string }>
+  jobAreas: Array<{ id: number, name: string }>
 }
 
 const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
@@ -27,6 +28,7 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
     onSubmit,
     isLoading = false,
     programs,
+    jobAreas,
     ...props
   }, ref) => {
     // Validación de rango de años
@@ -82,17 +84,22 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
                 className="h-11 text-base"
               />
             </div>
-            {/* Email académico */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="academicEmail" className="text-sm font-medium text-gray-700">Email Académico</label>
-              <Input
-                id="academicEmail"
-                placeholder="Email académico"
-                value={filters.academicEmail}
-                onChange={e => onFilterChange("academicEmail", e.target.value)}
-                maxLength={100}
+             {/* Área en la que ha trabajado el estudiante */}
+             <div className="flex flex-col gap-1">
+               <label htmlFor="jobAreaId" className="text-sm font-medium text-gray-700">Área en la que ha trabajado el estudiante</label>
+              <Select
+                id="jobAreaId"
+                value={filters.jobAreaId?.toString() || ""}
+                onChange={e => onFilterChange("jobAreaId", e.target.value ? Number(e.target.value) : undefined)}
                 className="h-11 text-base"
-              />
+              >
+                 <option value="">Seleccionar área</option>
+                {jobAreas.map(jobArea => (
+                  <option key={jobArea.id} value={jobArea.id.toString()}>
+                    {jobArea.name}
+                  </option>
+                ))}
+              </Select>
             </div>
             {/* Estudios complementarios */}
             <div className="flex flex-col gap-1 col-span-1 md:col-span-2">
@@ -191,6 +198,18 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
                 placeholder="Email personal"
                 value={filters.email}
                 onChange={e => onFilterChange("email", e.target.value)}
+                maxLength={100}
+                className="h-11 text-base"
+              />
+            </div>
+            {/* Email académico */}
+            <div className="flex flex-col gap-1">
+              <label htmlFor="academicEmail" className="text-sm font-medium text-gray-700">Email Académico</label>
+              <Input
+                id="academicEmail"
+                placeholder="Email académico"
+                value={filters.academicEmail}
+                onChange={e => onFilterChange("academicEmail", e.target.value)}
                 maxLength={100}
                 className="h-11 text-base"
               />

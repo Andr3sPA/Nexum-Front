@@ -1,6 +1,6 @@
 import type { UserFilterRequest } from "@/lib/services/profile/graduate-search.service"
 
-export type SearchFilterData = Pick<UserFilterRequest, 'gender' | 'startYear' | 'endYear' | 'programIds' | 'country' | 'city' | 'mobile' | 'email' | 'academicEmail' | 'complementaryStudies'> & {
+export type SearchFilterData = Pick<UserFilterRequest, 'gender' | 'startYear' | 'endYear' | 'programIds' | 'jobAreaId' | 'country' | 'city' | 'mobile' | 'email' | 'academicEmail' | 'complementaryStudies'> & {
   names: string
   lastnames: string
 }
@@ -40,6 +40,7 @@ export interface GraduateSearchProps {
   isLoading?: boolean
   isSearching?: boolean
   programs: Array<{ id: number, name: string, code: string }>
+  jobAreas: Array<{ id: number, name: string }>
   catalogError?: string | null
   filtersWidthClass?: string
   contentGapClass?: string
