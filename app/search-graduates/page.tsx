@@ -40,14 +40,15 @@ export default function SearchGraduatesPage() {
     names: "",
     lastnames: "",
     gender: "",
-    startYear: "",
-    endYear: "",
-    programIds: [] as string[],
+    startYear: undefined as number | undefined,
+    endYear: undefined as number | undefined,
+    programIds: [] as number[],
     country: "",
     city: "",
     mobile: "",
     email: "",
     academicEmail: "",
+    complementaryStudies: [] as string[],
   });
 
   // Resultados y paginación
@@ -112,7 +113,7 @@ export default function SearchGraduatesPage() {
     }
   }, [isClient]);
 
-  const handleFilterChange = (field: string, value: string | string[]) => {
+  const handleFilterChange = (field: string, value: string | string[] | number | number[] | undefined) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -129,20 +130,15 @@ export default function SearchGraduatesPage() {
         lastname: detailedFilters.lastname || undefined,
         secondLastname: detailedFilters.secondLastname || undefined,
         gender: detailedFilters.gender || undefined,
-        startYear: detailedFilters.startYear
-          ? Number(detailedFilters.startYear)
-          : undefined,
-        endYear: detailedFilters.endYear
-          ? Number(detailedFilters.endYear)
-          : undefined,
-        programIds: detailedFilters.programIds
-          ? detailedFilters.programIds.map(Number)
-          : undefined,
+        startYear: detailedFilters.startYear,
+        endYear: detailedFilters.endYear,
+        programIds: detailedFilters.programIds.length > 0 ? detailedFilters.programIds : undefined,
         country: detailedFilters.country || undefined,
         city: detailedFilters.city || undefined,
         mobile: detailedFilters.mobile || undefined,
         email: detailedFilters.email || undefined,
         academicEmail: detailedFilters.academicEmail || undefined,
+        complementaryStudies: detailedFilters.complementaryStudies.length > 0 ? detailedFilters.complementaryStudies : undefined,
         role: "GRADUATE", // Por defecto buscar solo graduados
       };
       const pageQuery: PageQuery = { page, pageSize, sortBy: sortBy || undefined, asc };
@@ -175,14 +171,15 @@ export default function SearchGraduatesPage() {
       names: "",
       lastnames: "",
       gender: "",
-      startYear: "",
-      endYear: "",
+      startYear: undefined,
+      endYear: undefined,
       programIds: [],
       country: "",
       city: "",
       mobile: "",
       email: "",
       academicEmail: "",
+      complementaryStudies: [],
     });
   };
 

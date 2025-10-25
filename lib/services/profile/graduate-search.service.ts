@@ -44,11 +44,12 @@ export interface UserFilterRequest {
   // Auth
   role?: string
 
-  // Academic Education
-  studyType?: string
-  studyName?: string
-  academicInstitution?: string
-  academicCountry?: string
+   // Academic Education
+   studyType?: string
+   studyName?: string
+   academicInstitution?: string
+   academicCountry?: string
+   complementaryStudies?: string[]
 }
 
 // PageQuery interface for pagination

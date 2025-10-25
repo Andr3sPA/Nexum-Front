@@ -1,18 +1,15 @@
+import type { UserFilterRequest } from "@/lib/services/profile/graduate-search.service"
+
+export type SearchFilterData = Pick<UserFilterRequest, 'gender' | 'startYear' | 'endYear' | 'programIds' | 'country' | 'city' | 'mobile' | 'email' | 'academicEmail' | 'complementaryStudies'> & {
+  names: string
+  lastnames: string
+}
+
+export type SearchFilterChangeHandler = (field: string, value: string | string[] | number | number[] | undefined) => void
+
 export interface GraduateSearchProps {
-  filters: {
-    names: string
-    lastnames: string
-    gender: string
-    startYear: string
-    endYear: string
-    programIds: string[]
-    country: string
-    city: string
-    mobile: string
-    email: string
-    academicEmail: string
-  }
-  onFilterChange: (field: string, value: string | string[]) => void
+  filters: SearchFilterData
+  onFilterChange: SearchFilterChangeHandler
   onSearch: (e?: React.FormEvent) => void
   onClearFilters: () => void
   onViewProfile: (id: string) => void

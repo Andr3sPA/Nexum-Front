@@ -5,42 +5,32 @@ import { cn } from "@/lib/utils"
 import { Search } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
 import { Input } from "@/components/atoms/input"
+import { MultiInput } from "@/components/atoms/multi-input"
 import { Select } from "@/components/atoms/select"
 import { Button } from "@/components/atoms/button"
 import { MultiSelect } from "@/components/molecules/multi-select"
+import type { SearchFilterData, SearchFilterChangeHandler } from "@/types/graduate-search.types"
 
 export interface SearchFiltersProps extends React.HTMLAttributes<HTMLDivElement> {
-  filters: {
-    names: string
-    lastnames: string
-    gender: string
-    startYear: string
-    endYear: string
-    programIds: string[]
-    country: string
-    city: string
-    mobile: string
-    email: string
-    academicEmail: string
-  }
-  onFilterChange: (field: string, value: string | string[]) => void
+  filters: SearchFilterData
+  onFilterChange: SearchFilterChangeHandler
   onSubmit: (e?: React.FormEvent) => void
   isLoading?: boolean
   programs: Array<{ id: number, name: string, code: string }>
 }
 
 const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
-  ({ 
-    className, 
+  ({
+    className,
     filters,
     onFilterChange,
     onSubmit,
     isLoading = false,
     programs,
-    ...props 
+    ...props
   }, ref) => {
     // Validación de rango de años
-    const showYearError = filters.startYear && filters.endYear && Number(filters.startYear) > Number(filters.endYear)
+    const showYearError = filters.startYear && filters.endYear && filters.startYear > filters.endYear
     return (
       <Card className={cn("sticky top-24", className)} ref={ref} {...props}>
         <CardHeader className="pb-2">
@@ -51,10 +41,10 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
             {/* Año de graduación (desde) */}
             <div className="flex flex-col gap-1">
               <label htmlFor="startYear" className="text-sm font-medium text-gray-700">Año de Graduación (Desde)</label>
-              <Select 
+              <Select
                 id="startYear"
-                value={filters.startYear} 
-                onChange={e => onFilterChange("startYear", e.target.value)}
+                value={filters.startYear?.toString() || ""}
+                onChange={e => onFilterChange("startYear", e.target.value ? Number(e.target.value) : undefined)}
                 className="h-11 text-base"
               >
                 <option value="">Seleccionar</option>
@@ -66,10 +56,10 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
             {/* Año de graduación (hasta) */}
             <div className="flex flex-col gap-1">
               <label htmlFor="endYear" className="text-sm font-medium text-gray-700">Año de Graduación (Hasta)</label>
-              <Select 
+              <Select
                 id="endYear"
-                value={filters.endYear} 
-                onChange={e => onFilterChange("endYear", e.target.value)}
+                value={filters.endYear?.toString() || ""}
+                onChange={e => onFilterChange("endYear", e.target.value ? Number(e.target.value) : undefined)}
                 className="h-11 text-base"
               >
                 <option value="">Seleccionar</option>
@@ -86,8 +76,8 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
               <label className="text-sm font-medium text-gray-700">Programas</label>
               <MultiSelect
                 options={programs.map(p => ({ value: p.id.toString(), label: p.name }))}
-                selected={filters.programIds}
-                onChange={(selected) => onFilterChange("programIds", selected)}
+                selected={filters.programIds?.map(id => id.toString()) || []}
+                onChange={(selected) => onFilterChange("programIds", selected.map(s => Number(s)))}
                 placeholder="Seleccionar programas..."
                 className="h-11 text-base"
               />
@@ -103,6 +93,19 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
                 maxLength={100}
                 className="h-11 text-base"
               />
+            </div>
+            {/* Estudios complementarios */}
+            <div className="flex flex-col gap-1 col-span-1 md:col-span-2">
+              <label className="text-sm font-medium text-gray-700">Estudios Complementarios</label>
+              <MultiInput
+                values={filters.complementaryStudies || []}
+                onChange={(values) => onFilterChange("complementaryStudies", values)}
+                placeholder="Ej: Matemáticas, Física, Programación..."
+                className="h-11 text-base"
+              />
+              <span className="text-xs text-gray-500 mt-1">
+                Escribe el nombre de un estudio y presiona Enter para agregarlo (búsqueda difusa)
+              </span>
             </div>
             {/* El resto de campos */}
             {/* Nombres */}
@@ -132,8 +135,8 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
             {/* Género */}
             <div className="flex flex-col gap-1">
               <label htmlFor="gender" className="text-sm font-medium text-gray-700">Género</label>
-              <Select 
-                value={filters.gender} 
+              <Select
+                value={filters.gender}
                 onChange={e => onFilterChange("gender", e.target.value)}
                 className="h-11 text-base"
               >
@@ -194,8 +197,8 @@ const SearchFilters = React.forwardRef<HTMLDivElement, SearchFiltersProps>(
             </div>
             {/* Botón buscar (ocupa las dos columnas) */}
             <div className="col-span-1 md:col-span-2 pt-2">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full udea-primary h-11 text-base"
                 disabled={isLoading}
               >

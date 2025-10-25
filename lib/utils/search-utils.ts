@@ -63,28 +63,30 @@ export function convertFiltersToDetailed(filters: {
   names: string
   lastnames: string
   gender: string
-  startYear: string
-  endYear: string
-  programIds: string[]
+  startYear: number | undefined
+  endYear: number | undefined
+  programIds: number[]
   country: string
   city: string
   mobile: string
   email: string
   academicEmail: string
+  complementaryStudies: string[]
 }): {
   name: string
   middleName: string
   lastname: string
   secondLastname: string
   gender: string
-  startYear: string
-  endYear: string
-  programIds: string[]
+  startYear: number | undefined
+  endYear: number | undefined
+  programIds: number[]
   country: string
   city: string
   mobile: string
   email: string
   academicEmail: string
+  complementaryStudies: string[]
 } {
   const { name, middleName } = separateNames(filters.names)
   const { lastname, secondLastname } = separateLastnames(filters.lastnames)
@@ -102,6 +104,7 @@ export function convertFiltersToDetailed(filters: {
     city: filters.city,
     mobile: filters.mobile,
     email: filters.email,
-    academicEmail: filters.academicEmail
+    academicEmail: filters.academicEmail,
+    complementaryStudies: filters.complementaryStudies
   }
 } 

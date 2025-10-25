@@ -18,5 +18,6 @@ export { InnovationProcessesCard } from "./innovation-processes-card"
 export { LoginForm } from "../organisms/login-form"
 
 // New molecules for search functionality
+export type { SearchFiltersProps } from "./search-filters"
 export { SearchFilters } from "./search-filters"
 export { SearchResults } from "./search-results" 
