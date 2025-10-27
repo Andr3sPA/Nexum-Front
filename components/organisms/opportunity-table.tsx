@@ -222,7 +222,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
     setError(null);
     try {
       // Use public endpoint to show opportunities to everyone
-      const data = await OpportunityService.listPublic();
+      const data = user ? await OpportunityService.list() : await OpportunityService.listPublic();
       if (Array.isArray(data)) {
         setOpportunities(data);
       } else {
