@@ -5,7 +5,7 @@ import {
 } from "@/lib/services/constants/api.constants";
 import { serviceWithAuth, service } from "@/lib/services/base.service";
 
-export type OpportunityStatus = "Draft" | "Active" | "Closed" | "Expired" | "On Hold" | "Cancelled";
+export type OpportunityStatus = "DRAFT" | "ACTIVE" | "CLOSED" | "EXPIRED" | "ON_HOLD" | "CANCELLED";
 
 export type RequiredExperience =
   | "No experience required"
@@ -16,7 +16,7 @@ export type RequiredExperience =
   | "More than 6 years"
   | "Not specified";
 
-export type WorkModality = "Remote" | "On Site" | "Hybrid";
+export type WorkModality = "REMOTE" | "ON_SITE" | "HYBRID";
 
 // Request DTO for creating an opportunity
 export interface OpportunityRequest {

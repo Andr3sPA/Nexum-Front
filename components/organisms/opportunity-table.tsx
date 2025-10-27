@@ -298,7 +298,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
 
   // Base list según rol: egresados (GRADUATE) solo ven activas y vigentes a la fecha
   const baseOpportunities = (user && user.role === ROLES.GRADUATE)
-    ? opportunities.filter(o => o.status === 'Active' && isNotExpired(o.expirationDate))
+    ? opportunities.filter(o => o.status === 'ACTIVE' && isNotExpired(o.expirationDate))
     : opportunities;
 
   // Filtrar y ordenar oportunidades
@@ -347,12 +347,12 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
         <div className="w-48">
           <Select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
             <option value="">Todos los estados</option>
-            <option value="Draft">Borrador</option>
-            <option value="Active">Activo</option>
-            <option value="Closed">Cerrado</option>
-            <option value="Expired">Expirado</option>
-            <option value="On Hold">En espera</option>
-            <option value="Cancelled">Cancelado</option>
+            <option value="DRAFT">Borrador</option>
+            <option value="ACTIVE">Activo</option>
+            <option value="CLOSED">Cerrado</option>
+            <option value="EXPIRED">Expirado</option>
+            <option value="ON_HOLD">En espera</option>
+            <option value="CANCELLED">Cancelado</option>
           </Select>
         </div>
         <div className="w-48">
@@ -374,9 +374,9 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
         <div className="w-60">
           <Select value={filterModality} onChange={e => setFilterModality(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
             <option value="">Todas las modalidades</option>
-            <option value="Remote">Remoto</option>
-            <option value="On Site">Presencial</option>
-            <option value="Hybrid">Híbrido</option>
+            <option value="REMOTE">Remoto</option>
+            <option value="ON_SITE">Presencial</option>
+            <option value="HYBRID">Híbrido</option>
           </Select>
         </div>
         <div className="w-60">
@@ -541,10 +541,10 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                           })()}
                         </TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${opp.status === 'Active' ? 'bg-green-100 text-green-800' :
-                            opp.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
-                              opp.status === 'Closed' ? 'bg-red-100 text-red-800' :
-                                opp.status === 'Expired' ? 'bg-gray-100 text-gray-800' :
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${opp.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                            opp.status === 'DRAFT' ? 'bg-yellow-100 text-yellow-800' :
+                              opp.status === 'CLOSED' ? 'bg-red-100 text-red-800' :
+                                opp.status === 'EXPIRED' ? 'bg-gray-100 text-gray-800' :
                                   'bg-blue-100 text-blue-800'
                           }`}>
                           {opp.status}
@@ -587,12 +587,12 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                                 }
                               }}
                             >
-                              <option value="Draft">Borrador</option>
-                              <option value="Active">Activo</option>
-                              <option value="Closed">Cerrado</option>
-                              <option value="Expired">Expirado</option>
-                              <option value="On Hold">En espera</option>
-                              <option value="Cancelled">Cancelado</option>
+                              <option value="DRAFT">Borrador</option>
+                              <option value="ACTIVE">Activo</option>
+                              <option value="CLOSED">Cerrado</option>
+                              <option value="EXPIRED">Expirado</option>
+                              <option value="ON_HOLD">En espera</option>
+                              <option value="CANCELLED">Cancelado</option>
                             </Select>
                           )}
                         </TableCell>

@@ -76,7 +76,7 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
                 <Textarea name="description" id="description" value={form.description} onChange={onChange} required />
               <div>
                 <Label htmlFor="link">Enlace para aplicar a oportunidad *</Label>
-                <Input name="link" id="link" type="url" required value={(form as any).link || ''} onChange={onChange} placeholder="https://www.ejemplo.com/aplicar" />
+                <Input name="link" id="link" type="url" required value={form.link || ''} onChange={onChange} placeholder="https://www.ejemplo.com/aplicar" />
               </div>
               </div>
               <div>
@@ -121,44 +121,33 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
             <div>
               <Label htmlFor="workModality">Modalidad de Trabajo *</Label>
               <Select name="workModality" id="workModality" value={form.workModality} onChange={onChange} required>
-                <option value="Remote">Remoto</option>
-                <option value="On Site">Presencial</option>
-                <option value="Hybrid">Híbrido</option>
+                <option value="REMOTE">Remoto</option>
+                <option value="ON_SITE">Presencial</option>
+                <option value="HYBRID">Híbrido</option>
               </Select>
             </div>
           </FormSection>
 
-          <FormSection
-            icon={Settings}
-            title="Estado de la Oportunidad"
-            description="Defina el estado actual de la oportunidad laboral"
-            color="orange"
-          >
-            <div>
-              <Label htmlFor="status">Estado *</Label>
-              <Select name="status" id="status" value={form.status} onChange={onChange} required>
-                <option value="Draft">Borrador</option>
-                {userRole !== ROLES.EMPLOYER && (
-                  <>
-                    <option value="Active">Activa</option>
-                    <option value="Closed">Cerrada</option>
-                    <option value="Expired">Expirada</option>
-                    <option value="On Hold">En Espera</option>
-                    <option value="Cancelled">Cancelada</option>
-                  </>
-                )}
-                {userRole === ROLES.EMPLOYER && (
-                  <>
-                    <option value="Active" disabled>Activa (Solo Admin)</option>
-                    <option value="Closed" disabled>Cerrada (Solo Admin)</option>
-                    <option value="Expired" disabled>Expirada (Solo Admin)</option>
-                    <option value="On Hold" disabled>En Espera (Solo Admin)</option>
-                    <option value="Cancelled" disabled>Cancelada (Solo Admin)</option>
-                  </>
-                )}
-              </Select>
-            </div>
-          </FormSection>
+          {userRole !== ROLES.EMPLOYER && (
+            <FormSection
+              icon={Settings}
+              title="Estado de la Oportunidad"
+              description="Defina el estado actual de la oportunidad laboral"
+              color="orange"
+            >
+              <div>
+                <Label htmlFor="status">Estado *</Label>
+                <Select name="status" id="status" value={form.status} onChange={onChange} required>
+                  <option value="DRAFT">Borrador</option>
+                  <option value="ACTIVE">Activa</option>
+                  <option value="CLOSED">Cerrada</option>
+                  <option value="EXPIRED">Expirada</option>
+                  <option value="ON_HOLD">En Espera</option>
+                  <option value="CANCELLED">Cancelada</option>
+                </Select>
+              </div>
+            </FormSection>
+          )}
 
           <FormSection
             icon={DollarSign}
@@ -264,7 +253,10 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
                   name="travelAvailability"
                   id="travelAvailability"
                   checked={form.travelAvailability}
-                  onChange={onChange}
+                  onCheckedChange={(checked) => onMultiSelectChange(prev => ({
+                    ...prev,
+                    travelAvailability: checked
+                  }))}
                 />
                 <Label htmlFor="travelAvailability" className="cursor-pointer">Disponibilidad para viajar</Label>
               </div>

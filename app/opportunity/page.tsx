@@ -32,7 +32,7 @@ export default function EmployerOpportunityPage() {
     title: "",
     description: "",
     location: "",
-    status: "Draft",
+    status: "DRAFT",
     salaryRangeId: 0,
 
     // Business information
@@ -45,7 +45,7 @@ export default function EmployerOpportunityPage() {
     complementaryStudies: "",
     requiredExperience: "Not specified",
     travelAvailability: false,
-    workModality: "On Site",
+    workModality: "ON_SITE",
     expirationDate: "",
 
     // Multiple selections
@@ -234,7 +234,7 @@ export default function EmployerOpportunityPage() {
       title: "",
       description: "",
       location: "",
-      status: "Draft",
+      status: "DRAFT",
       salaryRangeId: 0,
 
       // Business information
@@ -246,7 +246,7 @@ export default function EmployerOpportunityPage() {
       complementaryStudies: "",
       requiredExperience: "Not specified",
       travelAvailability: false,
-      workModality: "On Site",
+      workModality: "ON_SITE",
       expirationDate: "",
 
       // Multiple selections
