@@ -1,11 +1,13 @@
 import React from "react";
 import { OpportunityResponse } from "@/lib/services/opportunity";
+import { ApplicationService } from "@/lib/services/opportunity";
 import { SalaryRangeResponse } from "@/lib/services/catalog/salary-range.service";
 import { ProgramResponse } from "@/lib/services/catalog/program.service";
 import { ProgramCompetencyResponse } from "@/lib/services/catalog/program-competency.service";
 import { JobAreaResponse } from "@/lib/services/catalog/job-area.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card";
 import { Button } from "@/components/atoms/button";
+import { toast } from "@/hooks/use-toast";
 
 interface OpportunityDetailModalProps {
   opportunity: OpportunityResponse | null;
@@ -34,6 +36,18 @@ export default function OpportunityDetailModal({
   const selectedCompetencies = programCompetencies.filter(pc => opportunity.programCompetencyIds?.includes(pc.id));
   const selectedJobAreas = jobAreas.filter(ja => opportunity.jobAreaIds?.includes(ja.id));
 
+  const handleViewMoreInfo = async () => {
+    if (opportunity.link) {
+      window.open(opportunity.link, '_blank', 'noopener');
+    }
+    try {
+      await ApplicationService.apply({ opportunityId: opportunity.id });
+      toast({ title: 'Aplicación enviada exitosamente' });
+    } catch (error) {
+      toast({ title: 'Error al enviar aplicación', description: String(error) });
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-0 md:p-2">
@@ -55,9 +69,12 @@ export default function OpportunityDetailModal({
           <div className="flex flex-col items-end gap-2">
             <span className="text-sm font-medium text-green-700">{salaryRange ? salaryRange.salary : '-'}</span>
             {opportunity.link && (
-              <a href={opportunity.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-3 py-2 rounded-md bg-green-600 text-white text-xs font-semibold shadow hover:bg-green-700 transition">
+              <Button
+                onClick={handleViewMoreInfo}
+                className="inline-flex items-center px-3 py-2 rounded-md bg-green-600 text-white text-xs font-semibold shadow hover:bg-green-700 transition"
+              >
                 Ver más información
-              </a>
+              </Button>
             )}
           </div>
         </div>
