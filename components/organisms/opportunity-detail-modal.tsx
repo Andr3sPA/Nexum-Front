@@ -43,10 +43,10 @@ export default function OpportunityDetailModal({
             <div className="text-sm text-gray-600 mb-2">{opportunity.location || '-'} • {opportunity.workModality}</div>
             <div className="text-xs text-gray-500 mb-1">Expira: {opportunity.expirationDate ? new Date(opportunity.expirationDate).toLocaleDateString('es-ES') : '-'}</div>
             <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mt-1 mb-2 ${
-              opportunity.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-              opportunity.status === 'DRAFT' ? 'bg-yellow-100 text-yellow-800' :
-              opportunity.status === 'CLOSED' ? 'bg-red-100 text-red-800' :
-              opportunity.status === 'EXPIRED' ? 'bg-gray-100 text-gray-800' :
+              opportunity.status.replace(/\s+/g, '_').toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+              opportunity.status.replace(/\s+/g, '_').toUpperCase() === 'DRAFT' ? 'bg-yellow-100 text-yellow-800' :
+              opportunity.status.replace(/\s+/g, '_').toUpperCase() === 'CLOSED' ? 'bg-red-100 text-red-800' :
+              opportunity.status.replace(/\s+/g, '_').toUpperCase() === 'EXPIRED' ? 'bg-gray-100 text-gray-800' :
               'bg-blue-100 text-blue-800'
             }`}>
               {opportunity.status}

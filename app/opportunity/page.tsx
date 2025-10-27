@@ -372,7 +372,7 @@ export default function EmployerOpportunityPage() {
           directamente a través de los enlaces externos proporcionados. En caso de no contar
           con un enlace, contacte a la organización por correo electrónico.
         </FloatingNotice>
-        {showRegister && (user ? (user.role === ROLES.EMPLOYER || user.role === ROLES.ADMINISTRATIVE) : true) && (
+        {showRegister && (user ? (user.role === ROLES.EMPLOYER || user.role === ROLES.ADMINISTRATIVE || user.role === ROLES.ADMIN) : true) && (
           <OpportunityCreationForm
             form={form}
             onChange={handleChange}

@@ -222,7 +222,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
     setError(null);
     try {
       // Use public endpoint to show opportunities to everyone
-      const data = user ? await OpportunityService.list() : await OpportunityService.listPublic();
+      const data = await OpportunityService.listPublic();
       if (Array.isArray(data)) {
         setOpportunities(data);
       } else {
@@ -298,17 +298,17 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
 
   // Base list según rol: egresados (GRADUATE) solo ven activas y vigentes a la fecha
   const baseOpportunities = (user && user.role === ROLES.GRADUATE)
-    ? opportunities.filter(o => o.status === 'ACTIVE' && isNotExpired(o.expirationDate))
+    ? opportunities.filter(o => o.status.replace(/\s+/g, '_').toUpperCase() === 'ACTIVE' && isNotExpired(o.expirationDate))
     : opportunities;
 
   // Filtrar y ordenar oportunidades
   const filteredOpportunities = baseOpportunities
     .filter(opp =>
       (!search || opp.title.toLowerCase().includes(search.toLowerCase()) || opp.description.toLowerCase().includes(search.toLowerCase())) &&
-      (!filterStatus || opp.status === filterStatus) &&
+      (!filterStatus || opp.status.replace(/\s+/g, '_').toUpperCase() === filterStatus) &&
       (!filterProgram || opp.coursedProgramIds?.includes(Number(filterProgram))) &&
       (!filterArea || opp.jobAreaIds?.includes(Number(filterArea))) &&
-      (!filterModality || opp.workModality === filterModality) &&
+      (!filterModality || opp.workModality.replace(/\s+/g, '_').toUpperCase() === filterModality) &&
       (!filterSalary || String(opp.salaryRangeId) === filterSalary)
     )
     .sort((a, b) => {
@@ -541,10 +541,10 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                           })()}
                         </TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${opp.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                            opp.status === 'DRAFT' ? 'bg-yellow-100 text-yellow-800' :
-                              opp.status === 'CLOSED' ? 'bg-red-100 text-red-800' :
-                                opp.status === 'EXPIRED' ? 'bg-gray-100 text-gray-800' :
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${opp.status.replace(/\s+/g, '_').toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                            opp.status.replace(/\s+/g, '_').toUpperCase() === 'DRAFT' ? 'bg-yellow-100 text-yellow-800' :
+                              opp.status.replace(/\s+/g, '_').toUpperCase() === 'CLOSED' ? 'bg-red-100 text-red-800' :
+                                opp.status.replace(/\s+/g, '_').toUpperCase() === 'EXPIRED' ? 'bg-gray-100 text-gray-800' :
                                   'bg-blue-100 text-blue-800'
                           }`}>
                           {opp.status}
@@ -565,7 +565,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                             </div>
                           ) : (
                             <Select
-                              value={opp.status}
+                              value={opp.status.replace(/\s+/g, '_').toUpperCase()}
                               disabled={!!statusLoadingId || applying}
                               className="min-w-[120px] text-xs"
                               onChange={async (e) => {

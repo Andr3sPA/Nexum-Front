@@ -15,6 +15,10 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       onCheckedChange?.(e.target.checked)
     }
 
+    const handleClick = () => {
+      onCheckedChange?.(!checked)
+    }
+
     return (
       <div className="relative">
         <input
@@ -27,10 +31,11 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         />
         <div
           className={cn(
-            "peer h-4 w-4 shrink-0 rounded-sm border border-neutral-300 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#026937] data-[state=checked]:text-white data-[state=checked]:border-[#026937]",
+            "peer h-4 w-4 shrink-0 rounded-sm border border-neutral-300 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#026937] data-[state=checked]:text-white data-[state=checked]:border-[#026937] cursor-pointer",
             checked && "bg-[#026937] text-white border-[#026937]",
             className
           )}
+          onClick={handleClick}
         >
           {checked && (
             <Check className="h-3 w-3 text-white" />
