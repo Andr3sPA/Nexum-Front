@@ -128,7 +128,7 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
             </div>
           </FormSection>
 
-          {userRole !== ROLES.EMPLOYER && (
+          {userRole == ROLES.ADMIN || userRole == ROLES.ADMINISTRATIVE || userRole == ROLES.DEAN && (
             <FormSection
               icon={Settings}
               title="Estado de la Oportunidad"
