@@ -120,10 +120,10 @@ export default function EmployerOpportunityPage() {
         ]);
 
         setSalaryRanges(salaryRangesData.filter((range, index, self) => 
-          index === self.findIndex(r => r.id === range.id)
+          index === self.findIndex(r => r.salary === range.salary)
         ));
         setPrograms(programsData.filter((program, index, self) => 
-          index === self.findIndex(p => p.id === program.id)
+          index === self.findIndex(p => p.name === program.name)
         ));
         logger.info("Fetched catalog data", { salaryRanges: salaryRangesData, programs: programsData });
       } catch (error) {
@@ -147,10 +147,10 @@ export default function EmployerOpportunityPage() {
         ]);
 
         setProgramCompetencies(competenciesData.filter((competency, index, self) => 
-          index === self.findIndex(c => c.id === competency.id)
+          index === self.findIndex(c => c.name === competency.name)
         ));
         setJobAreas(jobAreasData.filter((area, index, self) => 
-          index === self.findIndex(a => a.id === area.id)
+          index === self.findIndex(a => a.name === area.name)
         ));
       } catch (error) {
         console.error("Error fetching catalog data:", error);

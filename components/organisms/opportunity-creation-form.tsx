@@ -165,9 +165,7 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
                 disabled={catalogLoading}
               >
                 <option value="0">Seleccionar rango salarial...</option>
-                {salaryRanges.filter((range, index, self) => 
-                  index === self.findIndex(r => r.id === range.id)
-                ).map((range) => (
+                {salaryRanges.map((range) => (
                   <option key={range.id} value={range.id.toString()}>
                     {range.salary}
                   </option>
@@ -214,9 +212,7 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
               <div>
                 <Label>Programas Relacionados</Label>
                 <MultiSelectNumber
-                  items={programs.filter((prog, index, self) => 
-                    index === self.findIndex(p => p.id === prog.id)
-                  )}
+                  items={programs}
                   selectedIds={form.coursedProgramIds}
                   onChange={(selectedIds) => onMultiSelectChange(prev => ({
                     ...prev,
@@ -229,9 +225,7 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
               <div>
                 <Label>Competencias Requeridas</Label>
                 <MultiSelectNumber
-                  items={programCompetencies.filter((comp, index, self) => 
-                    index === self.findIndex(c => c.id === comp.id)
-                  )}
+                  items={programCompetencies}
                   selectedIds={form.programCompetencyIds}
                   onChange={(selectedIds) => onMultiSelectChange(prev => ({
                     ...prev,
@@ -244,9 +238,7 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
               <div>
                 <Label>Áreas de Trabajo</Label>
                 <MultiSelectNumber
-                  items={jobAreas.filter((area, index, self) => 
-                    index === self.findIndex(a => a.id === area.id)
-                  )}
+                  items={jobAreas}
                   selectedIds={form.jobAreaIds}
                   onChange={(selectedIds) => onMultiSelectChange(prev => ({
                     ...prev,

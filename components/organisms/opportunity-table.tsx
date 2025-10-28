@@ -249,10 +249,10 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
           JobAreaService.getAll()
         ]);
 
-        setSalaryRanges(salaryRangesData.filter((item, index, arr) => arr.findIndex(i => i.id === item.id) === index));
-        setPrograms(programsData.filter((item, index, arr) => arr.findIndex(i => i.id === item.id) === index));
-        setProgramCompetencies(competenciesData.filter((item, index, arr) => arr.findIndex(i => i.id === item.id) === index));
-        setJobAreas(jobAreasData.filter((item, index, arr) => arr.findIndex(i => i.id === item.id) === index));
+        setSalaryRanges(salaryRangesData.filter((item, index, arr) => arr.findIndex(i => i.salary === item.salary) === index));
+        setPrograms(programsData.filter((item, index, arr) => arr.findIndex(i => i.name === item.name) === index));
+        setProgramCompetencies(competenciesData.filter((item, index, arr) => arr.findIndex(i => i.name === item.name) === index));
+        setJobAreas(jobAreasData.filter((item, index, arr) => arr.findIndex(i => i.name === item.name) === index));
       } catch (error) {
         console.error("Error fetching catalog data:", error);
         // Don't show toast here as it might be too intrusive
