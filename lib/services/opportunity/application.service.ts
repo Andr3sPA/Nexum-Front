@@ -18,7 +18,7 @@ export const ApplicationService = {
   async apply(data: ApplicationRequest): Promise<ApplicationResponse> {
     console.log('ApplicationService.apply called with data:', data);
     const { body } = await serviceWithAuth<ApplicationRequest, ApplicationResponse>(
-      "/applications",
+      "/application",
       "POST",
       data,
       OPPORTUNITY_HOST
