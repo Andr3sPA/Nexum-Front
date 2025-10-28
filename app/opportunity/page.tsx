@@ -119,8 +119,12 @@ export default function EmployerOpportunityPage() {
           ProgramService.getAll()
         ]);
 
-        setSalaryRanges(salaryRangesData);
-        setPrograms(programsData);
+        setSalaryRanges(salaryRangesData.filter((range, index, self) => 
+          index === self.findIndex(r => r.id === range.id)
+        ));
+        setPrograms(programsData.filter((program, index, self) => 
+          index === self.findIndex(p => p.id === program.id)
+        ));
         logger.info("Fetched catalog data", { salaryRanges: salaryRangesData, programs: programsData });
       } catch (error) {
         console.error("Error fetching catalog data:", error);
@@ -142,8 +146,12 @@ export default function EmployerOpportunityPage() {
           JobAreaService.getAll()
         ]);
 
-        setProgramCompetencies(competenciesData);
-        setJobAreas(jobAreasData);
+        setProgramCompetencies(competenciesData.filter((competency, index, self) => 
+          index === self.findIndex(c => c.id === competency.id)
+        ));
+        setJobAreas(jobAreasData.filter((area, index, self) => 
+          index === self.findIndex(a => a.id === area.id)
+        ));
       } catch (error) {
         console.error("Error fetching catalog data:", error);
         toast({ title: "Error al cargar datos del catálogo", description: String(error) });

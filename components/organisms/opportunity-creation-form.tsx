@@ -165,7 +165,9 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
                 disabled={catalogLoading}
               >
                 <option value="0">Seleccionar rango salarial...</option>
-                {salaryRanges.map((range) => (
+                {salaryRanges.filter((range, index, self) => 
+                  index === self.findIndex(r => r.id === range.id)
+                ).map((range) => (
                   <option key={range.id} value={range.id.toString()}>
                     {range.salary}
                   </option>
