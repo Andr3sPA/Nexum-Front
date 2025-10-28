@@ -134,9 +134,9 @@ export default function OpportunityPublicDetailPage() {
   }
 
   const salaryRange = salaryRanges.find(sr => sr.id === opportunity.salaryRangeId);
-  const selectedPrograms = programs.filter(p => opportunity.coursedPrograms?.includes(p.name));
-  const selectedCompetencies = programCompetencies.filter(pc => opportunity.programCompetencies?.includes(pc.name));
-  const selectedJobAreas = jobAreas.filter(ja => opportunity.jobAreas?.includes(ja.name));
+  const selectedPrograms = opportunity.coursedPrograms || [];
+  const selectedCompetencies = opportunity.programCompetencies || [];
+  const selectedJobAreas = opportunity.jobAreas || [];
 
   return (
     <>
@@ -178,10 +178,10 @@ export default function OpportunityPublicDetailPage() {
                     <div className="mb-2"><strong>Fecha de expiración:</strong> <span className="text-gray-600">{opportunity.expirationDate ? new Date(opportunity.expirationDate).toLocaleDateString('es-ES') : '-'}</span></div>
                   </div>
                   <div>
-                    <div className="mb-2"><strong>Empresa:</strong> <span className="text-gray-600">{opportunity.businessName || '-'}</span></div>
-                    <div className="mb-2"><strong>Contacto:</strong> <span className="text-gray-600">{opportunity.contactName || '-'}</span></div>
-                    <div className="mb-2"><strong>Email:</strong> <span className="text-gray-600">{opportunity.businessEmail || '-'}</span></div>
-                    <div className="mb-2"><strong>Teléfono:</strong> <span className="text-gray-600">{opportunity.businessPhone || '-'}</span></div>
+                    <div className="mb-2"><strong>Empresa:</strong> <span className="text-gray-600">{opportunity.businessContact?.businessName || opportunity.businessName || '-'}</span></div>
+                    <div className="mb-2"><strong>Contacto:</strong> <span className="text-gray-600">{opportunity.businessContact?.contactName || opportunity.contactName || '-'}</span></div>
+                    <div className="mb-2"><strong>Email:</strong> <span className="text-gray-600">{opportunity.businessContact?.businessEmail || opportunity.businessEmail || '-'}</span></div>
+                    <div className="mb-2"><strong>Teléfono:</strong> <span className="text-gray-600">{opportunity.businessContact?.businessPhone || opportunity.businessPhone || '-'}</span></div>
                   </div>
                 </div>
               </FormSection>
@@ -189,8 +189,8 @@ export default function OpportunityPublicDetailPage() {
               <FormSection icon={User} title="Programas relacionados" description="Programas asociados a la oportunidad" color="purple">
                 {selectedPrograms.length > 0 ? (
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {selectedPrograms.map(program => (
-                      <span key={program.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{program.name}</span>
+                    {selectedPrograms.map((program, index) => (
+                      <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{program}</span>
                     ))}
                   </div>
                 ) : (
@@ -201,8 +201,8 @@ export default function OpportunityPublicDetailPage() {
               <FormSection icon={Settings} title="Competencias requeridas" description="Habilidades y competencias solicitadas" color="green">
                 {selectedCompetencies.length > 0 ? (
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {selectedCompetencies.map(c => (
-                      <span key={c.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{c.name}</span>
+                    {selectedCompetencies.map((competency, index) => (
+                      <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{competency}</span>
                     ))}
                   </div>
                 ) : (
@@ -213,8 +213,8 @@ export default function OpportunityPublicDetailPage() {
               <FormSection icon={Briefcase} title="Áreas de trabajo" description="Áreas relacionadas con la oferta" color="blue">
                 {selectedJobAreas.length > 0 ? (
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {selectedJobAreas.map(a => (
-                      <span key={a.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">{a.name}</span>
+                    {selectedJobAreas.map((area, index) => (
+                      <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">{area}</span>
                     ))}
                   </div>
                 ) : (

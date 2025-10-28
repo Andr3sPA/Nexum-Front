@@ -32,9 +32,9 @@ export default function OpportunityDetailModal({
 
   // Find catalog names by IDs
   const salaryRange = salaryRanges.find(sr => sr.id === opportunity.salaryRangeId);
-  const selectedPrograms = programs.filter(p => opportunity.coursedPrograms?.includes(p.name));
-  const selectedCompetencies = programCompetencies.filter(pc => opportunity.programCompetencies?.includes(pc.name));
-  const selectedJobAreas = jobAreas.filter(ja => opportunity.jobAreas?.includes(ja.name));
+  const selectedPrograms = opportunity.coursedPrograms || [];
+  const selectedCompetencies = opportunity.programCompetencies || [];
+  const selectedJobAreas = opportunity.jobAreas || [];
 
   const handleViewMoreInfo = async () => {
     if (opportunity.link) {
@@ -87,9 +87,9 @@ export default function OpportunityDetailModal({
             <h4 className="text-md font-semibold text-[#026937]">Programas Relacionados</h4>
             {selectedPrograms.length > 0 ? (
               <div className="flex flex-wrap gap-2 mt-1">
-                {selectedPrograms.map(program => (
-                  <span key={program.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {program.name}
+                {selectedPrograms.map((program, index) => (
+                  <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {program}
                   </span>
                 ))}
               </div>
@@ -101,9 +101,9 @@ export default function OpportunityDetailModal({
             <h4 className="text-md font-semibold text-[#026937]">Competencias Requeridas</h4>
             {selectedCompetencies.length > 0 ? (
               <div className="flex flex-wrap gap-2 mt-1">
-                {selectedCompetencies.map(competency => (
-                  <span key={competency.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    {competency.name}
+                {selectedCompetencies.map((competency, index) => (
+                  <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {competency}
                   </span>
                 ))}
               </div>
@@ -115,9 +115,9 @@ export default function OpportunityDetailModal({
             <h4 className="text-md font-semibold text-[#026937]">Áreas de Trabajo</h4>
             {selectedJobAreas.length > 0 ? (
               <div className="flex flex-wrap gap-2 mt-1">
-                {selectedJobAreas.map(area => (
-                  <span key={area.id} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    {area.name}
+                {selectedJobAreas.map((area, index) => (
+                  <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    {area}
                   </span>
                 ))}
               </div>
