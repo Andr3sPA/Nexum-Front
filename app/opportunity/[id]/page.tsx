@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Navbar from "@/components/navbar";
 import { OpportunityService, OpportunityResponse } from "@/lib/services/opportunity/opportunity.service";
+import { ApplicationService } from "@/lib/services/opportunity";
 import { SalaryRangeService, SalaryRangeResponse } from "@/lib/services/catalog/salary-range.service";
 import { ProgramService, ProgramResponse } from "@/lib/services/catalog/program.service";
 import { ProgramCompetencyService, ProgramCompetencyResponse } from "@/lib/services/catalog/program-competency.service";
@@ -226,10 +227,24 @@ export default function OpportunityPublicDetailPage() {
             <div className="flex items-center gap-3 mt-6">
               <Button variant="outline" onClick={() => router.back()}>Volver</Button>
               {opportunity.link && (
-                <a href={opportunity.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-3 py-2 rounded-md bg-green-600 text-white text-sm gap-2">
+                <Button
+                  onClick={() => {
+                    // Abrir link y hacer POST simultáneamente
+                    window.open(opportunity.link, '_blank', 'noopener');
+                    // Hacer POST sin esperar respuesta
+                    ApplicationService.apply({ opportunityId: opportunity.id })
+                      .then(() => {
+                        toast({ title: 'Aplicación enviada exitosamente' });
+                      })
+                      .catch((error: any) => {
+                        toast({ title: 'Error al enviar aplicación', description: String(error) });
+                      });
+                  }}
+                  className="inline-flex items-center px-3 py-2 rounded-md bg-green-600 text-white text-sm gap-2 hover:bg-green-700"
+                >
                   Ver más información
                   <ExternalLink className="w-4 h-4 ml-1 text-white opacity-80" />
-                </a>
+                </Button>
               )}
             </div>
           </CardContent>

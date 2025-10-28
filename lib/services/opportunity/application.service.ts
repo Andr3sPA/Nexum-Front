@@ -16,18 +16,20 @@ export interface ApplicationResponse {
 
 export const ApplicationService = {
   async apply(data: ApplicationRequest): Promise<ApplicationResponse> {
+    console.log('ApplicationService.apply called with data:', data);
     const { body } = await serviceWithAuth<ApplicationRequest, ApplicationResponse>(
-      "/application",
+      "/applications",
       "POST",
       data,
       OPPORTUNITY_HOST
     );
+    console.log('ApplicationService.apply response:', body);
     return body;
   },
 
   async list(): Promise<ApplicationResponse[]> {
     const { body } = await serviceWithAuth<undefined, ApplicationResponse[]>(
-      "/application",
+      "/applications",
       "GET",
       undefined,
       OPPORTUNITY_HOST

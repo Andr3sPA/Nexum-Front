@@ -37,15 +37,25 @@ export default function OpportunityDetailModal({
   const selectedJobAreas = opportunity.jobAreas || [];
 
   const handleViewMoreInfo = async () => {
+    console.log('handleViewMoreInfo called for opportunity:', opportunity.id);
+
+    // Hacer POST y abrir link simultáneamente
     if (opportunity.link) {
+      console.log('Opening link:', opportunity.link);
       window.open(opportunity.link, '_blank', 'noopener');
     }
-    try {
-      await ApplicationService.apply({ opportunityId: opportunity.id });
-      toast({ title: 'Aplicación enviada exitosamente' });
-    } catch (error) {
-      toast({ title: 'Error al enviar aplicación', description: String(error) });
-    }
+
+    // Hacer POST sin esperar respuesta para redireccionar inmediatamente
+    console.log('Making application POST request for opportunityId:', opportunity.id);
+    ApplicationService.apply({ opportunityId: opportunity.id })
+      .then((response) => {
+        console.log('Application POST successful:', response);
+        toast({ title: 'Aplicación enviada exitosamente' });
+      })
+      .catch((error) => {
+        console.error('Application POST failed:', error);
+        toast({ title: 'Error al enviar aplicación', description: String(error) });
+      });
   };
 
   return (
