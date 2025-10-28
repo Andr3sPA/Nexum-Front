@@ -77,10 +77,32 @@ export interface OpportunityResponse {
   workModality: WorkModality;
   expirationDate: string;
 
-  // Multiple selections
-  coursedProgramIds: number[];
-  programCompetencyIds: number[];
-  jobAreaIds: number[];
+  // Arrays of names instead of IDs
+  coursedPrograms: string[];
+  programCompetencies: string[];
+  jobAreas: string[];
+
+  // Nested objects
+  businessContact?: {
+    id: number;
+    businessName: string;
+    contactName: string;
+    businessEmail: string;
+    businessPhone: string;
+    creationDate: string;
+    lastUpdate: string;
+  };
+
+  candidateRequirements?: {
+    id: number;
+    complementaryStudies: string;
+    requiredExperience: RequiredExperience;
+    location: string;
+    travelAvailability: boolean;
+    workModality: WorkModality;
+    creationDate: string;
+    lastUpdate: string;
+  };
 }
 
 export const OpportunityService = {

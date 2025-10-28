@@ -134,9 +134,9 @@ export default function OpportunityPublicDetailPage() {
   }
 
   const salaryRange = salaryRanges.find(sr => sr.id === opportunity.salaryRangeId);
-  const selectedPrograms = programs.filter(p => opportunity.coursedProgramIds?.includes(p.id));
-  const selectedCompetencies = programCompetencies.filter(pc => opportunity.programCompetencyIds?.includes(pc.id));
-  const selectedJobAreas = jobAreas.filter(ja => opportunity.jobAreaIds?.includes(ja.id));
+  const selectedPrograms = programs.filter(p => opportunity.coursedPrograms?.includes(p.name));
+  const selectedCompetencies = programCompetencies.filter(pc => opportunity.programCompetencies?.includes(pc.name));
+  const selectedJobAreas = jobAreas.filter(ja => opportunity.jobAreas?.includes(ja.name));
 
   return (
     <>

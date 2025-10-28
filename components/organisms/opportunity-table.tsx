@@ -306,17 +306,21 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
     .filter(opp =>
       (!search || opp.title.toLowerCase().includes(search.toLowerCase()) || opp.description.toLowerCase().includes(search.toLowerCase())) &&
       (!filterStatus || opp.status.replace(/\s+/g, '_').toUpperCase() === filterStatus) &&
-      (!filterProgram || opp.coursedProgramIds?.includes(Number(filterProgram))) &&
-      (!filterArea || opp.jobAreaIds?.includes(Number(filterArea))) &&
+      (!filterProgram || opp.coursedPrograms?.includes(filterProgram)) &&
+      (!filterArea || opp.jobAreas?.includes(filterArea)) &&
       (!filterModality || opp.workModality.replace(/\s+/g, '_').toUpperCase() === filterModality) &&
       (!filterSalary || String(opp.salaryRangeId) === filterSalary)
     )
     .sort((a, b) => {
-      let aValue = a[sortField as keyof OpportunityResponse];
-      let bValue = b[sortField as keyof OpportunityResponse];
+      let aValue: any = a[sortField as keyof OpportunityResponse];
+      let bValue: any = b[sortField as keyof OpportunityResponse];
       if (sortField === "expirationDate") {
         aValue = a.expirationDate || "";
         bValue = b.expirationDate || "";
+      }
+      if (sortField === "jobAreas") {
+        aValue = a.jobAreas?.join(', ') || '';
+        bValue = b.jobAreas?.join(', ') || '';
       }
       if (aValue === undefined || bValue === undefined) return 0;
       if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
@@ -359,7 +363,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
           <Select value={filterProgram} onChange={e => setFilterProgram(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
             <option value="">Todos los programas</option>
             {programs.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
+              <option key={p.id} value={p.name}>{p.name}</option>
             ))}
           </Select>
         </div>
@@ -367,7 +371,7 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
           <Select value={filterArea} onChange={e => setFilterArea(e.target.value)} className="w-full rounded-lg border-[#43b649] focus:ring-2 focus:ring-[#026937] bg-white shadow-sm">
             <option value="">Todas las áreas</option>
             {jobAreas.map(a => (
-              <option key={a.id} value={a.id}>{a.name}</option>
+              <option key={a.id} value={a.name}>{a.name}</option>
             ))}
           </Select>
         </div>
@@ -460,9 +464,9 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                         <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
                       )}
                     </TableHead>
-                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('jobAreaIds')}>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('jobAreas')}>
                       Área
-                      {sortField === 'jobAreaIds' && (
+                      {sortField === 'jobAreas' && (
                         <span className="ml-1 align-middle">{sortOrder === 'asc' ? '▲' : '▼'}</span>
                       )}
                     </TableHead>
@@ -523,12 +527,12 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                        </TableCell>
                         <TableCell>
                           {(() => {
-                            const selectedAreas = jobAreas.filter(ja => opp.jobAreaIds?.includes(ja.id));
+                            const selectedAreas = opp.jobAreas || [];
                             return selectedAreas.length > 0 ? (
                               <div className="flex flex-wrap gap-1">
-                                {selectedAreas.slice(0, 2).map(area => (
-                                  <span key={area.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                    {area.name}
+                                {selectedAreas.slice(0, 2).map((areaName, index) => (
+                                  <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    {areaName}
                                   </span>
                                 ))}
                                 {selectedAreas.length > 2 && (

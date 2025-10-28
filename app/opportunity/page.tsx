@@ -195,6 +195,17 @@ export default function EmployerOpportunityPage() {
 
 
   const handleEditOpportunity = (opportunity: OpportunityResponse) => {
+    // Convert string arrays to ID arrays for form editing
+    const programIds = programs
+      .filter(p => opportunity.coursedPrograms?.includes(p.name))
+      .map(p => p.id);
+    const competencyIds = programCompetencies
+      .filter(c => opportunity.programCompetencies?.includes(c.name))
+      .map(c => c.id);
+    const areaIds = jobAreas
+      .filter(a => opportunity.jobAreas?.includes(a.name))
+      .map(a => a.id);
+
     setEditingOpportunity(opportunity);
     setIsEditMode(true);
 
@@ -207,22 +218,22 @@ export default function EmployerOpportunityPage() {
       salaryRangeId: opportunity.salaryRangeId,
 
       // Business information
-      businessName: opportunity.businessName || "",
-      contactName: opportunity.contactName || "",
-      businessEmail: opportunity.businessEmail || "",
-      businessPhone: opportunity.businessPhone || "",
+      businessName: opportunity.businessContact?.businessName || opportunity.businessName || "",
+      contactName: opportunity.businessContact?.contactName || opportunity.contactName || "",
+      businessEmail: opportunity.businessContact?.businessEmail || opportunity.businessEmail || "",
+      businessPhone: opportunity.businessContact?.businessPhone || opportunity.businessPhone || "",
       link: opportunity.link || '',
 
-      complementaryStudies: opportunity.complementaryStudies || "",
-      requiredExperience: opportunity.requiredExperience,
-      travelAvailability: opportunity.travelAvailability || false,
-      workModality: opportunity.workModality,
+      complementaryStudies: opportunity.candidateRequirements?.complementaryStudies || opportunity.complementaryStudies || "",
+      requiredExperience: opportunity.candidateRequirements?.requiredExperience || opportunity.requiredExperience,
+      travelAvailability: opportunity.candidateRequirements?.travelAvailability ?? opportunity.travelAvailability ?? false,
+      workModality: opportunity.candidateRequirements?.workModality || opportunity.workModality,
       expirationDate: opportunity.expirationDate,
 
-      // Multiple selections
-      coursedProgramIds: opportunity.coursedProgramIds || [],
-      programCompetencyIds: opportunity.programCompetencyIds || [],
-      jobAreaIds: opportunity.jobAreaIds || []
+      // Multiple selections - convert from string arrays to ID arrays
+      coursedProgramIds: programIds,
+      programCompetencyIds: competencyIds,
+      jobAreaIds: areaIds
     });
 
     // Navigate to register view
