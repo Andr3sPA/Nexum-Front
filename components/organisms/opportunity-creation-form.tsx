@@ -214,7 +214,9 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
               <div>
                 <Label>Programas Relacionados</Label>
                 <MultiSelectNumber
-                  items={programs}
+                  items={programs.filter((prog, index, self) => 
+                    index === self.findIndex(p => p.id === prog.id)
+                  )}
                   selectedIds={form.coursedProgramIds}
                   onChange={(selectedIds) => onMultiSelectChange(prev => ({
                     ...prev,
@@ -227,7 +229,9 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
               <div>
                 <Label>Competencias Requeridas</Label>
                 <MultiSelectNumber
-                  items={programCompetencies}
+                  items={programCompetencies.filter((comp, index, self) => 
+                    index === self.findIndex(c => c.id === comp.id)
+                  )}
                   selectedIds={form.programCompetencyIds}
                   onChange={(selectedIds) => onMultiSelectChange(prev => ({
                     ...prev,
@@ -240,7 +244,9 @@ export const OpportunityCreationForm: React.FC<OpportunityCreationFormProps> = (
               <div>
                 <Label>Áreas de Trabajo</Label>
                 <MultiSelectNumber
-                  items={jobAreas}
+                  items={jobAreas.filter((area, index, self) => 
+                    index === self.findIndex(a => a.id === area.id)
+                  )}
                   selectedIds={form.jobAreaIds}
                   onChange={(selectedIds) => onMultiSelectChange(prev => ({
                     ...prev,
