@@ -105,6 +105,19 @@ export interface OpportunityResponse {
   };
 }
 
+// Candidate profile from backend
+export interface OpportunityCandidate {
+  id: string; // UUID
+  name: string;
+  middleName?: string;
+  lastname: string;
+  secondLastname?: string;
+  email?: string;
+  mobile?: string;
+  country?: string;
+  city?: string;
+}
+
 export const OpportunityService = {
   // Registrar una nueva oportunidad (POST) - permite usuarios anónimos
   async create(data: OpportunityRequest): Promise<OpportunityResponse> {
@@ -205,5 +218,60 @@ export const OpportunityService = {
       throw new Error((body as any)?.message || `Error updating opportunity status: HTTP ${status}`);
     }
     return body;
+  },
+
+  // Buscar candidatos para una oportunidad (paginado, 5 por página)
+  async searchCandidates(opportunityId: number, query: string = "", page: number = 0): Promise<OpportunityCandidate[]> {
+    const params = new URLSearchParams();
+    if (query) params.append("q", query);
+    params.append("page", String(page));
+    
+    const endpoint = `${OPPORTUNITY_ENDPOINT}/${opportunityId}/candidates?${params.toString()}`;
+    console.log('[searchCandidates] Calling endpoint:', endpoint);
+    console.log('[searchCandidates] Full URL:', `${OPPORTUNITY_HOST}${endpoint}`);
+    
+    const { status, body } = await serviceWithAuth<undefined, OpportunityCandidate[]>(
+      endpoint,
+      METHOD.get,
+      undefined,
+      OPPORTUNITY_HOST
+    );
+    
+    console.log('[searchCandidates] Response status:', status);
+    console.log('[searchCandidates] Response body:', body);
+    
+    if (status !== 200) {
+      throw new Error((body as any)?.message || `Error searching candidates: HTTP ${status}`);
+    }
+    return body;
+  },
+
+  // Obtener lista de IDs de candidatos contratados
+  async getHiredCandidates(opportunityId: number): Promise<string[]> {
+    const endpoint = `${OPPORTUNITY_ENDPOINT}/${opportunityId}/hired`;
+    const { status, body } = await serviceWithAuth<undefined, string[]>(
+      endpoint,
+      METHOD.get,
+      undefined,
+      OPPORTUNITY_HOST
+    );
+    if (status !== 200) {
+      throw new Error((body as any)?.message || `Error getting hired candidates: HTTP ${status}`);
+    }
+    return body;
+  },
+
+  // Guardar lista de candidatos contratados (reemplaza la lista completa)
+  async saveHiredCandidates(opportunityId: number, candidateIds: string[]): Promise<void> {
+    const endpoint = `${OPPORTUNITY_ENDPOINT}/${opportunityId}/hired`;
+    const { status, body } = await serviceWithAuth<string[], void>(
+      endpoint,
+      METHOD.post,
+      candidateIds,
+      OPPORTUNITY_HOST
+    );
+    if (status !== 200) {
+      throw new Error((body as any)?.message || `Error saving hired candidates: HTTP ${status}`);
+    }
   },
 };
