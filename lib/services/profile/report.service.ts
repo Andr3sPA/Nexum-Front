@@ -46,6 +46,20 @@ export interface GraduateReportResponse {
   endYear: number
 }
 
+export interface ProgramEmployability {
+  programName: string
+  totalGraduates: number
+  employedGraduates: number
+  employabilityRate: number
+}
+
+export interface EducationEmployabilityResponse {
+  totalGraduates: number
+  employedGraduates: number
+  employabilityRate: number
+  byProgram: ProgramEmployability[]
+}
+
 export const ReportService = {
   async generateGraduateReport(
     filterRequest: ReportFilterRequest,
@@ -133,28 +147,44 @@ export const ReportService = {
     filterRequest: ReportFilterRequest
   ): Promise<GraduateReportResponse> {
     // logger.info("📡 Llamando a getGraduateReportSummary con filtros:", filterRequest)
-    
+
     const params = new URLSearchParams()
     Object.entries(filterRequest).forEach(([key, value]) => {
       if (value !== undefined && value !== "") params.append(key, String(value))
     })
     const endpoint = `/reports/graduates/summary?${params.toString()}`
-    
+
     // logger.info("🔗 Endpoint:", endpoint)
     // logger.info("📋 Parámetros:", params.toString())
-    
+
     const { status, body } = await serviceWithAuth<undefined, GraduateReportResponse>(
       endpoint,
       METHOD.get,
       undefined,
       PROFILE_HOST
     )
-    
+
     // logger.info("📊 Status de respuesta:", status)
     // logger.info("📄 Body de respuesta:", body)
-    
+
     if (status !== 200) {
       throw new Error("No se pudo obtener el resumen del reporte")
+    }
+    return body
+  },
+
+  async getEducationEmployability(): Promise<EducationEmployabilityResponse> {
+    const endpoint = `/reports/education-employability`
+
+    const { status, body } = await serviceWithAuth<undefined, EducationEmployabilityResponse>(
+      endpoint,
+      METHOD.get,
+      undefined,
+      PROFILE_HOST
+    )
+
+    if (status !== 200) {
+      throw new Error("No se pudo obtener el reporte de empleabilidad educativa")
     }
     return body
   }
