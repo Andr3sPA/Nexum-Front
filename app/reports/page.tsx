@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { ROLES } from "@/lib/services/constants/api.constants"
 import { ReportService, ReportFormat, GraduateReportResponse, EducationEmployabilityResponse } from "@/lib/services/profile/report.service"
@@ -21,6 +21,8 @@ export default function ReportsPage() {
   const email = user?.email || ""
   const initials = user?.initials || (firstName[0] || "") + (firstLastname[0] || "")
   
+  const searchParams = useSearchParams()
+
   const [reportConfig, setReportConfig] = useState({
     gender: "",
     country: "",
@@ -37,6 +39,9 @@ export default function ReportsPage() {
    const [isGenerating, setIsGenerating] = useState(false)
    const [isExporting, setIsExporting] = useState(false)
    const [isLoadingEducation, setIsLoadingEducation] = useState(false)
+
+  // Determine which tab to open by default. Accepts ?view=employability
+  const initialView = searchParams?.get("view") === "employability" ? "employability" : "graduate"
 
   React.useEffect(() => {
     if (user && user.role && user.role !== ROLES.ADMINISTRATIVE && user.role !== ROLES.DEAN && user.role !== ROLES.ADMIN) {
@@ -136,7 +141,7 @@ export default function ReportsPage() {
         ...userProfile
       }}
     >
-      <Tabs defaultValue="graduate" className="w-full">
+      <Tabs defaultValue={initialView} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="graduate">Reportes de Egresados</TabsTrigger>
           <TabsTrigger value="employability">Empleabilidad Educativa</TabsTrigger>

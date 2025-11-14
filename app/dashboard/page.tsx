@@ -68,6 +68,14 @@ export default function UnifiedDashboardPage() {
         color: "green",
       },
       {
+        href: "/dashboard/metrics",
+        icon: <BarChart3 className="w-8 h-8 text-indigo-600" />,
+        title: "Métricas",
+        description:
+          "Consulta métricas institucionales de egresados y empleabilidad.",
+        color: "indigo",
+      },
+      {
         href: "/admin/accounts",
         icon: <User className="w-8 h-8 text-orange-500" />,
         title: "Administrar Cuentas",
@@ -119,6 +127,14 @@ export default function UnifiedDashboardPage() {
         description:
           "Genera reportes estadísticos detallados de egresados para análisis institucional.",
         color: "green",
+      },
+      {
+        href: "/dashboard/metrics",
+        icon: <BarChart3 className="w-8 h-8 text-indigo-600" />,
+        title: "Métricas",
+        description:
+          "Consulta métricas institucionales de egresados y empleabilidad.",
+        color: "indigo",
       },
       {
         href: "/opportunity",

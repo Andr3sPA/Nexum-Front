@@ -5,6 +5,7 @@ export interface ReportStatCardProps {
   title: string
   value: number | string
   subtitle?: string
+  info?: string
   variant?: "primary" | "secondary" | "success" | "warning" | "info"
   className?: string
 }
@@ -21,6 +22,7 @@ export const ReportStatCard: React.FC<ReportStatCardProps> = ({
   title,
   value,
   subtitle,
+  info,
   variant = "primary",
   className
 }) => {
@@ -31,7 +33,14 @@ export const ReportStatCard: React.FC<ReportStatCardProps> = ({
       className
     )}>
       <div className="text-2xl font-bold mb-1">{value}</div>
-      <div className="text-sm font-medium">{title}</div>
+      <div className="flex items-center gap-2">
+        <div className="text-sm font-medium">{title}</div>
+        {info && (
+          <div title={info} aria-label={info} className="text-xs text-gray-500" style={{ lineHeight: 1 }}>
+            ⓘ
+          </div>
+        )}
+      </div>
       {subtitle && (
         <div className="text-xs opacity-75 mt-1">{subtitle}</div>
       )}
