@@ -16,10 +16,12 @@ import { Briefcase, DollarSign, Calendar, User, Settings, Building, ExternalLink
 import { Button } from "@/components/atoms/button";
 import { toast } from "@/hooks/use-toast";
 import FloatingNotice from "@/components/atoms/floating-notice";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function OpportunityPublicDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const idParam = params?.id;
   const id = idParam ? parseInt(String(idParam)) : NaN;
 
@@ -226,26 +228,28 @@ export default function OpportunityPublicDetailPage() {
 
             <div className="flex items-center gap-3 mt-6">
               <Button variant="outline" onClick={() => router.back()}>Volver</Button>
-              {opportunity.link && (
-                <Button
-                  onClick={() => {
-                    // Abrir link y hacer POST simultáneamente
-                    window.open(opportunity.link, '_blank', 'noopener');
-                    // Hacer POST sin esperar respuesta
-                    ApplicationService.apply({ opportunityId: opportunity.id })
-                      .then(() => {
-                        toast({ title: 'Aplicación enviada exitosamente' });
-                      })
-                      .catch((error: any) => {
-                        toast({ title: 'Error al enviar aplicación', description: String(error) });
-                      });
-                  }}
-                  className="inline-flex items-center px-3 py-2 rounded-md bg-green-600 text-white text-sm gap-2 hover:bg-green-700"
-                >
-                  Ver más información
-                  <ExternalLink className="w-4 h-4 ml-1 text-white opacity-80" />
-                </Button>
-              )}
+               {opportunity.link && (
+                 <Button
+                   onClick={() => {
+                     // Abrir link y hacer POST simultáneamente
+                     window.open(opportunity.link, '_blank', 'noopener');
+                     // Hacer POST solo si el usuario es graduate
+                     if (user?.role === 'graduate') {
+                       ApplicationService.apply({ opportunityId: opportunity.id })
+                         .then(() => {
+                           toast({ title: 'Aplicación enviada exitosamente' });
+                         })
+                         .catch((error: any) => {
+                           toast({ title: 'Error al enviar aplicación', description: String(error) });
+                         });
+                     }
+                   }}
+                   className="inline-flex items-center px-3 py-2 rounded-md bg-green-600 text-white text-sm gap-2 hover:bg-green-700"
+                 >
+                   Ver más información
+                   <ExternalLink className="w-4 h-4 ml-1 text-white opacity-80" />
+                 </Button>
+               )}
             </div>
           </CardContent>
         </Card>

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { OpportunityResponse } from "@/lib/services/opportunity";
 import { ApplicationService } from "@/lib/services/opportunity";
@@ -8,6 +10,7 @@ import { JobAreaResponse } from "@/lib/services/catalog/job-area.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card";
 import { Button } from "@/components/atoms/button";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
 
 interface OpportunityDetailModalProps {
   opportunity: OpportunityResponse | null;
@@ -28,6 +31,8 @@ export default function OpportunityDetailModal({
   programCompetencies,
   jobAreas
 }: OpportunityDetailModalProps) {
+  const { user } = useAuth();
+
   if (!open || !opportunity) return null;
 
   // Find catalog names by IDs
@@ -45,17 +50,19 @@ export default function OpportunityDetailModal({
       window.open(opportunity.link, '_blank', 'noopener');
     }
 
-    // Hacer POST sin esperar respuesta para redireccionar inmediatamente
-    console.log('Making application POST request for opportunityId:', opportunity.id);
-    ApplicationService.apply({ opportunityId: opportunity.id })
-      .then((response) => {
-        console.log('Application POST successful:', response);
-        toast({ title: 'Aplicación enviada exitosamente' });
-      })
-      .catch((error) => {
-        console.error('Application POST failed:', error);
-        toast({ title: 'Error al enviar aplicación', description: String(error) });
-      });
+    // Hacer POST solo si el usuario es graduate
+    if (user?.role === 'graduate') {
+      console.log('Making application POST request for opportunityId:', opportunity.id);
+      ApplicationService.apply({ opportunityId: opportunity.id })
+        .then((response) => {
+          console.log('Application POST successful:', response);
+          toast({ title: 'Aplicación enviada exitosamente' });
+        })
+        .catch((error) => {
+          console.error('Application POST failed:', error);
+          toast({ title: 'Error al enviar aplicación', description: String(error) });
+        });
+    }
   };
 
   return (

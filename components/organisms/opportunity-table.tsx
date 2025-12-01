@@ -210,24 +210,9 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
     } finally {
       setApplying(false);
     }
-  };
+   };
 
-  const handleRowClick = (opportunityId: number) => {
-    try {
-      console.debug('[opportunity-table] row clicked, navigating to', opportunityId);
-      try {
-        // store a preview of the opportunity so the detail page can use it if the public API is protected
-        sessionStorage.setItem(`opportunity_preview_${opportunityId}`, JSON.stringify(opportunities.find(o => o.id === opportunityId) || {}));
-      } catch (e) {
-        // ignore sessionStorage errors
-      }
-      router.push(`/opportunity/${opportunityId}`);
-    } catch (e) {
-      console.warn('[opportunity-table] navigation failed', e);
-    }
-  };
-
-  // Confirmation dialog removed: applying happens immediately in handleApplyClick
+   // Confirmation dialog removed: applying happens immediately in handleApplyClick
 
   // Hire modal functions - Multiple selection
   const openHireModal = async (opp: OpportunityResponse) => {
@@ -635,15 +620,28 @@ export default function OpportunityTable({ refetchTrigger, onEditOpportunity, us
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredOpportunities.map((opp, index) => (
-                    <TableRow
-                      key={opp.id}
-                      className={index % 2 === 0 ? "bg-white cursor-pointer" : "bg-gray-50 cursor-pointer"}
-                      onClick={() => { handleRowClick(opp.id); }}
-                    >
-                      <TableCell className="font-medium">
-                        <Link href={`/opportunity/${opp.id}`} className="block">{opp.title}</Link>
-                      </TableCell>
+                   {filteredOpportunities.map((opp, index) => (
+                     <TableRow
+                       key={opp.id}
+                       className={index % 2 === 0 ? "bg-white cursor-pointer hover:bg-gray-50" : "bg-gray-50 cursor-pointer hover:bg-white"}
+                       onClick={() => {
+                         try {
+                           console.debug('[opportunity-table] row clicked, navigating to', opp.id);
+                           try {
+                             // store a preview of the opportunity so the detail page can use it if the public API is protected
+                             sessionStorage.setItem(`opportunity_preview_${opp.id}`, JSON.stringify(opp));
+                           } catch (e) {
+                             // ignore sessionStorage errors
+                           }
+                           router.push(`/opportunity/${opp.id}`);
+                         } catch (e) {
+                           console.warn('[opportunity-table] navigation failed', e);
+                         }
+                       }}
+                     >
+                       <TableCell className="font-medium">
+                         {opp.title}
+                       </TableCell>
                       <TableCell className="max-w-xs">
                         <div className="truncate" title={opp.description}>
                           {opp.description}
