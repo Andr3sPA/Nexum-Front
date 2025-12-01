@@ -35,26 +35,25 @@ export const ROUTES = {
 
   EMPLOYER: {
     DASHBOARD: "/dashboard",
-    OPPORTUNITY: "/employer/opportunity",
+    OPPORTUNITY: "/opportunity",
   },
 } as const;
 
 export const ROLE_ROUTES = {
-  [ROLES.GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE, "/employer/opportunity"],
+  [ROLES.GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE, "/opportunity"],
   [ROLES.ADMINISTRATIVE]: [
     ROUTES.DASHBOARD,
     ROUTES.SEARCH_GRADUATES,
     ROUTES.ADMIN.REPORTS,
     ROUTES.ADMIN.COMPLETE_PROFILE,
     ROUTES.PROFILE,
-    "/employer/opportunity",
+    "/opportunity",
   ],
   [ROLES.DEAN]: [
     ROUTES.DASHBOARD,
     ROUTES.SEARCH_GRADUATES,
     ROUTES.DEAN.REPORTS,
     ROUTES.PROFILE,
-    "/employer/opportunity",
   ],
   [ROLES.EMPLOYER]: [
     ROUTES.EMPLOYER.DASHBOARD,
@@ -65,9 +64,9 @@ export const ROLE_ROUTES = {
     ROUTES.SEARCH_GRADUATES,
     ROUTES.ADMIN.REPORTS,
     ROUTES.PROFILE,
-    "/employer/opportunity",
+    "/opportunity",
   ],
-  [ROLES.PRE_GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE, "/employer/opportunity"],
+  [ROLES.PRE_GRADUATE]: [ROUTES.DASHBOARD, ROUTES.PROFILE, "/opportunity"],
 } as const;
 
 export type UserRole = keyof typeof ROLE_ROUTES;

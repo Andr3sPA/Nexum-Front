@@ -7,7 +7,7 @@ interface EducationEmployabilityChartProps {
   data: EducationEmployabilityResponse
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
+const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
 
 export function EducationEmployabilityChart({ data }: EducationEmployabilityChartProps) {
   // Prepare data for program breakdown chart
@@ -21,45 +21,20 @@ export function EducationEmployabilityChart({ data }: EducationEmployabilityChar
 
   // Prepare data for overall pie chart
   const overallPieData = [
-    { name: 'Empleados', value: data.employedGraduates, color: '#00C49F' },
-    { name: 'No Empleados', value: data.totalGraduates - data.employedGraduates, color: '#FF8042' }
+    { name: 'Empleados', value: data.employedGraduates, color: '#10b981' },
+    { name: 'No Empleados', value: data.totalGraduates - data.employedGraduates, color: '#ef4444' }
   ]
 
   return (
     <div className="space-y-6">
-      {/* Overall Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Egresados</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.totalGraduates}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Egresados Empleados</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.employedGraduates}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Tasa de Empleabilidad</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{Math.round(data.employabilityRate)}%</div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Overall Distribution Pie Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Distribución General de Empleabilidad</CardTitle>
-          <CardDescription>
+      <Card className="border-l-4 border-l-blue-500">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardTitle className="text-blue-800 flex items-center gap-2">
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            Distribución General de Empleabilidad
+          </CardTitle>
+          <CardDescription className="text-blue-600">
             Proporción de egresados empleados vs no empleados
           </CardDescription>
         </CardHeader>
@@ -87,10 +62,13 @@ export function EducationEmployabilityChart({ data }: EducationEmployabilityChar
       </Card>
 
       {/* Program Breakdown Bar Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Empleabilidad por Programa</CardTitle>
-          <CardDescription>
+      <Card className="border-l-4 border-l-purple-500">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
+          <CardTitle className="text-purple-800 flex items-center gap-2">
+            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+            Empleabilidad por Programa
+          </CardTitle>
+          <CardDescription className="text-purple-600">
             Comparación de tasas de empleabilidad entre diferentes programas académicos
           </CardDescription>
         </CardHeader>
@@ -124,17 +102,20 @@ export function EducationEmployabilityChart({ data }: EducationEmployabilityChar
                   return item ? item.fullName : label
                 }}
               />
-              <Bar dataKey="rate" fill="#8884d8" name="Tasa %" />
+              <Bar dataKey="rate" fill="#8b5cf6" name="Tasa %" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
       {/* Program Details Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Detalles por Programa</CardTitle>
-          <CardDescription>
+      <Card className="border-l-4 border-l-amber-500">
+        <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50">
+          <CardTitle className="text-amber-800 flex items-center gap-2">
+            <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+            Detalles por Programa
+          </CardTitle>
+          <CardDescription className="text-amber-600">
             Información detallada de empleabilidad por programa académico
           </CardDescription>
         </CardHeader>
@@ -142,20 +123,30 @@ export function EducationEmployabilityChart({ data }: EducationEmployabilityChar
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Programa</th>
-                  <th className="text-right p-2">Total Egresados</th>
-                  <th className="text-right p-2">Empleados</th>
-                  <th className="text-right p-2">Tasa de Empleabilidad</th>
+                <tr className="border-b bg-amber-50">
+                  <th className="text-left p-3 font-semibold text-amber-800">Programa</th>
+                  <th className="text-right p-3 font-semibold text-amber-800">Total Egresados</th>
+                  <th className="text-right p-3 font-semibold text-amber-800">Empleados</th>
+                  <th className="text-right p-3 font-semibold text-amber-800">Tasa de Empleabilidad</th>
                 </tr>
               </thead>
               <tbody>
                 {data.byProgram.map((program, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="p-2">{program.programName}</td>
-                    <td className="text-right p-2">{program.totalGraduates}</td>
-                    <td className="text-right p-2">{program.employedGraduates}</td>
-                    <td className="text-right p-2">{Math.round(program.employabilityRate)}%</td>
+                  <tr key={index} className="border-b hover:bg-amber-50/50 transition-colors">
+                    <td className="p-3 font-medium">{program.programName}</td>
+                    <td className="text-right p-3">{program.totalGraduates}</td>
+                    <td className="text-right p-3 text-emerald-600 font-semibold">{program.employedGraduates}</td>
+                    <td className="text-right p-3">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        program.employabilityRate >= 80 
+                          ? 'bg-emerald-100 text-emerald-800' 
+                          : program.employabilityRate >= 60 
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-red-100 text-red-800'
+                      }`}>
+                        {Math.round(program.employabilityRate)}%
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>

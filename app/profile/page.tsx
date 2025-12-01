@@ -38,7 +38,7 @@ function ProfilePageContent() {
 
   // Permisos de edición
   const normalizedRole = (user?.role || "").toUpperCase()
-  const canEdit = isCurrentUser || (normalizedRole === "ADMINISTRATIVE" || normalizedRole === "DEAN")
+  const canEdit = isCurrentUser || (normalizedRole === "ADMINISTRATIVE" || normalizedRole === "ADMIN")
 
   // Use current user data for navbar (always from localStorage)
   const firstName = userProfile?.name?.split(" ")[0] || ""
@@ -175,13 +175,7 @@ function ProfilePageContent() {
                   ? "Actualiza tu información personal, académica y laboral"
                   : "Información personal, académica y laboral del egresado"}
                 </CardDescription>
-                {!isCurrentUser && (
-                  <div className="mt-2">
-                    <span className="text-sm text-gray-500">
-                      {canEdit ? "Modo de administración - Edición habilitada" : "Modo de solo lectura"}
-                    </span>
-                  </div>
-                )}
+
               </CardHeader>
                <CardContent>
                  <ProfileTabs

@@ -76,7 +76,22 @@ export default function EmployerOpportunityPage() {
     // Solo se ejecuta en el cliente
     const storedUser = LocalStorageService.getItem<AuthenticatedUserResponse>("user");
     const storedUserProfile = LocalStorageService.getItem<DetailedUserResponse>("userProfile");
-    const currentUser = storedUser && storedUserProfile ? { ...storedUser, ...storedUserProfile } : null;
+    const storedEmployerProfile = LocalStorageService.getItem<EmployerProfileResponse>("employerProfile");
+    
+    // For employers, we only need user and employerProfile (not userProfile)
+    let currentUser = null;
+    if (storedUser) {
+      if (storedUser.role === ROLES.EMPLOYER && storedEmployerProfile) {
+        // Employer: combine user with employerProfile
+        currentUser = { ...storedUser, ...storedEmployerProfile };
+      } else if (storedUserProfile) {
+        // Other roles: combine user with userProfile
+        currentUser = { ...storedUser, ...storedUserProfile };
+      } else {
+        // Fallback: just use user data
+        currentUser = storedUser;
+      }
+    }
     setUser(currentUser);
 
     // If user is not authenticated and not trying to create opportunity, redirect to login

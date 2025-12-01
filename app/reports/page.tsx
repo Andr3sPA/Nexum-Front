@@ -4,12 +4,10 @@ import React, { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { ROLES } from "@/lib/services/constants/api.constants"
-import { ReportService, ReportFormat, GraduateReportResponse, EducationEmployabilityResponse } from "@/lib/services/profile/report.service"
+import { ReportService, ReportFormat, GraduateReportResponse } from "@/lib/services/profile/report.service"
 import { useAcademic } from "@/contexts/academic-context"
 import { ReportTemplate } from "@/components/templates/report-template"
 import { ReportContainer } from "@/components/organisms/report-container"
-import { EducationEmployabilityChart } from "@/components/organisms/education-employability-chart"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/molecules/tabs"
 
 export default function ReportsPage() {
   const router = useRouter()
@@ -35,13 +33,8 @@ export default function ReportsPage() {
   })
 
    const [reportData, setReportData] = useState<GraduateReportResponse | null>(null)
-   const [educationData, setEducationData] = useState<EducationEmployabilityResponse | null>(null)
    const [isGenerating, setIsGenerating] = useState(false)
    const [isExporting, setIsExporting] = useState(false)
-   const [isLoadingEducation, setIsLoadingEducation] = useState(false)
-
-  // Determine which tab to open by default. Accepts ?view=employability
-  const initialView = searchParams?.get("view") === "employability" ? "employability" : "graduate"
 
   React.useEffect(() => {
     if (user && user.role && user.role !== ROLES.ADMINISTRATIVE && user.role !== ROLES.DEAN && user.role !== ROLES.ADMIN) {
@@ -114,21 +107,7 @@ export default function ReportsPage() {
     setReportData(null)
   }
 
-  const loadEducationEmployability = async () => {
-    setIsLoadingEducation(true)
-    try {
-      const data = await ReportService.getEducationEmployability()
-      setEducationData(data)
-    } catch (error) {
-      alert("No se pudo cargar el reporte de empleabilidad educativa: " + (error instanceof Error ? error.message : String(error)))
-    } finally {
-      setIsLoadingEducation(false)
-    }
-  }
 
-  React.useEffect(() => {
-    loadEducationEmployability()
-  }, [])
 
   return (
     <ReportTemplate
@@ -141,43 +120,20 @@ export default function ReportsPage() {
         ...userProfile
       }}
     >
-      <Tabs defaultValue={initialView} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="graduate">Reportes de Egresados</TabsTrigger>
-          <TabsTrigger value="employability">Empleabilidad Educativa</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="graduate" className="mt-6">
-          <ReportContainer
-            filters={reportConfig}
-            onFilterChange={handleConfigChange}
-            onGenerateReport={generateReport}
-            onClearFilters={handleClearFilters}
-            onExport={handleExport}
-            reportData={reportData}
-            isGenerating={isGenerating}
-            isExporting={isExporting}
-            programs={programs}
-            isLoadingPrograms={isLoadingPrograms}
-            filtersWidthClass="w-full md:w-[420px] lg:w-[480px]"
-            contentGapClass="gap-10"
-          />
-        </TabsContent>
-
-        <TabsContent value="employability" className="mt-6">
-          {isLoadingEducation ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="text-lg">Cargando datos de empleabilidad...</div>
-            </div>
-          ) : educationData ? (
-            <EducationEmployabilityChart data={educationData} />
-          ) : (
-            <div className="flex justify-center items-center h-64">
-              <div className="text-lg text-red-500">Error al cargar los datos</div>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+      <ReportContainer
+        filters={reportConfig}
+        onFilterChange={handleConfigChange}
+        onGenerateReport={generateReport}
+        onClearFilters={handleClearFilters}
+        onExport={handleExport}
+        reportData={reportData}
+        isGenerating={isGenerating}
+        isExporting={isExporting}
+        programs={programs}
+        isLoadingPrograms={isLoadingPrograms}
+        filtersWidthClass="w-full md:w-[420px] lg:w-[480px]"
+        contentGapClass="gap-10"
+      />
     </ReportTemplate>
   )
 }

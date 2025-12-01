@@ -136,14 +136,6 @@ export default function UnifiedDashboardPage() {
           "Consulta métricas institucionales de egresados y empleabilidad.",
         color: "indigo",
       },
-      {
-        href: "/opportunity",
-        icon: <BarChart3 className="w-8 h-8 text-yellow-600" />,
-        title: "Oportunidades",
-        description: "Descubre nuevas oportunidades académicas y laborales",
-        color: "yellow",
-
-      },
     ];
   } else if (role === ROLES.GRADUATE) {
     cards = [

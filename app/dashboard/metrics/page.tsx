@@ -6,8 +6,10 @@ import { LocalStorageService } from "@/lib/services/local-storage.service"
 import { DashboardTemplate } from "@/components/templates/dashboard-template"
 import { ROLES } from "@/lib/services/constants/api.constants"
 import { MetricsService, MetricsResponse } from "@/lib/services/profile/metrics.service"
+import { ReportService, EducationEmployabilityResponse } from "@/lib/services/profile/report.service"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/molecules/card"
 import { ReportStatCard } from "@/components/atoms/report-stat-card"
+import { EducationEmployabilityChart } from "@/components/organisms/education-employability-chart"
 import { useAcademic } from "@/contexts/academic-context"
 import { ProgramVersionService } from "@/lib/services/catalog/program-version.service"
 import { UserService, UserResponse } from "@/lib/services/profile/user.service"
@@ -42,6 +44,8 @@ export default function DashboardMetricsPage() {
   const [metrics, setMetrics] = React.useState<MetricsResponse | null>(null)
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
+  const [educationData, setEducationData] = React.useState<EducationEmployabilityResponse | null>(null)
+  const [isLoadingEducation, setIsLoadingEducation] = React.useState(false)
 
   const { programs } = useAcademic()
   const [programNames, setProgramNames] = React.useState<Record<number, string>>({})
@@ -60,6 +64,22 @@ export default function DashboardMetricsPage() {
     }
     return months
   }
+
+  const loadEducationEmployability = React.useCallback(async () => {
+    let mounted = true
+    setIsLoadingEducation(true)
+    try {
+      const data = await ReportService.getEducationEmployability()
+      if (!mounted) return
+      setEducationData(data)
+    } catch (error) {
+      if (!mounted) return
+      console.error('Error loading education employability:', error)
+    } finally {
+      if (!mounted) return
+      setIsLoadingEducation(false)
+    }
+  }, [])
 
   const load = React.useCallback(async (opts?: { force?: boolean }) => {
     let mounted = true
@@ -125,6 +145,9 @@ export default function DashboardMetricsPage() {
         } catch (err) {
           console.error('Error building registrations series', err)
         }
+
+        // Load education employability data
+        await loadEducationEmployability()
       } catch (e: any) {
         if (!mounted) return
         // Manejo explícito de códigos comunes
@@ -156,7 +179,7 @@ export default function DashboardMetricsPage() {
       setLoading(false)
     }
     // no explicit return of mounted needed here (mounted captured above)
-  }, [router, monthsRange])
+  }, [router, monthsRange, loadEducationEmployability])
 
   // initial load
   React.useEffect(() => {
@@ -283,6 +306,53 @@ export default function DashboardMetricsPage() {
                   subtitle="Cantidad total de opiniones/valoraciones sobre programas (registros)."
                   info="Contado desde la tabla de opiniones de programa (ProgramOpinion). Es el número de filas; no es un promedio ni un score."
                 />
+              </div>
+
+              {/* Education Employability Section */}
+              <div className="mt-8">
+                <Card className="border-l-4 border-l-emerald-500">
+                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
+                    <CardTitle className="text-xl text-emerald-800 flex items-center gap-2">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                      Empleabilidad Educativa
+                    </CardTitle>
+                    <CardDescription className="text-emerald-600">
+                      Métricas de empleabilidad de egresados por programa académico
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    {isLoadingEducation ? (
+                      <div className="flex justify-center items-center h-64">
+                        <div className="text-lg text-emerald-600">Cargando datos de empleabilidad...</div>
+                      </div>
+                    ) : educationData ? (
+                      <div className="space-y-6">
+                        {/* Summary Stats Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                            <div className="text-sm font-medium text-blue-600 mb-1">Total Egresados</div>
+                            <div className="text-2xl font-bold text-blue-800">{educationData.totalGraduates}</div>
+                          </div>
+                          <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-lg border border-emerald-200">
+                            <div className="text-sm font-medium text-emerald-600 mb-1">Egresados Empleados</div>
+                            <div className="text-2xl font-bold text-emerald-800">{educationData.employedGraduates}</div>
+                          </div>
+                          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                            <div className="text-sm font-medium text-purple-600 mb-1">Tasa de Empleabilidad</div>
+                            <div className="text-2xl font-bold text-purple-800">{Math.round(educationData.employabilityRate)}%</div>
+                          </div>
+                        </div>
+                        
+                        {/* Charts */}
+                        <EducationEmployabilityChart data={educationData} />
+                      </div>
+                    ) : (
+                      <div className="flex justify-center items-center h-64">
+                        <div className="text-lg text-red-500">Error al cargar los datos de empleabilidad</div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
             </div>
           )}

@@ -120,7 +120,7 @@ export function AcademicInfoTab({
           title="Información Académica"
           description="No hay información académica disponible."
           actionText="Agregar Carrera Cursada"
-          onAction={handleAddAcademicProgram}
+          onAction={isViewOnly ? undefined : handleAddAcademicProgram}
           color="blue"
         />
       </TabContainer>
@@ -144,7 +144,7 @@ export function AcademicInfoTab({
             title="Carreras Cursadas"
             description="No hay información académica registrada."
             actionText="Agregar Carrera Cursada"
-            onAction={handleAddAcademicProgram}
+            onAction={isViewOnly ? undefined : handleAddAcademicProgram}
             color="blue"
           />
         ) : (
@@ -188,7 +188,7 @@ export function AcademicInfoTab({
             title="Estudios Post Graduación"
             description="No hay estudios post graduación registrados."
             actionText="Agregar Estudio Post Graduación"
-            onAction={handleAddPostGraduate}
+            onAction={isViewOnly ? undefined : handleAddPostGraduate}
             color="purple"
           />
         )}
