@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "security:audit": "npm audit --production",
-    "security:outdated": "npm outdated",
-    "preinstall": "npm run security:audit"
+    "security:outdated": "npm outdated"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
